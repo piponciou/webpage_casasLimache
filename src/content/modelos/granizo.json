@@ -1,0 +1,69 @@
+{
+  "slug": "granizo",
+  "nombre": "Granizo",
+  "orden": 3,
+  "destacado": true,
+  "resumen": "36 m² con dos dormitorios: el formato mínimo que sigue siendo una casa y no una mediagua.",
+  "descripcion": [
+    "El Granizo es la entrada al catálogo. Dos dormitorios, un baño y un espacio único de cocina y estar, en 36 m² bien resueltos. Es la casa que se compra para habilitar un terreno rápido, para arrendar, o como primera etapa de algo más grande.",
+    "La estructura es la misma de los modelos grandes: tabiquería de 2×3, papel fieltro y paneles media luna de 5\". No es una construcción liviana con otro estándar, es la misma casa en menos metros.",
+    "También se pide en 42 m², donde el estar crece lo suficiente para poner mesa de comedor sin sacrificar los dos dormitorios."
+  ],
+  "metrajeBase": 36,
+  "variantes": [
+    {
+      "m2": 36,
+      "dormitorios": 2,
+      "banos": 1,
+      "aguas": 2,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 42,
+      "dormitorios": 2,
+      "banos": 1,
+      "aguas": 2,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["kit-basico", "semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": false, "terraza": false },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada",
+    "ventanas": "Corredera de aluminio con vidrio simple",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres interiores"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Techumbre completa",
+    "Plano de distribución del modelo"
+  ],
+  "noIncluye": [
+    "Radier o fundación (lo prepara el cliente antes de la entrega)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Pintura, cerámicas y terminaciones"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/granizo/01-exterior.jpg", "alt": "Modelo Granizo de 36 m² — fachada exterior" },
+    { "src": "/images/modelos/granizo/02-interior.jpg", "alt": "Modelo Granizo de 36 m² — estar y cocina integrados" },
+    { "src": "/images/modelos/granizo/03-cocina.jpg", "alt": "Modelo Granizo de 36 m² — sector de cocina" },
+    { "src": "/images/modelos/granizo/04-dormitorio.jpg", "alt": "Modelo Granizo de 36 m² — dormitorio" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/granizo/tarjeta.jpg",
+    "alt": "Modelo Granizo de 36 m² — vista general de la fachada"
+  },
+  "plano": {
+    "src": "/images/modelos/granizo/plano.jpg",
+    "alt": "Plano de distribución del modelo Granizo de 36 m² con dos dormitorios"
+  },
+  "seo": {}
+}

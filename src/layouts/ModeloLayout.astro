@@ -1,0 +1,63 @@
+---
+/**
+ * Layout de la ficha de modelo.
+ * Su única responsabilidad es derivar los metadatos SEO y el JSON-LD desde los
+ * datos del modelo, para que la página del catálogo no tenga que saber de eso.
+ *
+ * El title y la description se generan solos a partir del JSON. El JSON puede
+ * sobrescribirlos con `seo.title` y `seo.description` si el cliente quiere una
+ * redacción particular para un modelo puntual.
+ */
+import BaseLayout from './BaseLayout.astro';
+import { rangoM2, dormitoriosDisponibles, rutaModelo, varianteBase } from '../lib/catalogo';
+import { migaDePan, productoModelo } from '../lib/schema';
+import type { DatosModelo } from '../lib/catalogo';
+
+interface Props {
+  datos: DatosModelo;
+}
+
+const { datos } = Astro.props;
+
+const ruta = rutaModelo(datos.slug);
+const rango = rangoM2(datos);
+const base = varianteBase(datos);
+const dormitorios = dormitoriosDisponibles(datos);
+
+const textoDormitorios =
+  dormitorios.length === 1
+    ? `${dormitorios[0]} Dormitorios`
+    : `${dormitorios[0]} a ${dormitorios[dormitorios.length - 1]} Dormitorios`;
+
+// Plantilla del brief: "Casa Prefabricada {Nombre} {m2} m² | {n} Dormitorios | Casas Limache".
+// La marca se agrega solo si el título sigue cabiendo en los ~60 caracteres que
+// muestra Google: un title cortado a la mitad rinde peor que uno sin marca.
+const tituloBase = `Casa Prefabricada ${datos.nombre} ${base.m2} m² | ${textoDormitorios}`;
+const conMarca = `${tituloBase} | Casas Limache`;
+const titulo = datos.seo.title ?? (conMarca.length <= 60 ? conMarca : tituloBase);
+
+const descripcion =
+  datos.seo.description ??
+  `Casa prefabricada ${datos.nombre} de ${rango.min}${rango.min === rango.max ? '' : ' a ' + rango.max} m² con ${textoDormitorios.toLowerCase()}. ${datos.resumen} Cotiza por WhatsApp.`.slice(
+    0,
+    160
+  );
+
+const jsonLd = [
+  productoModelo(datos, ruta),
+  migaDePan([
+    { nombre: 'Catálogo', ruta: '/catalogo/' },
+    { nombre: datos.nombre, ruta },
+  ]),
+];
+---
+
+{
+  /* La imagen de redes es la del sitio (1200×630) y no la foto del modelo: las
+     fotos de galería son 3:2 y declararlas como 1200×630 sería mentir en el
+     Open Graph. Si el cliente quiere una portada por modelo, se agrega el
+     archivo en /images/og/{slug}.jpg y se pasa acá. */
+}
+<BaseLayout titulo={titulo} descripcion={descripcion} ruta={ruta} jsonLd={jsonLd}>
+  <slot />
+</BaseLayout>

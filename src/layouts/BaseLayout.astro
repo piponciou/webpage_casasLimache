@@ -1,0 +1,171 @@
+---
+/**
+ * LAYOUT BASE
+ * ===========
+ * Todos los metadatos SEO del sitio viven acá. Ninguna página escribe su propio
+ * <head>: le pasa props a este layout. Así el title, el canonical, el Open Graph
+ * y el JSON-LD siguen siempre la misma regla.
+ */
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { SITE, DIRECCION, ANALITICA } from '../config/site';
+import { grafo, negocioLocal } from '../lib/schema';
+
+interface Props {
+  /** Máximo ~60 caracteres. Se usa tal cual, sin sufijos automáticos. */
+  titulo: string;
+  /** Entre 150 y 160 caracteres, con llamada a la acción. */
+  descripcion: string;
+  /** Ruta absoluta del sitio, con slash final. Ej: "/catalogo/" */
+  ruta: string;
+  /** Ruta de la imagen para redes sociales (1200×630). */
+  imagenOg?: string;
+  /** Nodos JSON-LD adicionales de esta página. El negocio local ya va incluido. */
+  jsonLd?: unknown[];
+  noIndexar?: boolean;
+  /** Clase extra para el <main>. */
+  claseMain?: string;
+}
+
+const {
+  titulo,
+  descripcion,
+  ruta,
+  imagenOg = '/images/og/portada.jpg',
+  jsonLd = [],
+  noIndexar = false,
+  claseMain,
+} = Astro.props;
+
+const canonica = new URL(ruta, SITE.dominio).href;
+const urlImagen = new URL(imagenOg, SITE.dominio).href;
+
+const datosEstructurados = grafo([negocioLocal(), ...jsonLd]);
+---
+
+<!doctype html>
+<html lang={SITE.idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    <link rel="alternate" hreflang="es-cl" href={canonica} />
+
+    {
+      noIndexar ? (
+        <meta name="robots" content="noindex, follow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+      )
+    }
+
+    {/* Señales geográficas: el sitio compite por búsquedas locales. */}
+    <meta name="geo.region" content={DIRECCION.regionISO} />
+    <meta name="geo.placename" content={`${DIRECCION.comuna}, ${DIRECCION.region}`} />
+    <meta name="geo.position" content={`${DIRECCION.geo.lat};${DIRECCION.geo.lng}`} />
+    <meta name="ICBM" content={`${DIRECCION.geo.lat}, ${DIRECCION.geo.lng}`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={SITE.locale} />
+    <meta property="og:site_name" content={SITE.nombre} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={urlImagen} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE.nombre} — casas prefabricadas en la Región de Valparaíso`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={urlImagen} />
+
+    {/* Las dos fuentes que aparecen en el primer pintado. Las demás cargan con swap. */}
+    <link rel="preload" href="/fonts/archivo-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/plex-sans-400.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#d7dcda" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />
+
+    {
+      /* Analítica: mientras no haya IDs cargados en site.ts no se carga ningún
+         script de terceros. El evento igual queda en dataLayer para que, el día
+         que se conecte GA4 o Meta, no haya que tocar ningún componente. */
+    }
+    <script is:inline define:vars={{ GA4: ANALITICA.GA4_ID, PIXEL: ANALITICA.META_PIXEL_ID }}>
+      window.dataLayer = window.dataLayer || [];
+
+      document.addEventListener(
+        'click',
+        function (evento) {
+          var destino = evento.target;
+          if (!destino || typeof destino.closest !== 'function') return;
+          var enlace = destino.closest('a[data-wsp]');
+          if (!enlace) return;
+
+          window.dataLayer.push({
+            event: 'whatsapp_click',
+            origen: enlace.dataset.wsp || null,
+            modelo: enlace.dataset.wspModelo || null,
+            metraje: enlace.dataset.wspMetraje ? Number(enlace.dataset.wspMetraje) : null,
+            kit: enlace.dataset.wspKit || null,
+          });
+
+          // Cuando el cliente entregue los IDs, descomentar lo que corresponda:
+          // if (GA4) gtag('event', 'whatsapp_click', { origen: enlace.dataset.wsp });
+          // if (PIXEL) fbq('track', 'Contact');
+        },
+        true
+      );
+    </script>
+  </head>
+
+  <body>
+    <a class="saltar-al-contenido" href="#contenido">Saltar al contenido</a>
+
+    <Header />
+
+    <main id="contenido" class={claseMain}>
+      <slot />
+    </main>
+
+    <Footer />
+    <WhatsAppFloat />
+
+    <script>
+      // Revelados al scroll y dibujo de las cotas. Si esto no corre, el
+      // contenido igual se ve: la clase .visible solo se agrega, nunca se quita.
+      const prefiereQuieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const objetivos = document.querySelectorAll<HTMLElement>('.revelar, .cota[data-dibujar]');
+
+      if (prefiereQuieto || !('IntersectionObserver' in window)) {
+        objetivos.forEach((el) => el.classList.add('visible', 'dibujada'));
+      } else {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            entradas.forEach((entrada) => {
+              if (!entrada.isIntersecting) return;
+              const el = entrada.target as HTMLElement;
+              el.classList.add(el.classList.contains('cota') ? 'dibujada' : 'visible');
+              observador.unobserve(el);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
+        );
+
+        objetivos.forEach((el) => observador.observe(el));
+      }
+    </script>
+  </body>
+</html>

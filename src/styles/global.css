@@ -1,0 +1,515 @@
+@import './tokens.css';
+
+/* =============================================================================
+   BASE
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* El header es sticky: que los anclas no queden debajo. */
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  min-height: 100svh;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  font-size: var(--t-cuerpo);
+  line-height: var(--interlinea-cuerpo);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+  /* Mientras la foto real no carga, el hueco tiene el color del sitio en vez
+     de blanco: no hay flash. */
+  background-color: var(--tinta-10);
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* =============================================================================
+   TIPOGRAFÍA
+   ============================================================================= */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  line-height: var(--interlinea-titular);
+  letter-spacing: var(--tracking-titular);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--t-titular);
+}
+
+h2 {
+  font-size: var(--t-seccion);
+}
+
+h3 {
+  font-size: var(--t-sub);
+  font-weight: 600;
+}
+
+h4 {
+  font-size: var(--t-cuerpo-grande);
+  font-weight: 600;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* El titular del hero: el único lugar donde Archivo va en su tamaño grande. */
+.display {
+  font-family: var(--fuente-display);
+  font-size: var(--t-display);
+  font-weight: 700;
+  line-height: var(--interlinea-display);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+/* La voz de los datos: metrajes, precios, especificaciones. Nunca prosa. */
+.mono {
+  font-family: var(--fuente-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-mono);
+}
+
+.etiqueta {
+  font-family: var(--fuente-mono);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: var(--tracking-etiqueta);
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+}
+
+.prosa {
+  max-width: var(--medida);
+  font-size: var(--t-cuerpo-grande);
+  color: var(--texto-suave);
+}
+
+.prosa > * + * {
+  margin-top: var(--e-4);
+}
+
+.prosa strong {
+  font-weight: 600;
+  color: var(--texto);
+}
+
+/* =============================================================================
+   ENLACES Y FOCO
+   ============================================================================= */
+
+a {
+  color: var(--cota);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-thickness var(--dur-corta) var(--ease-suave);
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--foco);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Sobre fondo tinta el azul del lápiz no se ve: el foco pasa a pino. */
+.invertido :focus-visible {
+  outline-color: var(--acento);
+}
+
+.saltar-al-contenido {
+  position: absolute;
+  left: var(--e-4);
+  top: var(--e-4);
+  z-index: 999;
+  padding: var(--e-3) var(--e-4);
+  background: var(--tinta-fieltro);
+  color: var(--zinc-marga);
+  border-radius: var(--radio);
+  transform: translateY(-200%);
+  transition: transform var(--dur-media) var(--ease-salida);
+}
+
+.saltar-al-contenido:focus {
+  transform: translateY(0);
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =============================================================================
+   RETÍCULA
+   El margen de cota es un carril izquierdo reservado a las acotaciones.
+   Nunca lleva contenido, y existe igual en móvil: es lo que hace que el sitio
+   no sea "el desktop achicado".
+   ============================================================================= */
+
+.envoltorio {
+  width: 100%;
+  max-width: calc(var(--ancho-max) + var(--margen-cota) + var(--borde-pagina) * 2);
+  margin-inline: auto;
+  padding-inline: var(--borde-pagina);
+  padding-inline-start: calc(var(--borde-pagina) + var(--margen-cota));
+}
+
+/* Para bloques que necesitan sangrar hasta el borde derecho de la ventana. */
+.envoltorio--sangra-derecha {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline-end: 0;
+  margin-inline-start: max(0px, calc((100vw - var(--ancho-max) - var(--margen-cota) - var(--borde-pagina) * 2) / 2));
+}
+
+.seccion {
+  padding-block: var(--seccion-y);
+}
+
+/* Una sección puede pegarse a la siguiente sin duplicar aire. */
+.seccion--pegada-arriba {
+  padding-block-start: 0;
+}
+
+.seccion--invertida {
+  background: var(--superficie-oscura);
+  color: var(--texto-invertido);
+}
+
+/* Encabezado de sección: el título va solo. Sin etiqueta encima. */
+.encabezado-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--e-4);
+  margin-block-end: var(--e-6);
+}
+
+.encabezado-seccion p {
+  max-width: 46ch;
+  color: var(--texto-suave);
+}
+
+/* =============================================================================
+   LA COTA — elemento firma
+   Una sola ley: línea de 1.5px con remates en tick y un numeral en mono.
+   Solo aparece donde mide un dato real del catálogo. Máximo una por bloque.
+   ============================================================================= */
+
+.cota {
+  --cota-color: var(--cota);
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  color: var(--cota-color);
+  font-family: var(--fuente-mono);
+  font-size: var(--t-micro);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-mono);
+  line-height: 1;
+}
+
+.cota__tramo {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 12px;
+  height: var(--grosor-cota);
+  background: currentColor;
+  opacity: 0.55;
+  transform-origin: left center;
+}
+
+.cota__tramo:last-child {
+  transform-origin: right center;
+}
+
+/* Los remates a 45°, como en un plano. */
+.cota__tramo::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: var(--grosor-cota);
+  height: 11px;
+  background: currentColor;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.cota__tramo:first-child::after {
+  left: 0;
+}
+
+.cota__tramo:last-child::after {
+  right: 0;
+}
+
+.cota__valor {
+  flex: 0 0 auto;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cota--sola .cota__tramo:first-child {
+  display: none;
+}
+
+.invertido .cota,
+.seccion--invertida .cota {
+  --cota-color: var(--lapiz-claro);
+}
+
+/* Entrada: la cota se dibuja una vez, desde los extremos hacia el centro. */
+.cota[data-dibujar] .cota__tramo {
+  transform: scaleX(0);
+}
+
+.cota[data-dibujar] .cota__valor {
+  opacity: 0;
+}
+
+.cota[data-dibujar].dibujada .cota__tramo {
+  transform: scaleX(1);
+  transition: transform var(--dur-larga) var(--ease-salida);
+}
+
+.cota[data-dibujar].dibujada .cota__valor {
+  opacity: 1;
+  transition: opacity var(--dur-media) var(--ease-suave) 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cota[data-dibujar] .cota__tramo {
+    transform: scaleX(1);
+  }
+  .cota[data-dibujar] .cota__valor {
+    opacity: 1;
+  }
+}
+
+/* =============================================================================
+   BOTONES
+   Alto mínimo 48px en todos: el objetivo táctil manda.
+   ============================================================================= */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-3);
+  min-height: 48px;
+  padding: var(--e-3) var(--e-5);
+  border-radius: var(--radio);
+  font-weight: 500;
+  font-size: var(--t-cuerpo);
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-corta) var(--ease-suave),
+    color var(--dur-corta) var(--ease-suave),
+    border-color var(--dur-corta) var(--ease-suave);
+}
+
+.boton svg {
+  flex: 0 0 auto;
+}
+
+/* Principal: relleno de pino con texto tinta (5.3:1).
+   Al pasar el mouse se invierte el material en vez de oscurecerse, porque un
+   pino más oscuro bajaría el contraste por debajo de AA. */
+.boton--principal {
+  background: var(--acento);
+  color: var(--tinta-fieltro);
+  border: var(--grosor-cota) solid var(--acento);
+}
+
+.boton--principal:hover {
+  background: var(--tinta-fieltro);
+  color: var(--acento);
+  border-color: var(--tinta-fieltro);
+}
+
+.boton--secundario {
+  background: transparent;
+  color: var(--texto);
+  border: var(--grosor-cota) solid var(--texto);
+}
+
+.boton--secundario:hover {
+  background: var(--tinta-fieltro);
+  color: var(--zinc-marga);
+}
+
+.invertido .boton--secundario,
+.seccion--invertida .boton--secundario {
+  color: var(--texto-invertido);
+  border-color: var(--texto-invertido-suave);
+}
+
+.invertido .boton--secundario:hover,
+.seccion--invertida .boton--secundario:hover {
+  background: var(--zinc-marga);
+  color: var(--tinta-fieltro);
+  border-color: var(--zinc-marga);
+}
+
+.boton--grande {
+  min-height: 60px;
+  padding: var(--e-4) var(--e-7);
+  font-size: var(--t-cuerpo-grande);
+  font-weight: 600;
+}
+
+.boton--ancho {
+  width: 100%;
+}
+
+.boton[aria-disabled='true'],
+.boton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* =============================================================================
+   SUPERFICIES
+   La elevación se declara una sola vez: o borde, o sombra. Nunca las dos.
+   ============================================================================= */
+
+.tarjeta {
+  background: var(--superficie);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-baja);
+  transition:
+    box-shadow var(--dur-media) var(--ease-salida),
+    transform var(--dur-media) var(--ease-salida);
+}
+
+.tarjeta--enlace:hover {
+  box-shadow: var(--sombra-media);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta--enlace:hover {
+    transform: none;
+  }
+}
+
+/* =============================================================================
+   REVELADOS AL SCROLL
+   Desplazamiento corto desde un estado ya visible. Si el JS no corre, el
+   contenido se ve igual: la clase la agrega el script, no la quita.
+   ============================================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+  .revelar {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .revelar.visible {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--dur-larga) var(--ease-salida),
+      transform var(--dur-larga) var(--ease-salida);
+  }
+}
+
+/* =============================================================================
+   UTILIDADES MÍNIMAS
+   ============================================================================= */
+
+/* `hidden` tiene que ganarle a cualquier display de componente. */
+[hidden] {
+  display: none !important;
+}
+
+.sin-lista {
+  list-style: none;
+  padding: 0;
+}
+
+/* Listas de enlaces apretadas (comunas, índices). En pantalla táctil cada
+   enlace crece a 44px de alto; con puntero se quedan compactas. */
+@media (pointer: coarse) {
+  .enlaces-densos a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+.fila-mono {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2) var(--e-4);
+  font-family: var(--fuente-mono);
+  font-size: var(--t-chico);
+  font-variant-numeric: tabular-nums;
+  color: var(--texto-suave);
+}

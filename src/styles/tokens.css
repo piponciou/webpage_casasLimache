@@ -1,0 +1,199 @@
+/* =============================================================================
+   TOKENS — Casas Limache
+   Dirección de diseño: "Cota".
+   La casa se vende por metro cuadrado, así que la interfaz mide: líneas de cota,
+   acotaciones y numerales monoespaciados anotan datos reales del catálogo.
+   Ningún token decorativo: si un valor no se usa, no está.
+   ============================================================================= */
+
+/* ---------- Tipografías autoalojadas -------------------------------------- */
+/* Los .woff2 los copia scripts/copiar-fuentes.mjs desde node_modules.         */
+
+@font-face {
+  font-family: 'Archivo Variable';
+  src: url('/fonts/archivo-variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
+    U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Plex Sans';
+  src: url('/fonts/plex-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Sans';
+  src: url('/fonts/plex-sans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Sans';
+  src: url('/fonts/plex-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Mono';
+  src: url('/fonts/plex-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Mono';
+  src: url('/fonts/plex-mono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Color -------------------------------------------------------
+     Cinco tonos, todos sacados de materiales que existen en la obra.
+     Contraste verificado:
+       tinta sobre zinc   → 11.9:1   (texto normal, AA y AAA)
+       tinta sobre neblina→ 13.6:1
+       lapiz sobre zinc   →  6.4:1   (enlaces y foco, AA)
+       pino sobre tinta   →  5.3:1   (relleno de botón con texto tinta)
+     REGLA: el pino NUNCA se usa como color de texto sobre fondo claro
+     (daría 2.4:1). Solo como relleno, o como texto sobre tinta.            */
+
+  --tinta-fieltro: #1c1f1d; /* papel fieltro entre panel y tabiquería */
+  --zinc-marga: #d7dcda; /* zinc galvanizado con la humedad de la mañana */
+  --neblina: #f1f3f1; /* la bruma sobre el cerro */
+  --pino-radiata: #c08a3e; /* pino sin pintar bajo sol */
+  --lapiz-carpintero: #2e4e5c; /* el lápiz plano azul del carpintero */
+
+  /* Derivados. Solo mezclas de los cinco de arriba, ningún color nuevo. */
+  /* Los dos niveles de texto secundario están calculados para pasar AA sobre
+     zinc y sobre neblina: 88% → 8.0:1 y 70% → 5.1:1. Un gris más claro se veía
+     mejor en la maqueta y era ilegible en un celular al sol. */
+  --tinta-88: color-mix(in srgb, var(--tinta-fieltro) 88%, var(--zinc-marga));
+  --tinta-70: color-mix(in srgb, var(--tinta-fieltro) 70%, var(--zinc-marga));
+  --tinta-18: color-mix(in srgb, var(--tinta-fieltro) 18%, var(--zinc-marga));
+  --tinta-10: color-mix(in srgb, var(--tinta-fieltro) 10%, var(--zinc-marga));
+  --pino-oscuro: color-mix(in srgb, var(--pino-radiata) 82%, var(--tinta-fieltro));
+  --lapiz-claro: color-mix(in srgb, var(--lapiz-carpintero) 55%, var(--neblina));
+
+  /* Roles */
+  --fondo: var(--zinc-marga);
+  --superficie: var(--neblina);
+  --superficie-oscura: var(--tinta-fieltro);
+  --texto: var(--tinta-fieltro);
+  --texto-suave: var(--tinta-88);
+  --texto-tenue: var(--tinta-70);
+  --texto-invertido: var(--zinc-marga);
+  --texto-invertido-suave: color-mix(in srgb, var(--zinc-marga) 72%, var(--tinta-fieltro));
+  --linea: var(--tinta-18);
+  --linea-tenue: var(--tinta-10);
+  --acento: var(--pino-radiata);
+  --cota: var(--lapiz-carpintero);
+  --foco: var(--lapiz-carpintero);
+
+  /* ---------- Tipografía --------------------------------------------------
+     Archivo (variable) solo en titulares y numerales grandes.
+     Plex Sans para leer. Plex Mono exclusivamente para medidas y datos.     */
+
+  --fuente-display: 'Archivo Variable', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --fuente-texto: 'Plex Sans', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-mono: 'Plex Mono', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Escala fluida. El techo del display es 5.4rem: por debajo del máximo de
+     6rem que nos fijamos, para que 320px y 1920px no se peleen. */
+  --t-display: clamp(2.5rem, 1.4rem + 5.4vw, 5.4rem);
+  --t-titular: clamp(1.85rem, 1.25rem + 2.6vw, 3.1rem);
+  --t-seccion: clamp(1.5rem, 1.15rem + 1.5vw, 2.25rem);
+  --t-sub: clamp(1.2rem, 1.05rem + 0.7vw, 1.5rem);
+  --t-cuerpo-grande: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem);
+  --t-cuerpo: 1rem;
+  --t-chico: 0.9375rem;
+  --t-micro: 0.8125rem;
+
+  --interlinea-display: 0.94;
+  --interlinea-titular: 1.06;
+  --interlinea-cuerpo: 1.6;
+
+  /* El display se aprieta; el texto nunca. Tope duro en -0.03em. */
+  --tracking-display: -0.03em;
+  --tracking-titular: -0.02em;
+  --tracking-mono: 0.02em;
+  --tracking-etiqueta: 0.08em;
+
+  --medida: 68ch; /* ancho máximo de un párrafo */
+
+  /* ---------- Espaciado ---------------------------------------------------
+     Progresión que se abre: grupos apretados, separaciones generosas.       */
+  --e-1: 0.25rem;
+  --e-2: 0.5rem;
+  --e-3: 0.75rem;
+  --e-4: 1rem;
+  --e-5: 1.5rem;
+  --e-6: 2rem;
+  --e-7: 3rem;
+  --e-8: 4rem;
+  --e-9: 6rem;
+  --e-10: 8rem;
+
+  /* Aire vertical entre secciones, fluido. */
+  --seccion-y: clamp(3.5rem, 2rem + 6vw, 7rem);
+
+  /* ---------- Retícula ----------------------------------------------------
+     El margen de cota es el carril izquierdo reservado a las acotaciones.
+     Nunca lleva contenido. Es lo que hace que el móvil no sea el desktop
+     achicado: sobrevive hasta 320px.                                        */
+  --ancho-max: 1240px;
+  --margen-cota: 24px;
+  --borde-pagina: 20px;
+  --canal: clamp(1rem, 0.5rem + 2vw, 2rem); /* separación entre columnas */
+
+  /* ---------- Forma -------------------------------------------------------
+     Radio corto: el mundo es de plano técnico, no de app. La elevación se
+     declara UNA vez por elemento: o borde, o sombra. Nunca las dos.         */
+  --radio: 4px;
+  --radio-chico: 3px;
+  --radio-control: 999px; /* solo controles chicos tipo chip */
+
+  --sombra-baja: 0 1px 2px rgb(28 31 29 / 0.05), 0 2px 8px rgb(28 31 29 / 0.05);
+  --sombra-media: 0 2px 4px rgb(28 31 29 / 0.06), 0 8px 24px rgb(28 31 29 / 0.09);
+  --sombra-alta: 0 4px 8px rgb(28 31 29 / 0.08), 0 18px 44px rgb(28 31 29 / 0.14);
+
+  --grosor-cota: 1.5px;
+
+  /* ---------- Movimiento --------------------------------------------------
+     Una salida exponencial, siempre desde un estado ya visible.             */
+  --ease-salida: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-suave: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-corta: 140ms;
+  --dur-media: 260ms;
+  --dur-larga: 420ms;
+
+  /* ---------- Capas -------------------------------------------------------- */
+  --z-contenido: 1;
+  --z-sticky: 50;
+  --z-header: 100;
+  --z-flotante: 200;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --margen-cota: 56px;
+    --borde-pagina: 32px;
+  }
+}
+
+/* Nadie ve una animación que no pidió. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-corta: 1ms;
+    --dur-media: 1ms;
+    --dur-larga: 1ms;
+  }
+}

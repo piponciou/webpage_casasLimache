@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#1c1f1d"/>
+  <!-- La cota: el mismo trazo con remates a 45° que estructura todo el sitio. -->
+  <g stroke="#c08a3e" stroke-width="2" stroke-linecap="square">
+    <path d="M6 16h20"/>
+    <path d="M4 13l4 6M28 13l-4 6"/>
+  </g>
+</svg>

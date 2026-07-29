@@ -1,0 +1,77 @@
+{
+  "slug": "lo-hidalgo",
+  "nombre": "Lo Hidalgo",
+  "orden": 6,
+  "destacado": true,
+  "resumen": "42 m² compactos con logia incorporada, el modelo que está armado en la casa piloto.",
+  "descripcion": [
+    "El Lo Hidalgo es el modelo que se puede recorrer: es el que está montado en la casa piloto de Camino Troncal. Si quieres saber cómo suena el piso, cuánta luz entra por una ventana corredera o qué tan ancho es realmente un pasillo de casa prefabricada, este es el que vas a tocar.",
+    "Son 42 m² con dos dormitorios, baño completo, cocina con logia y un estar que da al frente. La logia incorporada es lo que lo diferencia de otros modelos de este tamaño: la lavadora no queda en el baño ni afuera.",
+    "Se fabrica también en 36 y 54 m². En 54 aparece el tercer dormitorio, manteniendo la misma fachada."
+  ],
+  "metrajeBase": 42,
+  "variantes": [
+    {
+      "m2": 36,
+      "dormitorios": 2,
+      "banos": 1,
+      "aguas": 2,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 42,
+      "dormitorios": 2,
+      "banos": 1,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 54,
+      "dormitorios": 3,
+      "banos": 1,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["kit-basico", "semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": true, "terraza": false },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada",
+    "ventanas": "Corredera de aluminio con vidrio simple",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres interiores"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Techumbre completa",
+    "Logia cerrada detrás de la cocina",
+    "Plano de distribución del modelo"
+  ],
+  "noIncluye": [
+    "Radier o fundación (lo prepara el cliente antes de la entrega)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Pintura, cerámicas y terminaciones"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/lo-hidalgo/01-exterior.jpg", "alt": "Modelo Lo Hidalgo de 42 m² — fachada exterior" },
+    { "src": "/images/modelos/lo-hidalgo/02-interior.jpg", "alt": "Modelo Lo Hidalgo de 42 m² — estar" },
+    { "src": "/images/modelos/lo-hidalgo/03-cocina.jpg", "alt": "Modelo Lo Hidalgo de 42 m² — cocina con logia" },
+    { "src": "/images/modelos/lo-hidalgo/04-dormitorio.jpg", "alt": "Modelo Lo Hidalgo de 42 m² — dormitorio" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/lo-hidalgo/tarjeta.jpg",
+    "alt": "Modelo Lo Hidalgo de 42 m² — vista general de la fachada"
+  },
+  "plano": {
+    "src": "/images/modelos/lo-hidalgo/plano.jpg",
+    "alt": "Plano de distribución del modelo Lo Hidalgo de 42 m² con dos dormitorios y logia"
+  },
+  "seo": {}
+}

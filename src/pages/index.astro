@@ -1,0 +1,301 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ModeloCard from '../components/ModeloCard.astro';
+import ComparadorKits from '../components/ComparadorKits.astro';
+import Proceso from '../components/Proceso.astro';
+import MapaCasaPiloto from '../components/MapaCasaPiloto.astro';
+import Testimonios from '../components/Testimonios.astro';
+import FAQ from '../components/FAQ.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
+import Icono from '../components/Icono.astro';
+
+import { obtenerDestacados } from '../lib/catalogo';
+import { PREGUNTAS_HOME } from '../data/faq';
+import { CONFIANZA, DIRECCION, HORARIOS, TELEFONO } from '../config/site';
+import { mensajeCasaPiloto } from '../lib/whatsapp';
+import { sitioWeb, organizacion, paginaFaq } from '../lib/schema';
+
+const destacados = await obtenerDestacados();
+
+const jsonLd = [
+  sitioWeb(),
+  organizacion(),
+  paginaFaq(PREGUNTAS_HOME.map((p) => ({ pregunta: p.pregunta, respuesta: p.respuesta }))),
+];
+---
+
+<BaseLayout
+  titulo="Casas Prefabricadas en Limache y V Región | Casas Limache"
+  descripcion="Casas prefabricadas en Limache, Olmué y toda la Región de Valparaíso. Casa piloto visitable en Villa Alemana y entrega inmediata. Cotiza por WhatsApp."
+  ruta="/"
+  jsonLd={jsonLd}
+>
+  <Hero />
+
+  {/* B — Barra de confianza. Sin cifras: no inventamos años ni casas entregadas. */}
+  <section class="seccion confianza" aria-label="Por qué comprarnos">
+    <div class="envoltorio">
+      <ul class="sin-lista confianza__lista">
+        {
+          CONFIANZA.map((item) => (
+            <li class="confianza__item">
+              <h2 class="confianza__titulo">{item.titulo}</h2>
+              <p class="confianza__detalle">{item.detalle}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* C — Catálogo destacado */}
+  <section class="seccion" aria-labelledby="titulo-destacados">
+    <div class="envoltorio">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-destacados">Modelos destacados</h2>
+        <p>
+          Ocho plantas distintas, de 36 a 120 m². Todas se pueden ver en materiales en la casa
+          piloto.
+        </p>
+      </div>
+
+      <div class="grilla-modelos">
+        {destacados.map((modelo, i) => <ModeloCard modelo={modelo} prioridad={i === 0} />)}
+      </div>
+
+      <a class="boton boton--principal boton--grande ver-catalogo" href="/catalogo/">
+        Ver catálogo completo
+        <Icono nombre="flecha" tamano={22} />
+      </a>
+    </div>
+  </section>
+
+  {/* D — Qué incluye cada kit */}
+  <section class="seccion" id="formatos" aria-labelledby="titulo-kits">
+    <div class="envoltorio">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-kits">¿Qué incluye cada formato?</h2>
+        <p>Tres maneras de comprar la misma casa, según cuánto quieras hacer tú.</p>
+      </div>
+
+      <ComparadorKits />
+    </div>
+  </section>
+
+  {/* E — Proceso */}
+  <section class="seccion" aria-labelledby="titulo-proceso">
+    <div class="envoltorio">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-proceso">Cómo se compra</h2>
+      </div>
+
+      <Proceso />
+    </div>
+  </section>
+
+  {/* F — Casa piloto */}
+  <section class="seccion seccion--invertida" aria-labelledby="titulo-piloto">
+    <div class="envoltorio piloto">
+      <div class="piloto__texto">
+        <h2 id="titulo-piloto">Ven a recorrer la casa piloto</h2>
+        <p class="piloto__parrafo">
+          Es la diferencia con comprar por internet: acá entras, tocas los materiales, ves cómo se
+          ve un panel media luna por dentro y mides con tu propio cuerpo cuánto es un dormitorio de
+          verdad. No cuesta nada y no hay que comprar nada.
+        </p>
+
+        <dl class="piloto__datos">
+          {
+            HORARIOS.map((h) => (
+              <div class="piloto__dato">
+                <dt>{h.dias}</dt>
+                <dd class="mono">
+                  {h.desde}–{h.hasta}
+                  {h.nota && <span class="piloto__nota"> ({h.nota})</span>}
+                </dd>
+              </div>
+            ))
+          }
+          <div class="piloto__dato">
+            <dt>Teléfono</dt>
+            <dd><a class="mono" href={`tel:${TELEFONO.tel}`}>{TELEFONO.visible}</a></dd>
+          </div>
+        </dl>
+
+        <div class="piloto__acciones">
+          <BotonWhatsApp
+            mensaje={mensajeCasaPiloto()}
+            origen="home-casa-piloto"
+            texto="Coordinar una visita"
+          />
+          <a class="boton boton--secundario" href="/casa-piloto/">Ver la página de la casa piloto</a>
+        </div>
+      </div>
+
+      <div class="piloto__mapa">
+        <MapaCasaPiloto />
+      </div>
+    </div>
+  </section>
+
+  {/* G — Testimonios */}
+  <section class="seccion" aria-labelledby="titulo-testimonios">
+    <div class="envoltorio">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-testimonios">Lo que dicen quienes ya compraron</h2>
+      </div>
+
+      <Testimonios />
+    </div>
+  </section>
+
+  {/* H — FAQ */}
+  <section class="seccion" aria-labelledby="titulo-faq">
+    <div class="envoltorio">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-faq">Preguntas frecuentes</h2>
+        <p>
+          Lo que más nos preguntan por WhatsApp. Si falta la tuya,
+          <a href="/preguntas-frecuentes/">hay más respuestas acá</a>.
+        </p>
+      </div>
+
+      <FAQ preguntas={PREGUNTAS_HOME} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* B — barra de confianza. Sin tarjetas y sin íconos de relleno: cuatro
+     afirmaciones separadas por una línea, que es lo que son. */
+  .confianza {
+    padding-block: var(--e-7);
+  }
+
+  .confianza__lista {
+    display: grid;
+    gap: var(--e-5);
+  }
+
+  .confianza__item {
+    padding-block-start: var(--e-4);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .confianza__titulo {
+    font-size: var(--t-cuerpo-grande);
+    font-weight: 600;
+  }
+
+  .confianza__detalle {
+    margin-block-start: var(--e-2);
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+    max-width: 34ch;
+  }
+
+  .grilla-modelos {
+    display: grid;
+    gap: var(--e-5);
+    grid-template-columns: 1fr;
+  }
+
+  /* Requisito explícito del cliente: este botón tiene que ser imposible de no
+     ver. Ocupa el ancho de la grilla en móvil y no comparte fila con nada. */
+  .ver-catalogo {
+    margin-block-start: var(--e-7);
+    width: 100%;
+  }
+
+  /* F — casa piloto */
+  .piloto {
+    display: grid;
+    gap: var(--e-6);
+  }
+
+  .piloto__parrafo {
+    margin-block-start: var(--e-4);
+    max-width: 52ch;
+    color: var(--texto-invertido-suave);
+    font-size: var(--t-cuerpo-grande);
+  }
+
+  .piloto__datos {
+    margin-block-start: var(--e-6);
+    display: grid;
+    gap: var(--e-3);
+    font-size: var(--t-chico);
+  }
+
+  .piloto__dato {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-4);
+    padding-block-start: var(--e-3);
+    border-top: var(--grosor-cota) solid color-mix(in srgb, var(--zinc-marga) 20%, transparent);
+  }
+
+  .piloto__dato dt {
+    min-width: 12ch;
+    color: var(--texto-invertido-suave);
+  }
+
+  .piloto__dato dd {
+    margin: 0;
+  }
+
+  .piloto__dato a {
+    color: var(--texto-invertido);
+  }
+
+  .piloto__nota {
+    color: var(--lapiz-claro);
+  }
+
+  .piloto__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+    margin-block-start: var(--e-6);
+  }
+
+  /* El mapa vive sobre fondo tinta: su superficie sube un poco de tono. */
+  .piloto__mapa :global(.mapa) {
+    background: color-mix(in srgb, var(--zinc-marga) 16%, transparent);
+  }
+
+  @media (min-width: 560px) {
+    .confianza__lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--e-5) var(--e-6);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .grilla-modelos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ver-catalogo {
+      width: auto;
+      min-width: 320px;
+    }
+  }
+
+  @media (min-width: 940px) {
+    .confianza__lista {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grilla-modelos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .piloto {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: var(--e-8);
+      align-items: center;
+    }
+  }
+</style>

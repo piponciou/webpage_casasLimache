@@ -1,0 +1,193 @@
+---
+import Icono from './Icono.astro';
+import { NAV, SITE } from '../config/site';
+import { linkWhatsApp, mensajeGenerico } from '../lib/whatsapp';
+
+const rutaActual = Astro.url.pathname;
+
+/** Marca el enlace activo también cuando estás dentro de una subruta. */
+function esActual(href: string): boolean {
+  if (href === '/') return rutaActual === '/';
+  return rutaActual.startsWith(href);
+}
+---
+
+<header class="cabecera">
+  <div class="cabecera__barra envoltorio">
+    {/* El espacio entre las dos palabras es literal y no solo un margen: si no,
+        el nombre accesible ("Casas Limache — inicio") no contendría el texto
+        visible ("CasasLimache") y un lector de pantalla leería otra cosa que la
+        que se ve. */}
+    <a class="marca" href="/" aria-label={`${SITE.nombre} — inicio`}>
+      <span class="marca__casas">Casas</span> <span class="marca__limache">Limache</span>
+    </a>
+
+    <nav class="nav-principal" aria-label="Navegación principal">
+      <ul class="sin-lista">
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={esActual(item.href) ? 'page' : undefined}>
+                {item.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a
+      class="cabecera__wsp"
+      href={linkWhatsApp(mensajeGenerico())}
+      target="_blank"
+      rel="noopener"
+      data-wsp="header"
+    >
+      <Icono nombre="whatsapp" tamano={20} />
+      <span class="cabecera__wsp-texto">Cotizar</span>
+      <span class="visualmente-oculto">por WhatsApp (se abre WhatsApp)</span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: color-mix(in srgb, var(--zinc-marga) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: var(--grosor-cota) solid var(--linea);
+  }
+
+  .cabecera__barra {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--e-3) var(--e-5);
+    min-height: 60px;
+    padding-block: var(--e-2);
+  }
+
+  /* Marca: Archivo apretada, con el peso repartido entre las dos palabras. */
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--fuente-display);
+    font-size: 1.0625rem;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    text-decoration: none;
+    color: var(--texto);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .marca__casas {
+    font-weight: 400;
+  }
+
+  .marca__limache {
+    font-weight: 700;
+    /* El espacio literal ya separa las palabras; esto solo lo afina. */
+    margin-inline-start: 0.08em;
+  }
+
+  .nav-principal {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(var(--borde-pagina) * -1);
+    padding-inline: var(--borde-pagina);
+    border-top: var(--grosor-cota) solid var(--linea-tenue);
+    padding-block-start: var(--e-2);
+  }
+
+  .nav-principal::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-principal ul {
+    display: flex;
+    gap: var(--e-5);
+    margin: 0;
+  }
+
+  .nav-principal a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--dur-corta) var(--ease-suave);
+  }
+
+  .nav-principal a:hover {
+    color: var(--texto);
+  }
+
+  /* El activo se marca con la cota, no con color: coherente con el sistema. */
+  .nav-principal a[aria-current='page'] {
+    color: var(--texto);
+    font-weight: 500;
+    box-shadow: inset 0 -1.5px 0 var(--cota);
+  }
+
+  .cabecera__wsp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--e-2);
+    min-height: 44px;
+    min-width: 44px;
+    padding-inline: var(--e-4);
+    border-radius: var(--radio);
+    background: var(--acento);
+    color: var(--tinta-fieltro);
+    font-size: var(--t-chico);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-corta) var(--ease-suave),
+      color var(--dur-corta) var(--ease-suave);
+  }
+
+  .cabecera__wsp:hover {
+    background: var(--tinta-fieltro);
+    color: var(--acento);
+  }
+
+  @media (min-width: 900px) {
+    .cabecera__barra {
+      grid-template-columns: auto 1fr auto;
+      min-height: 76px;
+    }
+
+    .marca {
+      font-size: 1.1875rem;
+    }
+
+    .nav-principal {
+      grid-column: 2;
+      grid-row: 1;
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      border-top: none;
+      padding-block-start: 0;
+    }
+
+    .nav-principal ul {
+      justify-content: center;
+      gap: var(--e-6);
+    }
+
+    .nav-principal a {
+      font-size: var(--t-cuerpo);
+    }
+  }
+</style>

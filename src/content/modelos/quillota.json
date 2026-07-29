@@ -1,0 +1,76 @@
+{
+  "slug": "quillota",
+  "nombre": "Quillota",
+  "orden": 4,
+  "destacado": true,
+  "resumen": "Cuatro dormitorios en un piso, con el principal separado del resto por el estar.",
+  "descripcion": [
+    "El Quillota resuelve el problema de las familias grandes que no quieren segundo piso: cuatro dormitorios repartidos en dos alas, con el estar y la cocina haciendo de separación entre el principal y los tres restantes. Se puede dormir siesta mientras alguien ve tele.",
+    "En 84 m² el dormitorio principal alcanza para cama de dos plazas más clóset corrido; en 96 m² admite baño en suite. Es el modelo de un piso más grande que fabricamos y también el que más pide radier bien nivelado: conviene revisar el terreno antes de encargarlo.",
+    "Para terrenos rurales de Quillota y La Calera es el que más sale, porque no obliga a escalera ni a estructura de entrepiso."
+  ],
+  "metrajeBase": 84,
+  "variantes": [
+    {
+      "m2": 72,
+      "dormitorios": 4,
+      "banos": 1,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 84,
+      "dormitorios": 4,
+      "banos": 2,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 96,
+      "dormitorios": 4,
+      "banos": 2,
+      "aguas": 4,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["kit-basico", "semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": true, "terraza": false },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada, dos aguas",
+    "ventanas": "Corredera de aluminio con vidrio simple",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres interiores"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Techumbre completa a dos aguas",
+    "Plano de distribución del modelo"
+  ],
+  "noIncluye": [
+    "Radier o fundación (lo prepara el cliente antes de la entrega)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Muebles de cocina y closets"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/quillota/01-exterior.jpg", "alt": "Modelo Quillota de 84 m² — fachada exterior" },
+    { "src": "/images/modelos/quillota/02-interior.jpg", "alt": "Modelo Quillota de 84 m² — estar central" },
+    { "src": "/images/modelos/quillota/03-cocina.jpg", "alt": "Modelo Quillota de 84 m² — cocina con logia" },
+    { "src": "/images/modelos/quillota/04-dormitorio.jpg", "alt": "Modelo Quillota de 84 m² — dormitorio principal" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/quillota/tarjeta.jpg",
+    "alt": "Modelo Quillota de 84 m² — vista general de la fachada"
+  },
+  "plano": {
+    "src": "/images/modelos/quillota/plano.jpg",
+    "alt": "Plano de distribución del modelo Quillota de 84 m² con cuatro dormitorios"
+  },
+  "seo": {}
+}

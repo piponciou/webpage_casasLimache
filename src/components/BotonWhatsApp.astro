@@ -1,0 +1,60 @@
+---
+/**
+ * El único botón de conversión del sitio.
+ * Todos los enlaces a WhatsApp pasan por acá para que el mensaje, el aria-label
+ * y el evento de tracking sean idénticos en todas partes.
+ */
+import Icono from './Icono.astro';
+import { linkWhatsApp } from '../lib/whatsapp';
+
+interface Props {
+  mensaje: string;
+  texto?: string;
+  /** De dónde salió el clic. Viaja en el evento whatsapp_click. */
+  origen: string;
+  modelo?: string;
+  metraje?: number;
+  kit?: string;
+  variante?: 'principal' | 'secundario';
+  grande?: boolean;
+  ancho?: boolean;
+  id?: string;
+  class?: string;
+}
+
+const {
+  mensaje,
+  texto = 'Cotizar por WhatsApp',
+  origen,
+  modelo,
+  metraje,
+  kit,
+  variante = 'principal',
+  grande = false,
+  ancho = false,
+  id,
+  class: clase,
+} = Astro.props;
+---
+
+<a
+  id={id}
+  class:list={[
+    'boton',
+    variante === 'principal' ? 'boton--principal' : 'boton--secundario',
+    grande && 'boton--grande',
+    ancho && 'boton--ancho',
+    clase,
+  ]}
+  href={linkWhatsApp(mensaje)}
+  target="_blank"
+  rel="noopener"
+  data-wsp={origen}
+  data-wsp-modelo={modelo}
+  data-wsp-metraje={metraje}
+  data-wsp-kit={kit}
+>
+  <Icono nombre="whatsapp" tamano={grande ? 22 : 20} />
+  {texto}
+  <span class="visualmente-oculto">(se abre WhatsApp)</span>
+</a>

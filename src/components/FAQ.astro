@@ -1,0 +1,103 @@
+---
+/**
+ * Acordeón de preguntas. Usa <details>/<summary>: funciona sin JavaScript, es
+ * navegable por teclado por defecto y el contenido está siempre en el HTML, así
+ * que Google lo indexa igual que si estuviera abierto.
+ */
+import type { Pregunta } from '../data/faq';
+
+interface Props {
+  preguntas: Pregunta[];
+}
+
+const { preguntas } = Astro.props;
+---
+
+<div class="faq">
+  {
+    preguntas.map((p) => (
+      <details class="faq__item">
+        <summary class="faq__pregunta">
+          <span>{p.pregunta}</span>
+          <span class="faq__signo" aria-hidden="true" />
+        </summary>
+        <div class="faq__respuesta">
+          <p>{p.respuesta}</p>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    display: grid;
+  }
+
+  .faq__item {
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .faq__item:last-child {
+    border-bottom: var(--grosor-cota) solid var(--linea);
+  }
+
+  .faq__pregunta {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--e-4);
+    min-height: 60px;
+    padding-block: var(--e-4);
+    font-size: var(--t-cuerpo-grande);
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__pregunta::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__pregunta:focus-visible {
+    outline-offset: -2px;
+  }
+
+  /* El signo es una cruz de dos trazos, del mismo grosor que la cota. */
+  .faq__signo {
+    position: relative;
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin-block-start: 0.3em;
+    color: var(--cota);
+  }
+
+  .faq__signo::before,
+  .faq__signo::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: var(--grosor-cota);
+    background: currentColor;
+    transition: transform var(--dur-media) var(--ease-salida);
+  }
+
+  .faq__signo::after {
+    transform: rotate(90deg);
+  }
+
+  .faq__item[open] .faq__signo::after {
+    transform: rotate(0deg);
+  }
+
+  .faq__respuesta {
+    padding-block-end: var(--e-5);
+    padding-inline-end: var(--e-6);
+  }
+
+  .faq__respuesta p {
+    max-width: 68ch;
+    color: var(--texto-suave);
+  }
+</style>

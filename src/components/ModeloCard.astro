@@ -1,0 +1,168 @@
+---
+/**
+ * Tarjeta de modelo. La usan el home y el catálogo.
+ *
+ * La cota de abajo mide el metraje real del modelo: es el único adorno de la
+ * tarjeta y no es adorno, es el dato que la persona vino a buscar.
+ *
+ * Los data-* sirven al filtrado del catálogo, que ocurre sobre nodos que ya
+ * están en el HTML: nada se carga por fetch y nada desaparece del código fuente
+ * que ve Google.
+ */
+import Cota from './Cota.astro';
+import { rutaModelo, rangoM2, dormitoriosDisponibles, precioDesde, varianteBase } from '../lib/catalogo';
+import { formatearPrecio, formatearM2, plural } from '../lib/formato';
+import type { Modelo } from '../lib/catalogo';
+
+interface Props {
+  modelo: Modelo;
+  /** true solo en la primera tarjeta visible: evita competir con el LCP. */
+  prioridad?: boolean;
+}
+
+const { modelo, prioridad = false } = Astro.props;
+const datos = modelo.data;
+
+const rango = rangoM2(datos);
+const dormitorios = dormitoriosDisponibles(datos);
+const base = varianteBase(datos);
+const desde = precioDesde(datos);
+
+const textoM2 = rango.min === rango.max ? formatearM2(rango.min) : `${rango.min} – ${formatearM2(rango.max)}`;
+const textoDormitorios =
+  dormitorios.length === 1
+    ? plural(dormitorios[0]!, 'dormitorio', 'dormitorios')
+    : `${dormitorios[0]}–${dormitorios[dormitorios.length - 1]} dormitorios`;
+---
+
+<article
+  class="tarjeta tarjeta--enlace modelo"
+  data-modelo
+  data-slug={datos.slug}
+  data-nombre={datos.nombre}
+  data-m2-min={rango.min}
+  data-m2-max={rango.max}
+  data-dormitorios={dormitorios.join(',')}
+  data-kits={datos.kitsDisponibles.join(',')}
+  data-precio={desde ?? ''}
+  data-orden={datos.orden}
+  data-destacado={datos.destacado ? '1' : '0'}
+>
+  <a class="modelo__enlace" href={rutaModelo(datos.slug)}>
+    <img
+      class="modelo__foto"
+      src={datos.imagenTarjeta.src}
+      alt={datos.imagenTarjeta.alt}
+      width="800"
+      height="533"
+      loading={prioridad ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchpriority={prioridad ? 'high' : 'auto'}
+    />
+
+    <div class="modelo__cuerpo">
+      <h3 class="modelo__nombre">{datos.nombre}</h3>
+      <p class="modelo__resumen">{datos.resumen}</p>
+
+      <p class="fila-mono modelo__ficha">
+        <span>{textoDormitorios}</span>
+        <span aria-hidden="true">·</span>
+        <span>{plural(base.banos, 'baño', 'baños')}</span>
+      </p>
+
+      <p class="modelo__precio">
+        {
+          desde === null ? (
+            <span class="modelo__cotizar">Cotizar</span>
+          ) : (
+            <>
+              <span class="modelo__desde">Desde</span>
+              <span class="mono modelo__valor">{formatearPrecio(desde)}</span>
+            </>
+          )
+        }
+      </p>
+
+      <Cota valor={textoM2} etiqueta="Superficie" class="modelo__cota" />
+    </div>
+  </a>
+</article>
+
+<style>
+  .modelo {
+    overflow: hidden;
+  }
+
+  .modelo__enlace {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .modelo__foto {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .modelo__cuerpo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: var(--e-2);
+    padding: var(--e-5);
+  }
+
+  .modelo__nombre {
+    font-size: var(--t-sub);
+    font-weight: 600;
+  }
+
+  .modelo__resumen {
+    color: var(--texto-suave);
+    font-size: var(--t-chico);
+    max-width: 42ch;
+  }
+
+  .modelo__ficha {
+    margin-block-start: var(--e-2);
+    font-size: var(--t-micro);
+  }
+
+  .modelo__precio {
+    margin-block-start: var(--e-3);
+    display: flex;
+    align-items: baseline;
+    gap: var(--e-2);
+  }
+
+  .modelo__desde {
+    font-size: var(--t-micro);
+    color: var(--texto-tenue);
+  }
+
+  .modelo__valor {
+    font-size: var(--t-cuerpo-grande);
+    font-weight: 500;
+  }
+
+  .modelo__cotizar {
+    font-family: var(--fuente-mono);
+    font-size: var(--t-chico);
+    font-weight: 500;
+    color: var(--cota);
+  }
+
+  /* La cota se pega al fondo de la tarjeta y la mide de lado a lado. */
+  .modelo__cota {
+    margin-block-start: auto;
+    padding-block-start: var(--e-5);
+  }
+
+  /* El foco tiene que verse sobre la tarjeta completa, no sobre el texto. */
+  .modelo__enlace:focus-visible {
+    outline-offset: -3px;
+  }
+</style>
