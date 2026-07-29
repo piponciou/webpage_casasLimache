@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FAQ from '../components/FAQ.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
+import { PREGUNTAS } from '../data/faq';
+import { mensajeGenerico } from '../lib/whatsapp';
+import { migaDePan, paginaFaq } from '../lib/schema';
+
+const jsonLd = [
+  migaDePan([{ nombre: 'Preguntas frecuentes', ruta: '/preguntas-frecuentes/' }]),
+  paginaFaq(PREGUNTAS.map((p) => ({ pregunta: p.pregunta, respuesta: p.respuesta }))),
+];
+---
+
+<BaseLayout
+  titulo="Preguntas Frecuentes | Casas Limache"
+  descripcion="Permisos, plazos, radier, despacho, garantía y formas de pago de una casa prefabricada en la Región de Valparaíso. Y si falta la tuya, pregúntala por WhatsApp."
+  ruta="/preguntas-frecuentes/"
+  jsonLd={jsonLd}
+>
+  <div class="envoltorio">
+    <nav class="migas" aria-label="Ruta de navegación">
+      <ol class="sin-lista">
+        <li><a href="/">Inicio</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">Preguntas frecuentes</li>
+      </ol>
+    </nav>
+
+    <header class="cabecera">
+      <h1>Preguntas frecuentes</h1>
+      <p class="prosa cabecera__bajada">
+        Lo que más nos preguntan antes de comprar. Están escritas en el mismo orden en que aparecen
+        las dudas: primero lo legal y los plazos, después el terreno, al final el pago.
+      </p>
+    </header>
+
+    <FAQ preguntas={PREGUNTAS} />
+
+    <div class="cierre">
+      <div>
+        <h2 class="cierre__titulo">¿No está la tuya?</h2>
+        <p class="cierre__texto">
+          Pregúntala directamente por WhatsApp. Contesta una ejecutiva, no un bot.
+        </p>
+      </div>
+      <BotonWhatsApp mensaje={mensajeGenerico()} origen="faq" texto="Preguntar por WhatsApp" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .migas {
+    padding-block: var(--e-5) var(--e-4);
+    font-size: var(--t-micro);
+    font-family: var(--fuente-mono);
+    color: var(--texto-tenue);
+  }
+
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2);
+  }
+
+  .migas a {
+    color: var(--texto-tenue);
+    text-decoration: none;
+  }
+
+  .cabecera {
+    padding-block: var(--e-5) var(--e-7);
+  }
+
+  .cabecera h1 {
+    font-family: var(--fuente-display);
+    font-size: var(--t-titular);
+    font-weight: 700;
+  }
+
+  .cabecera__bajada {
+    margin-block-start: var(--e-4);
+  }
+
+  .cierre {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e-5);
+    margin-block-start: var(--e-8);
+    padding-block-start: var(--e-6);
+  }
+
+  .cierre__titulo {
+    font-size: var(--t-sub);
+  }
+
+  .cierre__texto {
+    margin-block-start: var(--e-2);
+    color: var(--texto-suave);
+    max-width: 44ch;
+  }
+</style>

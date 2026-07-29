@@ -1,0 +1,61 @@
+---
+/**
+ * Botón flotante persistente.
+ * Solo en móvil: en escritorio el botón del header está siempre a la vista y
+ * duplicarlo sería tapar contenido sin ganar nada.
+ *
+ * En la ficha de modelo se oculta, porque ahí manda el botón sticky de cotizar
+ * con el modelo y el metraje ya seleccionados: dos botones de WhatsApp
+ * compitiendo en la misma pantalla es peor que uno.
+ */
+import Icono from './Icono.astro';
+import { linkWhatsApp, mensajeGenerico } from '../lib/whatsapp';
+---
+
+<a
+  class="wsp-flotante"
+  href={linkWhatsApp(mensajeGenerico())}
+  target="_blank"
+  rel="noopener"
+  data-wsp="flotante"
+  aria-label="Escribir por WhatsApp a Casas Limache (se abre WhatsApp)"
+>
+  <Icono nombre="whatsapp" tamano={26} />
+</a>
+
+<style>
+  .wsp-flotante {
+    position: fixed;
+    right: var(--borde-pagina);
+    bottom: var(--borde-pagina);
+    z-index: var(--z-flotante);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: var(--acento);
+    color: var(--tinta-fieltro);
+    box-shadow: var(--sombra-media);
+    transition:
+      background-color var(--dur-corta) var(--ease-suave),
+      color var(--dur-corta) var(--ease-suave);
+  }
+
+  .wsp-flotante:hover {
+    background: var(--tinta-fieltro);
+    color: var(--acento);
+  }
+
+  /* Que no tape el botón sticky de la ficha de modelo. */
+  :global(body:has(.cotizador__sticky)) .wsp-flotante {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .wsp-flotante {
+      display: none;
+    }
+  }
+</style>

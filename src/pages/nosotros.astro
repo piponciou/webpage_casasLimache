@@ -1,0 +1,263 @@
+---
+/**
+ * Nosotros.
+ *
+ * ⚠️ IMPORTANTE: acá NO se inventó historia de la empresa. Todo lo que se
+ * afirma sale de datos entregados por el cliente (casa piloto, zona de
+ * despacho, formatos de compra, atención por WhatsApp). El bloque de la historia
+ * está marcado y tiene que escribirlo el cliente: cuándo partieron, quiénes son
+ * y cuántas casas llevan entregadas.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
+import Icono from '../components/Icono.astro';
+import { DIRECCION, ZONA_DESPACHO, HORARIOS } from '../config/site';
+import { mensajeGenerico } from '../lib/whatsapp';
+import { migaDePan } from '../lib/schema';
+
+const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
+---
+
+<BaseLayout
+  titulo="Quiénes somos | Casas Limache"
+  descripcion="Casas Limache vende y construye casas prefabricadas en la Región de Valparaíso, con casa piloto visitable en Villa Alemana y atención directa por WhatsApp."
+  ruta="/nosotros/"
+  jsonLd={jsonLd}
+>
+  <div class="envoltorio">
+    <nav class="migas" aria-label="Ruta de navegación">
+      <ol class="sin-lista">
+        <li><a href="/">Inicio</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">Nosotros</li>
+      </ol>
+    </nav>
+
+    <header class="cabecera">
+      <h1>Vendemos casas que se pueden visitar</h1>
+      <p class="cabecera__bajada">
+        Es la única diferencia que importa frente a comprar una casa prefabricada por internet, y es
+        sobre la que está armado todo lo demás.
+      </p>
+    </header>
+
+    <div class="bloques">
+      <section class="bloque" aria-labelledby="t-historia">
+        <h2 id="t-historia">Cómo partimos</h2>
+        <div class="prosa">
+          <p class="pendiente">
+            ⚠️ Este párrafo lo tiene que escribir el cliente: en qué año partió Casas Limache,
+            quiénes están detrás y cuántas casas llevan entregadas. No lo inventamos, porque un dato
+            falso acá es el tipo de cosa que después se cae en una conversación de WhatsApp.
+          </p>
+        </div>
+      </section>
+
+      <section class="bloque" aria-labelledby="t-piloto">
+        <h2 id="t-piloto">La casa piloto</h2>
+        <div class="prosa">
+          <p>
+            Tenemos una casa armada y abierta en {DIRECCION.calle}, {DIRECCION.sector}, {
+              DIRECCION.comuna
+            }. {DIRECCION.referencia}
+          </p>
+          <p>
+            No es una sala de ventas con folletos: es una casa completa, con sus paneles, su
+            tabiquería y su techumbre, donde puedes entrar y quedarte el rato que necesites. La
+            mayoría de las decisiones de compra se toman ahí adentro y no en una pantalla.
+          </p>
+          <p>
+            Atendemos {HORARIOS.map((h) => `${h.dias.toLowerCase()} de ${h.desde} a ${h.hasta}`).join(', ')}.
+          </p>
+        </div>
+        <a class="bloque__enlace" href="/casa-piloto/">
+          Ver cómo llegar
+          <Icono nombre="flecha" tamano={18} />
+        </a>
+      </section>
+
+      <section class="bloque" aria-labelledby="t-como">
+        <h2 id="t-como">Cómo trabajamos</h2>
+        <div class="prosa">
+          <p>
+            No hay formulario de contacto. Escribes por WhatsApp, te contesta una ejecutiva y
+            cotizas ahí mismo, con el modelo y el metraje que te interesan. Nos parece más honesto
+            que un formulario que nadie responde en tres días.
+          </p>
+          <p>
+            Vendemos en tres formatos —Kit Básico, Semifull y Llave en Mano— para que puedas
+            comprar solo la estructura y terminarla tú, o recibir la casa lista. Lo que no incluye
+            cada formato está escrito en la ficha de cada modelo, sin letra chica: el radier, las
+            instalaciones y los permisos corren por cuenta del comprador y decirlo antes evita
+            problemas después.
+          </p>
+        </div>
+      </section>
+
+      <section class="bloque" aria-labelledby="t-donde">
+        <h2 id="t-donde">Dónde llegamos</h2>
+        <div class="prosa">
+          <p>
+            Despachamos en la Región de Valparaíso: {ZONA_DESPACHO.join(', ')}. El flete se cotiza
+            aparte porque depende de la distancia, del tamaño del modelo y del acceso al terreno; un
+            camino de tierra con pendiente o un pasaje angosto cambian el costo, y preferimos
+            decirlo antes de que llegue el camión.
+          </p>
+        </div>
+        <ul class="sin-lista comunas enlaces-densos">
+          {
+            ZONA_DESPACHO.map((comuna) => {
+              const slug = comuna
+                .normalize('NFD')
+                .replace(/\p{Diacritic}/gu, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-');
+              return (
+                <li>
+                  <a href={`/casas-prefabricadas-${slug}/`}>{comuna}</a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </section>
+
+      <section class="bloque" aria-labelledby="t-porque">
+        <h2 id="t-porque">Por qué prefabricado</h2>
+        <div class="prosa">
+          <p>
+            Una casa prefabricada se fabrica en taller y se monta en tu terreno. Eso significa
+            plazos más cortos, menos improvisación en obra y un precio que se sabe antes de empezar,
+            no después. Para un terreno que ya tienes y quieres habitar pronto, es la vía más
+            directa.
+          </p>
+          <p>
+            No es magia: necesita un radier bien hecho, instalaciones ejecutadas por un técnico y
+            permisos tramitados como cualquier construcción. Lo que se ahorra es tiempo e
+            incertidumbre, no requisitos legales.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="cierre">
+      <BotonWhatsApp mensaje={mensajeGenerico()} origen="nosotros" texto="Hablar con una ejecutiva" />
+      <a class="boton boton--secundario" href="/catalogo/">Ver el catálogo</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .migas {
+    padding-block: var(--e-5) var(--e-4);
+    font-size: var(--t-micro);
+    font-family: var(--fuente-mono);
+    color: var(--texto-tenue);
+  }
+
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2);
+  }
+
+  .migas a {
+    color: var(--texto-tenue);
+    text-decoration: none;
+  }
+
+  .cabecera {
+    padding-block: var(--e-5) var(--e-8);
+  }
+
+  .cabecera h1 {
+    font-family: var(--fuente-display);
+    font-size: var(--t-display);
+    font-weight: 700;
+    line-height: var(--interlinea-display);
+    letter-spacing: var(--tracking-display);
+    max-width: 14ch;
+  }
+
+  .cabecera__bajada {
+    margin-block-start: var(--e-5);
+    font-size: var(--t-cuerpo-grande);
+    color: var(--texto-suave);
+    max-width: 52ch;
+  }
+
+  .bloques {
+    display: grid;
+    gap: var(--e-8);
+  }
+
+  .bloque {
+    display: grid;
+    gap: var(--e-4);
+    padding-block-start: var(--e-5);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .bloque h2 {
+    font-size: var(--t-seccion);
+  }
+
+  .bloque__enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e-2);
+    min-height: 44px;
+    justify-self: start;
+    font-size: var(--t-chico);
+    text-decoration: none;
+  }
+
+  .bloque__enlace:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  /* Marca visible de dato pendiente. No se disimula: si queda publicada, se ve. */
+  .pendiente {
+    padding: var(--e-4);
+    border: var(--grosor-cota) dashed var(--texto-tenue);
+    border-radius: var(--radio);
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+  }
+
+  .comunas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-4);
+    font-size: var(--t-chico);
+  }
+
+  .cierre {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+    margin-block-start: var(--e-9);
+    padding-block-start: var(--e-6);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  @media (min-width: 860px) {
+    .bloque {
+      grid-template-columns: minmax(0, 22ch) minmax(0, 1fr);
+      gap: var(--e-5) var(--e-7);
+    }
+
+    .bloque h2 {
+      font-size: var(--t-sub);
+    }
+
+    .bloque__enlace {
+      grid-column: 2;
+    }
+
+    .comunas {
+      grid-column: 2;
+    }
+  }
+</style>

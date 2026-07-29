@@ -1,0 +1,37 @@
+---
+/**
+ * LA COTA — elemento firma del sitio.
+ *
+ * Es la línea de acotación de un plano: trazo con remates a 45° y un numeral en
+ * monoespaciada. Solo se usa para medir un dato REAL del catálogo (metraje,
+ * altura, rango). Nunca como adorno, nunca más de una por bloque.
+ *
+ * `decorativa` se pone en true solo cuando el mismo valor ya está escrito como
+ * texto al lado: ahí la cota se oculta a los lectores de pantalla para no
+ * repetir el dato.
+ */
+interface Props {
+  valor: string;
+  /** Contexto para lectores de pantalla, ej: "Superficie". */
+  etiqueta?: string;
+  decorativa?: boolean;
+  /** Anima el trazo la primera vez que entra en pantalla. */
+  animada?: boolean;
+  class?: string;
+}
+
+const { valor, etiqueta, decorativa = false, animada = false, class: clase } = Astro.props;
+---
+
+<div
+  class:list={['cota', clase]}
+  data-dibujar={animada ? '' : undefined}
+  aria-hidden={decorativa ? 'true' : undefined}
+>
+  <span class="cota__tramo"></span>
+  <span class="cota__valor">
+    {etiqueta && !decorativa && <span class="visualmente-oculto">{etiqueta}: </span>}
+    {valor}
+  </span>
+  <span class="cota__tramo"></span>
+</div>

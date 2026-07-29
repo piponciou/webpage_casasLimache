@@ -1,0 +1,33 @@
+{
+  "name": "casas-limache",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sitio web de Casas Limache — casas prefabricadas en la Región de Valparaíso",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "placeholders": "node scripts/generar-placeholders.mjs",
+    "optimizar-imagenes": "node scripts/optimizar-imagenes.mjs",
+    "fuentes": "node scripts/copiar-fuentes.mjs",
+    "postinstall": "node scripts/copiar-fuentes.mjs && node scripts/generar-placeholders.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.1.1",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@fontsource-variable/archivo": "^5.1.0",
+    "@fontsource/ibm-plex-mono": "^5.1.0",
+    "@fontsource/ibm-plex-sans": "^5.1.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20.3.0"
+  }
+}

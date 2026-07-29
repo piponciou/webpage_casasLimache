@@ -1,0 +1,144 @@
+---
+/**
+ * Mapa de la casa piloto.
+ *
+ * El iframe de Google Maps NO se carga con la página: mata el LCP y además
+ * mandaría datos de quien visita a Google sin que haya pedido ver el mapa. Se
+ * carga cuando la persona toca "Ver el mapa".
+ *
+ * Sin JavaScript, el botón se oculta y queda el enlace "Cómo llegar", que
+ * resuelve lo mismo abriendo la app de mapas.
+ */
+import Icono from './Icono.astro';
+import { DIRECCION } from '../config/site';
+
+const punto = `${DIRECCION.geo.lat},${DIRECCION.geo.lng}`;
+const urlEmbed = `https://www.google.com/maps?q=${punto}&hl=es&z=16&output=embed`;
+const urlComoLlegar = `https://www.google.com/maps/dir/?api=1&destination=${punto}`;
+---
+
+<div class="mapa" data-mapa data-src={urlEmbed}>
+  <div class="mapa__previa">
+    <p class="mapa__direccion">
+      {DIRECCION.calle}<br />
+      <span class="mapa__sector">{DIRECCION.sector}, {DIRECCION.comuna}</span>
+    </p>
+    <p class="mapa__referencia">{DIRECCION.referencia}</p>
+
+    <div class="mapa__acciones">
+      <button class="boton boton--secundario mapa__boton" type="button" data-cargar-mapa hidden>
+        <Icono nombre="pin" tamano={20} />
+        Ver el mapa
+      </button>
+
+      <a class="boton boton--secundario" href={urlComoLlegar} target="_blank" rel="noopener">
+        <Icono nombre="flecha" tamano={20} />
+        Cómo llegar
+      </a>
+    </div>
+
+    <p class="mapa__aviso">El mapa lo carga Google recién cuando lo pides.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((contenedor) => {
+    const boton = contenedor.querySelector<HTMLButtonElement>('[data-cargar-mapa]');
+    const src = contenedor.dataset.src;
+    if (!boton || !src) return;
+
+    // El botón solo existe si hay JS para atenderlo.
+    boton.hidden = false;
+
+    boton.addEventListener('click', () => {
+      const marco = document.createElement('iframe');
+      marco.src = src;
+      marco.title = 'Ubicación de la casa piloto de Casas Limache en Google Maps';
+      marco.loading = 'lazy';
+      marco.referrerPolicy = 'no-referrer-when-downgrade';
+      marco.setAttribute('allowfullscreen', '');
+      marco.className = 'mapa__marco';
+      contenedor.replaceChildren(marco);
+    });
+  });
+</script>
+
+<style>
+  /* El mapa se usa sobre fondo claro (página de casa piloto) y sobre fondo
+     tinta (home). Sus colores de texto se declaran como variables locales y se
+     invierten cuando vive dentro de una sección oscura, para no quedar con
+     texto oscuro sobre superficie oscura. */
+  .mapa {
+    --mapa-texto: var(--texto);
+    --mapa-suave: var(--texto-suave);
+    --mapa-tenue: var(--texto-tenue);
+
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--tinta-10);
+    border-radius: var(--radio);
+    overflow: hidden;
+    color: var(--mapa-texto);
+  }
+
+  :global(.seccion--invertida) .mapa {
+    --mapa-texto: var(--texto-invertido);
+    --mapa-suave: var(--texto-invertido-suave);
+    --mapa-tenue: var(--texto-invertido-suave);
+  }
+
+  .mapa__previa {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    gap: var(--e-3);
+    height: 100%;
+    padding: var(--e-5);
+  }
+
+  .mapa__direccion {
+    font-family: var(--fuente-display);
+    font-size: var(--t-sub);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .mapa__sector {
+    font-family: var(--fuente-texto);
+    font-size: var(--t-cuerpo);
+    font-weight: 400;
+    color: var(--mapa-suave);
+  }
+
+  .mapa__referencia {
+    font-size: var(--t-chico);
+    color: var(--mapa-suave);
+    max-width: 36ch;
+  }
+
+  .mapa__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+    margin-block-start: var(--e-2);
+  }
+
+  /* Va sobre la superficie gris del mapa, que es más oscura que el fondo de la
+     página: necesita el tono fuerte para seguir pasando AA. */
+  .mapa__aviso {
+    font-size: var(--t-micro);
+    color: var(--mapa-suave);
+  }
+
+  .mapa :global(.mapa__marco) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (min-width: 700px) {
+    .mapa {
+      aspect-ratio: 16 / 10;
+    }
+  }
+</style>

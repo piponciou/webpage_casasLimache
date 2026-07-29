@@ -1,0 +1,31 @@
+# build
+dist/
+.astro/
+
+# dependencias
+node_modules/
+
+# fuentes copiadas desde node_modules por scripts/copiar-fuentes.mjs
+public/fonts/*.woff2
+
+# skill de diseño instalada con "npx skills add".
+# Son 3 MB de herramientas de terceros que no forman parte del sitio: se
+# reinstalan desde skills-lock.json, que sí está versionado.
+.agents/
+
+# preferencias locales de Claude Code (launch.json sí se versiona)
+.claude/settings.local.json
+
+# entorno
+.env
+.env.production
+*.log
+npm-debug.log*
+
+# sistema operativo
+.DS_Store
+Thumbs.db
+
+# editores
+.vscode/
+.idea/

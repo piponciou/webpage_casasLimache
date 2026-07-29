@@ -1,0 +1,70 @@
+{
+  "slug": "penablanca",
+  "nombre": "Peñablanca",
+  "orden": 7,
+  "destacado": false,
+  "resumen": "Dos pisos en 96 m² sobre una huella chica: la salida cuando el terreno no da para más ancho.",
+  "descripcion": [
+    "El Peñablanca es la respuesta a los sitios angostos de los loteos urbanos. En vez de estirarse, sube: zona de día completa en el primer piso y los cuatro dormitorios arriba, apoyados sobre una huella de menos de 50 m². Queda patio de verdad en un terreno donde una casa de un piso lo comería entero.",
+    "El segundo piso obliga a dos cosas que conviene saber antes de cotizar: el radier tiene que ir bien armado y el montaje toma más días que un modelo de un piso. A cambio, es el modelo con mejor relación entre metros construidos y metros de terreno ocupados.",
+    "Disponible en 84 y 96 m². En 96 el dormitorio principal tiene baño propio."
+  ],
+  "metrajeBase": 96,
+  "variantes": [
+    {
+      "m2": 84,
+      "dormitorios": 3,
+      "banos": 2,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 96,
+      "dormitorios": 4,
+      "banos": 2,
+      "aguas": 4,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": true, "terraza": false },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro y entrepiso estructurado",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada, dos aguas",
+    "ventanas": "Corredera de aluminio con vidrio simple",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres por piso"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Entrepiso estructurado y escalera",
+    "Techumbre completa a dos aguas",
+    "Plano de distribución de los dos pisos"
+  ],
+  "noIncluye": [
+    "Radier o fundación (requiere cálculo por ser dos pisos)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Barandas y terminación de escalera"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/penablanca/01-exterior.jpg", "alt": "Modelo Peñablanca de 96 m² — fachada exterior de dos pisos" },
+    { "src": "/images/modelos/penablanca/02-interior.jpg", "alt": "Modelo Peñablanca de 96 m² — estar del primer piso" },
+    { "src": "/images/modelos/penablanca/03-cocina.jpg", "alt": "Modelo Peñablanca de 96 m² — cocina" },
+    { "src": "/images/modelos/penablanca/04-dormitorio.jpg", "alt": "Modelo Peñablanca de 96 m² — dormitorio del segundo piso" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/penablanca/tarjeta.jpg",
+    "alt": "Modelo Peñablanca de 96 m² — vista general de la fachada de dos pisos"
+  },
+  "plano": {
+    "src": "/images/modelos/penablanca/plano.jpg",
+    "alt": "Plano de distribución del modelo Peñablanca de 96 m² en dos pisos"
+  },
+  "seo": {}
+}

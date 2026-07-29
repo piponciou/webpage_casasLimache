@@ -1,0 +1,119 @@
+---
+/**
+ * Galería de la ficha de modelo: imagen principal + miniaturas.
+ *
+ * Las cuatro fotos están en el HTML desde el build (las miniaturas son las
+ * mismas imágenes), así que Google las ve todas aunque nunca se toque un botón.
+ * El cambio de foto es un intercambio de src, sin fetch y sin librería.
+ */
+interface Props {
+  imagenes: { src: string; alt: string }[];
+  nombre: string;
+}
+
+const { imagenes, nombre } = Astro.props;
+const principal = imagenes[0]!;
+---
+
+<div class="galeria" data-galeria>
+  <div class="galeria__marco">
+    <img
+      class="galeria__foto"
+      data-galeria-principal
+      src={principal.src}
+      alt={principal.alt}
+      width="1600"
+      height="1067"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+
+  {
+    imagenes.length > 1 && (
+      <ul class="sin-lista galeria__miniaturas" aria-label={`Fotos del modelo ${nombre}`}>
+        {imagenes.map((img, i) => (
+          <li>
+            <button
+              class="miniatura"
+              type="button"
+              data-galeria-boton
+              data-src={img.src}
+              data-alt={img.alt}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              <img src={img.src} alt={img.alt} width="800" height="533" loading="lazy" decoding="async" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-galeria]').forEach((galeria) => {
+    const principal = galeria.querySelector<HTMLImageElement>('[data-galeria-principal]');
+    const botones = galeria.querySelectorAll<HTMLButtonElement>('[data-galeria-boton]');
+    if (!principal || botones.length === 0) return;
+
+    botones.forEach((boton) => {
+      boton.addEventListener('click', () => {
+        const { src, alt } = boton.dataset;
+        if (!src || !alt) return;
+
+        principal.src = src;
+        principal.alt = alt;
+
+        botones.forEach((otro) => otro.setAttribute('aria-pressed', String(otro === boton)));
+      });
+    });
+  });
+</script>
+
+<style>
+  .galeria__marco {
+    background: var(--tinta-10);
+    border-radius: var(--radio);
+    overflow: hidden;
+  }
+
+  .galeria__foto {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .galeria__miniaturas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--e-2);
+    margin-block-start: var(--e-2);
+  }
+
+  .miniatura {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border-radius: var(--radio-chico);
+    overflow: hidden;
+    opacity: 0.55;
+    transition: opacity var(--dur-corta) var(--ease-suave);
+  }
+
+  .miniatura img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .miniatura:hover {
+    opacity: 0.85;
+  }
+
+  /* La foto activa se marca con la cota, no con un borde de color. */
+  .miniatura[aria-pressed='true'] {
+    opacity: 1;
+    box-shadow: inset 0 -2px 0 var(--cota);
+  }
+</style>

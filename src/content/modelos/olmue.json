@@ -1,0 +1,76 @@
+{
+  "slug": "olmue",
+  "nombre": "Olmué",
+  "orden": 2,
+  "destacado": true,
+  "resumen": "Planta en L con estar orientado al norte, pensada para terrenos con vista al cerro.",
+  "descripcion": [
+    "El Olmué rompe el rectángulo: los dormitorios quedan en el ala corta y el estar en la larga, con el quiebre abriendo hacia donde llegue el sol. En un sitio con pendiente o con vista al cerro, esa orientación es la diferencia entre un living que se usa todo el año y uno que solo sirve en verano.",
+    "El ala del estar lleva ventanas más altas que el resto de la casa. Es el modelo que elige quien va a vivir en un terreno grande y no quiere una fachada plana mirando al camino.",
+    "Se fabrica en 42, 54 y 63 m². Desde los 54 aparece la logia cerrada detrás de la cocina, que en el valle sirve tanto de lavandería como de despensa."
+  ],
+  "metrajeBase": 54,
+  "variantes": [
+    {
+      "m2": 42,
+      "dormitorios": 2,
+      "banos": 1,
+      "aguas": 2,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 54,
+      "dormitorios": 3,
+      "banos": 1,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 63,
+      "dormitorios": 3,
+      "banos": 2,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["kit-basico", "semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": true, "terraza": true },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada, dos aguas",
+    "ventanas": "Corredera de aluminio, ventanal alto en el estar",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres, 2,70 m en el estar"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Techumbre completa a dos aguas",
+    "Plano de distribución del modelo"
+  ],
+  "noIncluye": [
+    "Radier o fundación (lo prepara el cliente antes de la entrega)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Deck o terraza exterior"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/olmue/01-exterior.jpg", "alt": "Modelo Olmué de 54 m² — fachada exterior en L" },
+    { "src": "/images/modelos/olmue/02-interior.jpg", "alt": "Modelo Olmué de 54 m² — estar con ventanal alto" },
+    { "src": "/images/modelos/olmue/03-cocina.jpg", "alt": "Modelo Olmué de 54 m² — cocina y logia" },
+    { "src": "/images/modelos/olmue/04-dormitorio.jpg", "alt": "Modelo Olmué de 54 m² — dormitorio principal" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/olmue/tarjeta.jpg",
+    "alt": "Modelo Olmué de 54 m² — vista general de la fachada en L"
+  },
+  "plano": {
+    "src": "/images/modelos/olmue/plano.jpg",
+    "alt": "Plano de distribución del modelo Olmué de 54 m² en planta L"
+  },
+  "seo": {}
+}

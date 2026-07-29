@@ -1,0 +1,72 @@
+---
+/**
+ * Testimonios. El contenido es de ejemplo y está marcado con ⚠️ en site.ts.
+ * Si el cliente borra el array, esta sección desaparece del home sin dejar un
+ * hueco: es preferible no tener testimonios a tener testimonios falsos.
+ */
+import { TESTIMONIOS } from '../config/site';
+---
+
+{
+  TESTIMONIOS.length > 0 && (
+    <ul class="sin-lista testimonios">
+      {TESTIMONIOS.map((t) => (
+        <li class="testimonio revelar">
+          <blockquote class="testimonio__texto">
+            <p>{t.texto}</p>
+          </blockquote>
+          <footer class="testimonio__firma">
+            <span class="testimonio__nombre">{t.nombre}</span>
+            <span class="testimonio__detalle mono">
+              {t.comuna} · {t.modelo}
+            </span>
+          </footer>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .testimonios {
+    display: grid;
+    gap: var(--e-5);
+  }
+
+  .testimonio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-4);
+    padding-block-start: var(--e-4);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .testimonio__texto {
+    flex: 1;
+    font-size: var(--t-cuerpo-grande);
+    color: var(--texto);
+    max-width: 40ch;
+  }
+
+  .testimonio__firma {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-1);
+  }
+
+  .testimonio__nombre {
+    font-weight: 500;
+  }
+
+  .testimonio__detalle {
+    font-size: var(--t-micro);
+    color: var(--texto-tenue);
+  }
+
+  @media (min-width: 760px) {
+    .testimonios {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--e-6);
+    }
+  }
+</style>

@@ -1,0 +1,19 @@
+{
+  "name": "Casas Limache — casas prefabricadas en la V Región",
+  "short_name": "Casas Limache",
+  "description": "Casas prefabricadas en Limache y la Región de Valparaíso. Casa piloto visitable en Villa Alemana.",
+  "lang": "es-CL",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#d7dcda",
+  "theme_color": "#d7dcda",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

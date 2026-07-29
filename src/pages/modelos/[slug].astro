@@ -1,0 +1,268 @@
+---
+/**
+ * Ficha de modelo. Una URL real e indexable por cada archivo JSON del catálogo.
+ * Ningún modelo está escrito acá: las rutas salen de la colección.
+ */
+import ModeloLayout from '../../layouts/ModeloLayout.astro';
+import Galeria from '../../components/Galeria.astro';
+import CotizadorWhatsApp from '../../components/CotizadorWhatsApp.astro';
+import FichaTecnica from '../../components/FichaTecnica.astro';
+import ModeloCard from '../../components/ModeloCard.astro';
+import BotonWhatsApp from '../../components/BotonWhatsApp.astro';
+import Cota from '../../components/Cota.astro';
+import Icono from '../../components/Icono.astro';
+
+import { obtenerModelos, rutaModelo, rangoM2 } from '../../lib/catalogo';
+import { mensajeModeloSimple } from '../../lib/whatsapp';
+import { formatearM2 } from '../../lib/formato';
+
+export async function getStaticPaths() {
+  const modelos = await obtenerModelos();
+
+  return modelos.map((modelo) => {
+    // Tres relacionados: los que vienen después en el catálogo, dando la vuelta
+    // al final. Así todos los modelos quedan enlazados entre sí.
+    const indice = modelos.findIndex((m) => m.id === modelo.id);
+    const relacionados = [...modelos.slice(indice + 1), ...modelos.slice(0, indice)].slice(0, 3);
+
+    return {
+      params: { slug: modelo.data.slug },
+      props: { modelo, relacionados },
+    };
+  });
+}
+
+const { modelo, relacionados } = Astro.props;
+const datos = modelo.data;
+const rango = rangoM2(datos);
+const textoRango =
+  rango.min === rango.max ? formatearM2(rango.min) : `${rango.min} – ${formatearM2(rango.max)}`;
+---
+
+<ModeloLayout datos={datos}>
+  <div class="envoltorio">
+    <nav class="migas" aria-label="Ruta de navegación">
+      <ol class="sin-lista">
+        <li><a href="/">Inicio</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="/catalogo/">Catálogo</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">{datos.nombre}</li>
+      </ol>
+    </nav>
+
+    <div class="modelo-detalle">
+      <div class="modelo-detalle__galeria">
+        <Galeria imagenes={datos.imagenes} nombre={datos.nombre} />
+      </div>
+
+      <div class="modelo-detalle__ficha">
+        <h1 class="modelo-detalle__titulo">{datos.nombre}</h1>
+        <p class="modelo-detalle__resumen">{datos.resumen}</p>
+        <Cota valor={textoRango} etiqueta="Metrajes disponibles" class="modelo-detalle__cota" />
+
+        <CotizadorWhatsApp datos={datos} />
+      </div>
+    </div>
+
+    <div class="modelo-detalle__cuerpo">
+      <section class="descripcion" aria-labelledby="titulo-descripcion">
+        <h2 id="titulo-descripcion">Sobre el modelo {datos.nombre}</h2>
+        <div class="prosa">
+          {datos.descripcion.map((parrafo) => <p>{parrafo}</p>)}
+        </div>
+      </section>
+
+      <FichaTecnica datos={datos} />
+
+      {
+        datos.plano && (
+          <section class="plano" aria-labelledby="titulo-plano">
+            <h2 id="titulo-plano">Distribución</h2>
+            <img
+              class="plano__imagen"
+              src={datos.plano.src}
+              alt={datos.plano.alt}
+              width="1400"
+              height="1050"
+              loading="lazy"
+              decoding="async"
+            />
+          </section>
+        )
+      }
+    </div>
+  </div>
+
+  <section class="seccion seccion--invertida cierre" aria-labelledby="titulo-cierre">
+    <div class="envoltorio cierre__interior">
+      <div>
+        <h2 id="titulo-cierre">¿Te sirve este modelo?</h2>
+        <p class="cierre__texto">
+          Escríbenos con el metraje y el formato que te interesan y te llega la cotización con el
+          flete a tu comuna incluido. Si prefieres verlo antes, la casa piloto está abierta de lunes
+          a sábado.
+        </p>
+      </div>
+
+      <div class="cierre__acciones">
+        <BotonWhatsApp
+          mensaje={mensajeModeloSimple(datos.nombre)}
+          origen="ficha-cierre"
+          modelo={datos.nombre}
+          texto="Cotizar por WhatsApp"
+        />
+        <a class="boton boton--secundario" href="/casa-piloto/">
+          <Icono nombre="pin" tamano={20} />
+          Visitar la casa piloto
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="titulo-relacionados">
+    <div class="envoltorio">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-relacionados">Otros modelos</h2>
+        <p><a href="/catalogo/">Ver el catálogo completo</a></p>
+      </div>
+
+      <div class="grilla-relacionados">
+        {relacionados.map((otro) => <ModeloCard modelo={otro} />)}
+      </div>
+    </div>
+  </section>
+</ModeloLayout>
+
+<style>
+  .migas {
+    padding-block: var(--e-5) var(--e-4);
+    font-size: var(--t-micro);
+    font-family: var(--fuente-mono);
+    color: var(--texto-tenue);
+  }
+
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2);
+  }
+
+  .migas a {
+    color: var(--texto-tenue);
+    text-decoration: none;
+  }
+
+  .migas a:hover {
+    color: var(--texto);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  .modelo-detalle {
+    display: grid;
+    gap: var(--e-6);
+  }
+
+  .modelo-detalle > *,
+  .modelo-detalle__cuerpo > * {
+    min-width: 0;
+  }
+
+  .modelo-detalle__titulo {
+    font-family: var(--fuente-display);
+    font-size: var(--t-titular);
+    font-weight: 700;
+    letter-spacing: var(--tracking-titular);
+  }
+
+  .modelo-detalle__resumen {
+    margin-block-start: var(--e-3);
+    color: var(--texto-suave);
+    max-width: 44ch;
+  }
+
+  .modelo-detalle__cota {
+    margin-block: var(--e-5);
+  }
+
+  .modelo-detalle__cuerpo {
+    display: grid;
+    gap: var(--e-8);
+    margin-block-start: var(--e-9);
+    /* Espacio para que la barra sticky de móvil no tape el final del contenido. */
+    padding-block-end: var(--e-8);
+  }
+
+  .descripcion h2 {
+    margin-block-end: var(--e-5);
+  }
+
+  .plano__imagen {
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: var(--tinta-10);
+    border-radius: var(--radio);
+  }
+
+  .plano h2 {
+    margin-block-end: var(--e-5);
+  }
+
+  .cierre__interior {
+    display: grid;
+    gap: var(--e-6);
+  }
+
+  .cierre__texto {
+    margin-block-start: var(--e-4);
+    max-width: 54ch;
+    color: var(--texto-invertido-suave);
+  }
+
+  .cierre__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+    align-content: center;
+  }
+
+  .grilla-relacionados {
+    display: grid;
+    gap: var(--e-5);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .grilla-relacionados {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 900px) {
+    .modelo-detalle {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: var(--e-7);
+      align-items: start;
+    }
+
+    /* La ficha acompaña la galería mientras se lee: el precio y el botón nunca
+       quedan fuera de pantalla en escritorio. */
+    .modelo-detalle__ficha {
+      position: sticky;
+      top: 100px;
+    }
+
+    .modelo-detalle__cuerpo {
+      max-width: 62rem;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .grilla-relacionados {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

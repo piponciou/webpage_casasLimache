@@ -1,0 +1,76 @@
+{
+  "slug": "marga-marga",
+  "nombre": "Marga Marga",
+  "orden": 5,
+  "destacado": true,
+  "resumen": "Tres dormitorios con estar corrido de fachada a fachada, la planta más luminosa del catálogo.",
+  "descripcion": [
+    "El Marga Marga tiene el estar cruzando la casa completa, con ventana en los dos extremos. Eso hace que a media tarde no haya que prender luz y que la casa se ventile de lado a lado abriendo dos ventanas, algo que se agradece en los veranos secos del interior.",
+    "A cambio de esa luz, los dormitorios son algo más compactos que en el Limache del mismo metraje. Es una decisión de planta, no un ahorro: si pasas más tiempo en el living que en la pieza, este es el modelo.",
+    "Se fabrica en 54, 63 y 72 m². La versión de 72 permite abrir la cocina al estar sin muro divisorio."
+  ],
+  "metrajeBase": 63,
+  "variantes": [
+    {
+      "m2": 54,
+      "dormitorios": 3,
+      "banos": 1,
+      "aguas": 2,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 63,
+      "dormitorios": 3,
+      "banos": 1,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 72,
+      "dormitorios": 3,
+      "banos": 2,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["kit-basico", "semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": false, "terraza": true },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada",
+    "ventanas": "Corredera de aluminio en ambas fachadas del estar",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres interiores"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Techumbre completa",
+    "Plano de distribución del modelo"
+  ],
+  "noIncluye": [
+    "Radier o fundación (lo prepara el cliente antes de la entrega)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Deck o terraza exterior"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/marga-marga/01-exterior.jpg", "alt": "Modelo Marga Marga de 63 m² — fachada exterior" },
+    { "src": "/images/modelos/marga-marga/02-interior.jpg", "alt": "Modelo Marga Marga de 63 m² — estar corrido con luz cruzada" },
+    { "src": "/images/modelos/marga-marga/03-cocina.jpg", "alt": "Modelo Marga Marga de 63 m² — cocina abierta al estar" },
+    { "src": "/images/modelos/marga-marga/04-dormitorio.jpg", "alt": "Modelo Marga Marga de 63 m² — dormitorio" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/marga-marga/tarjeta.jpg",
+    "alt": "Modelo Marga Marga de 63 m² — vista general de la fachada"
+  },
+  "plano": {
+    "src": "/images/modelos/marga-marga/plano.jpg",
+    "alt": "Plano de distribución del modelo Marga Marga de 63 m² con tres dormitorios"
+  },
+  "seo": {}
+}

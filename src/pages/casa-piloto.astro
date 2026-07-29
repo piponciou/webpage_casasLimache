@@ -1,0 +1,308 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MapaCasaPiloto from '../components/MapaCasaPiloto.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
+import ModeloCard from '../components/ModeloCard.astro';
+import Cota from '../components/Cota.astro';
+
+import { DIRECCION, HORARIOS, TELEFONO } from '../config/site';
+import { mensajeCasaPiloto } from '../lib/whatsapp';
+import { migaDePan } from '../lib/schema';
+import { obtenerModelos } from '../lib/catalogo';
+
+const modelos = await obtenerModelos();
+const modeloPiloto = modelos.find((m) => m.data.slug === 'lo-hidalgo') ?? modelos[0]!;
+const altura = modeloPiloto.data.especificaciones.altura;
+
+const jsonLd = [migaDePan([{ nombre: 'Casa piloto', ruta: '/casa-piloto/' }])];
+
+const FOTOS = [
+  {
+    src: '/images/casa-piloto/01-fachada.jpg',
+    alt: 'Fachada de la casa piloto de Casas Limache en Camino Troncal, Villa Alemana',
+  },
+  {
+    src: '/images/casa-piloto/02-interior.jpg',
+    alt: 'Interior de la casa piloto de Casas Limache con los materiales a la vista',
+  },
+  {
+    src: '/images/casa-piloto/03-terreno.jpg',
+    alt: 'Terreno de la casa piloto de Casas Limache en el sector Lo Hidalgo',
+  },
+];
+---
+
+<BaseLayout
+  titulo="Casa Piloto en Villa Alemana | Casas Limache"
+  descripcion="Visita nuestra casa piloto en Camino Troncal 06680, Villa Alemana, camino a Limache. Recorre una casa prefabricada por dentro antes de comprarla. Lunes a sábado."
+  ruta="/casa-piloto/"
+  jsonLd={jsonLd}
+>
+  <div class="envoltorio">
+    <nav class="migas" aria-label="Ruta de navegación">
+      <ol class="sin-lista">
+        <li><a href="/">Inicio</a></li>
+        <li aria-hidden="true">/</li>
+        <li aria-current="page">Casa piloto</li>
+      </ol>
+    </nav>
+
+    <header class="cabecera-piloto">
+      <h1>Una casa que puedes tocar antes de comprar</h1>
+      <p class="cabecera-piloto__bajada">
+        Comprar una casa por fotos es apostar. Por eso tenemos una casa piloto armada y abierta: no
+        hay que pedir hora, no hay que comprar nada, y puedes recorrerla entera.
+      </p>
+    </header>
+
+    <div class="piloto-datos">
+      <section class="piloto-datos__bloque" aria-labelledby="titulo-donde">
+        <h2 id="titulo-donde">Dónde</h2>
+        <address class="piloto-datos__direccion">
+          {DIRECCION.calle}<br />
+          {DIRECCION.sector}, {DIRECCION.comuna}<br />
+          {DIRECCION.region}
+        </address>
+        <p class="piloto-datos__referencia">{DIRECCION.referencia}</p>
+      </section>
+
+      <section class="piloto-datos__bloque" aria-labelledby="titulo-cuando">
+        <h2 id="titulo-cuando">Cuándo</h2>
+        <ul class="sin-lista piloto-datos__horarios">
+          {
+            HORARIOS.map((h) => (
+              <li>
+                <span>{h.dias}</span>
+                <span class="mono">
+                  {h.desde}–{h.hasta}
+                </span>
+                {h.nota && <span class="piloto-datos__nota">({h.nota})</span>}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="piloto-datos__referencia">
+          Si vienes de más lejos, escríbenos antes: coordinamos para que alguien te reciba y te
+          muestre.
+        </p>
+      </section>
+
+      <section class="piloto-datos__bloque" aria-labelledby="titulo-contacto">
+        <h2 id="titulo-contacto">Con quién</h2>
+        <p class="piloto-datos__referencia">
+          Te atiende directamente una ejecutiva, no un vendedor de turno.
+        </p>
+        <p class="piloto-datos__telefono">
+          <a class="mono" href={`tel:${TELEFONO.tel}`}>{TELEFONO.visible}</a>
+        </p>
+      </section>
+    </div>
+
+    <div class="piloto-acciones">
+      <BotonWhatsApp
+        mensaje={mensajeCasaPiloto()}
+        origen="casa-piloto-principal"
+        texto="Coordinar mi visita"
+        grande
+      />
+    </div>
+
+    <section class="piloto-mapa" aria-labelledby="titulo-mapa">
+      <h2 class="visualmente-oculto" id="titulo-mapa">Ubicación</h2>
+      <MapaCasaPiloto />
+    </section>
+
+    <section class="piloto-fotos" aria-labelledby="titulo-fotos">
+      <h2 id="titulo-fotos">Así se ve</h2>
+      <div class="piloto-fotos__grilla">
+        {
+          FOTOS.map((foto) => (
+            <img
+              src={foto.src}
+              alt={foto.alt}
+              width="1600"
+              height="1067"
+              loading="lazy"
+              decoding="async"
+            />
+          ))
+        }
+      </div>
+      <Cota valor={altura} etiqueta="Altura libre interior" class="piloto-fotos__cota" />
+    </section>
+
+    <section class="piloto-que-ver" aria-labelledby="titulo-que-ver">
+      <h2 id="titulo-que-ver">Qué mirar cuando vengas</h2>
+      <div class="prosa">
+        <p>
+          Toca el panel exterior media luna de 5 pulgadas y fíjate en el grosor. Es la diferencia
+          más grande entre una casa prefabricada bien hecha y una que se siente hueca.
+        </p>
+        <p>
+          Párate en medio de un dormitorio y mide con el cuerpo. Un dormitorio de 3×3 en plano y un
+          dormitorio de 3×3 con una cama adentro no se parecen en nada, y esa es información que
+          ninguna ficha técnica te va a dar.
+        </p>
+        <p>
+          Pregunta por lo que no incluye. El radier, las instalaciones y los permisos son la parte
+          del presupuesto que la gente subestima, y preferimos que te enteres acá y no después.
+        </p>
+      </div>
+    </section>
+
+    <section class="piloto-modelo" aria-labelledby="titulo-modelo-piloto">
+      <div class="encabezado-seccion">
+        <h2 id="titulo-modelo-piloto">El modelo que está armado</h2>
+        <p>Es el que vas a recorrer. Los demás los puedes ver en materiales y en plano.</p>
+      </div>
+      <div class="piloto-modelo__tarjeta">
+        <ModeloCard modelo={modeloPiloto} />
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .migas {
+    padding-block: var(--e-5) var(--e-4);
+    font-size: var(--t-micro);
+    font-family: var(--fuente-mono);
+    color: var(--texto-tenue);
+  }
+
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2);
+  }
+
+  .migas a {
+    color: var(--texto-tenue);
+    text-decoration: none;
+  }
+
+  .cabecera-piloto {
+    padding-block: var(--e-5) var(--e-7);
+  }
+
+  .cabecera-piloto h1 {
+    font-family: var(--fuente-display);
+    font-size: var(--t-display);
+    font-weight: 700;
+    line-height: var(--interlinea-display);
+    letter-spacing: var(--tracking-display);
+    max-width: 15ch;
+  }
+
+  .cabecera-piloto__bajada {
+    margin-block-start: var(--e-5);
+    font-size: var(--t-cuerpo-grande);
+    color: var(--texto-suave);
+    max-width: 56ch;
+  }
+
+  .piloto-datos {
+    display: grid;
+    gap: var(--e-6);
+  }
+
+  .piloto-datos__bloque {
+    padding-block-start: var(--e-4);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .piloto-datos__bloque h2 {
+    font-size: var(--t-cuerpo);
+    font-weight: 600;
+    margin-block-end: var(--e-3);
+  }
+
+  .piloto-datos__direccion {
+    font-style: normal;
+    font-size: var(--t-cuerpo-grande);
+  }
+
+  .piloto-datos__referencia {
+    margin-block-start: var(--e-3);
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+    max-width: 36ch;
+  }
+
+  .piloto-datos__horarios {
+    display: grid;
+    gap: var(--e-2);
+    font-size: var(--t-chico);
+  }
+
+  .piloto-datos__horarios li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+  }
+
+  .piloto-datos__horarios li span:first-child {
+    min-width: 12ch;
+  }
+
+  .piloto-datos__nota {
+    color: var(--cota);
+  }
+
+  .piloto-datos__telefono {
+    margin-block-start: var(--e-3);
+    font-size: var(--t-cuerpo-grande);
+  }
+
+  .piloto-acciones {
+    margin-block: var(--e-7);
+  }
+
+  .piloto-mapa {
+    margin-block-end: var(--e-9);
+  }
+
+  .piloto-fotos h2,
+  .piloto-que-ver h2,
+  .piloto-modelo h2 {
+    margin-block-end: var(--e-5);
+  }
+
+  .piloto-fotos__grilla {
+    display: grid;
+    gap: var(--e-3);
+    grid-template-columns: 1fr;
+  }
+
+  .piloto-fotos__grilla img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radio);
+  }
+
+  .piloto-fotos__cota {
+    margin-block-start: var(--e-4);
+    max-width: 320px;
+  }
+
+  .piloto-que-ver,
+  .piloto-modelo {
+    margin-block-start: var(--e-9);
+  }
+
+  .piloto-modelo__tarjeta {
+    max-width: 420px;
+  }
+
+  @media (min-width: 700px) {
+    .piloto-datos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--e-5);
+    }
+
+    .piloto-fotos__grilla {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -1,0 +1,76 @@
+{
+  "slug": "limache",
+  "nombre": "Limache",
+  "orden": 1,
+  "destacado": true,
+  "resumen": "Tres dormitorios y living comedor en un rectángulo simple, el formato que más sale para familia joven.",
+  "descripcion": [
+    "El Limache es la planta más pedida del catálogo: tres dormitorios alineados a un costado, baño al centro y living comedor abierto a la cocina en el otro extremo. No tiene pasillos largos, así que casi todos los metros cuadrados terminan siendo habitables.",
+    "El rectángulo sin quiebres es lo que hace que sea la casa más rápida de montar y la más barata de fletar: entra completa en un camión y se arma sobre radier en pocos días. Si tu terreno es angosto y largo, que es lo típico en los loteos del valle, este modelo calza sin desperdiciar patio.",
+    "Viene en 63, 72 y 84 m². Las tres versiones mantienen los tres dormitorios; lo que crece es el estar y el dormitorio principal. En 84 m² el baño se puede dividir en dos."
+  ],
+  "metrajeBase": 72,
+  "variantes": [
+    {
+      "m2": 63,
+      "dormitorios": 3,
+      "banos": 1,
+      "aguas": 2,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 72,
+      "dormitorios": 3,
+      "banos": 2,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 84,
+      "dormitorios": 3,
+      "banos": 2,
+      "aguas": 3,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["kit-basico", "semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": true, "terraza": false },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada",
+    "ventanas": "Corredera de aluminio con vidrio simple",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres interiores"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Techumbre completa",
+    "Plano de distribución del modelo"
+  ],
+  "noIncluye": [
+    "Radier o fundación (lo prepara el cliente antes de la entrega)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte según la comuna",
+    "Pintura, cerámicas y terminaciones"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/limache/01-exterior.jpg", "alt": "Modelo Limache de 72 m² — fachada exterior" },
+    { "src": "/images/modelos/limache/02-interior.jpg", "alt": "Modelo Limache de 72 m² — living comedor" },
+    { "src": "/images/modelos/limache/03-cocina.jpg", "alt": "Modelo Limache de 72 m² — cocina" },
+    { "src": "/images/modelos/limache/04-dormitorio.jpg", "alt": "Modelo Limache de 72 m² — dormitorio principal" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/limache/tarjeta.jpg",
+    "alt": "Modelo Limache de 72 m² — vista general de la fachada"
+  },
+  "plano": {
+    "src": "/images/modelos/limache/plano.jpg",
+    "alt": "Plano de distribución del modelo Limache de 72 m² con tres dormitorios"
+  },
+  "seo": {}
+}

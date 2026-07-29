@@ -1,0 +1,399 @@
+---
+/**
+ * COTIZADOR — la única isla interactiva del sitio.
+ *
+ * Nota de stack: el brief pedía este componente como .tsx. Se implementó con
+ * TypeScript sin framework porque la sección 3 del brief no autoriza
+ * @astrojs/react entre los complementos permitidos, y porque montar React solo
+ * para dos grupos de radios costaría ~45 KB de JS en la página que más importa
+ * para el LCP. El resultado son ~2 KB y el mismo comportamiento.
+ *
+ * Al elegir metraje o formato cambian en vivo: el precio, los dormitorios, los
+ * baños, las aguas y el mensaje de WhatsApp (el del botón normal y el del botón
+ * sticky de móvil, que son el mismo estado).
+ *
+ * Todos los datos de todas las variantes viajan en atributos data-* del HTML
+ * generado en el build: no hay fetch, no hay estado que dependa de la red.
+ */
+import Icono from './Icono.astro';
+import { formatearPrecio, plural } from '../lib/formato';
+import { varianteBase, kitsDe, precioDeVariante, rutaModelo } from '../lib/catalogo';
+import { linkWhatsApp, mensajeCotizacion } from '../lib/whatsapp';
+import { precioParaMensaje } from '../lib/formato';
+import { ZONA_DESPACHO } from '../config/site';
+import type { DatosModelo } from '../lib/catalogo';
+
+interface Props {
+  datos: DatosModelo;
+}
+
+const { datos } = Astro.props;
+
+const base = varianteBase(datos);
+const kits = kitsDe(datos);
+const kitInicial = kits[0]!;
+const ruta = rutaModelo(datos.slug);
+const precioInicial = precioDeVariante(base, kitInicial.id);
+
+/** El enlace que se genera en el build ya es válido: si el JS no corre, el
+ *  botón igual abre WhatsApp con el metraje base y el primer formato. */
+const enlaceInicial = linkWhatsApp(
+  mensajeCotizacion({
+    nombreModelo: datos.nombre,
+    metraje: base.m2,
+    tipoKit: kitInicial.nombre,
+    dormitorios: base.dormitorios,
+    banos: base.banos,
+    precio: precioParaMensaje(precioInicial),
+    ruta,
+  })
+);
+---
+
+<section
+  class="cotizador"
+  data-cotizador
+  data-slug={datos.slug}
+  data-nombre={datos.nombre}
+  data-ruta={ruta}
+  aria-labelledby="cotizador-titulo"
+>
+  <h2 class="visualmente-oculto" id="cotizador-titulo">Cotizar este modelo</h2>
+
+  <div class="cotizador__cifra">
+    <span class="cotizador__m2 mono" data-salida-m2>{base.m2}</span>
+    <span class="cotizador__unidad">m²</span>
+  </div>
+
+  <p class="cotizador__resumen fila-mono">
+    <span data-salida-dormitorios>{plural(base.dormitorios, 'dormitorio', 'dormitorios')}</span>
+    <span aria-hidden="true">·</span>
+    <span data-salida-banos>{plural(base.banos, 'baño', 'baños')}</span>
+    <span aria-hidden="true">·</span>
+    <span data-salida-aguas>{plural(base.aguas, 'agua', 'aguas')}</span>
+  </p>
+
+  <p class="cotizador__precio">
+    <span class="cotizador__precio-etiqueta etiqueta">Valor de referencia</span>
+    <span class="cotizador__precio-valor mono" data-salida-precio>{formatearPrecio(precioInicial)}</span>
+  </p>
+
+  <fieldset class="cotizador__grupo">
+    <legend class="etiqueta">Metraje</legend>
+    <div class="cotizador__opciones">
+      {
+        datos.variantes.map((variante) => (
+          <label class="opcion">
+            <input
+              type="radio"
+              name="metraje"
+              value={variante.m2}
+              checked={variante.m2 === base.m2}
+              data-dormitorios={variante.dormitorios}
+              data-banos={variante.banos}
+              data-aguas={variante.aguas}
+              data-precio-kit-basico={variante.precios.kitBasico ?? ''}
+              data-precio-semifull={variante.precios.semifull ?? ''}
+              data-precio-llave-en-mano={variante.precios.llaveEnMano ?? ''}
+            />
+            <span class="mono">{variante.m2} m²</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <fieldset class="cotizador__grupo">
+    <legend class="etiqueta">Formato de compra</legend>
+    <div class="cotizador__opciones">
+      {
+        kits.map((kit) => (
+          <label class="opcion">
+            <input type="radio" name="kit" value={kit.id} data-nombre={kit.nombre} checked={kit.id === kitInicial.id} />
+            <span>{kit.nombre}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <label class="cotizador__comuna">
+    <span class="etiqueta">Comuna de destino</span>
+    <select name="comuna" data-comuna>
+      <option value="">Por confirmar</option>
+      {ZONA_DESPACHO.map((comuna) => <option value={comuna}>{comuna}</option>)}
+      <option value="Otra comuna">Otra comuna</option>
+    </select>
+  </label>
+
+  <div class="cotizador__acciones">
+    <a
+      class="boton boton--principal boton--ancho"
+      href={enlaceInicial}
+      target="_blank"
+      rel="noopener"
+      data-boton-cotizar
+      data-wsp="ficha-modelo"
+      data-wsp-modelo={datos.nombre}
+      data-wsp-metraje={base.m2}
+      data-wsp-kit={kitInicial.id}
+    >
+      <Icono nombre="whatsapp" tamano={20} />
+      Cotizar por WhatsApp
+      <span class="visualmente-oculto">(se abre WhatsApp)</span>
+    </a>
+
+    <a class="boton boton--secundario boton--ancho" href="#formatos-modelo">Ver qué incluye cada formato</a>
+  </div>
+</section>
+
+{/* Barra sticky de móvil: mismo estado, mismo mensaje. */}
+<div class="cotizador__sticky" data-sticky>
+  <p class="cotizador__sticky-datos mono">
+    <span data-salida-m2>{base.m2}</span> m² · <span data-salida-kit>{kitInicial.nombre}</span>
+  </p>
+  <a
+    class="boton boton--principal"
+    href={enlaceInicial}
+    target="_blank"
+    rel="noopener"
+    data-boton-cotizar
+    data-wsp="ficha-sticky"
+    data-wsp-modelo={datos.nombre}
+    data-wsp-metraje={base.m2}
+    data-wsp-kit={kitInicial.id}
+  >
+    <Icono nombre="whatsapp" tamano={20} />
+    Cotizar
+  </a>
+</div>
+
+<script>
+  import { linkWhatsApp, mensajeCotizacion } from '../lib/whatsapp';
+  import { formatearPrecio, precioParaMensaje, plural } from '../lib/formato';
+
+  const raiz = document.querySelector<HTMLElement>('[data-cotizador]');
+
+  if (raiz) {
+    const nombreModelo = raiz.dataset.nombre ?? '';
+    const ruta = raiz.dataset.ruta ?? '/';
+
+    const radiosMetraje = raiz.querySelectorAll<HTMLInputElement>('input[name="metraje"]');
+    const radiosKit = raiz.querySelectorAll<HTMLInputElement>('input[name="kit"]');
+    const selectComuna = raiz.querySelector<HTMLSelectElement>('[data-comuna]');
+
+    // Las salidas viven en la ficha y en la barra sticky: se actualizan juntas.
+    const salidas = (nombre: string) =>
+      document.querySelectorAll<HTMLElement>(`[data-salida-${nombre}]`);
+    const botones = document.querySelectorAll<HTMLAnchorElement>('[data-boton-cotizar]');
+
+    const escribir = (nombre: string, texto: string) => {
+      salidas(nombre).forEach((el) => (el.textContent = texto));
+    };
+
+    const seleccionado = (lista: NodeListOf<HTMLInputElement>) =>
+      Array.from(lista).find((r) => r.checked) ?? lista[0]!;
+
+    /** El JSON guarda kitBasico / semifull / llaveEnMano; el id es kit-basico… */
+    const claveDe = (kit: string) => `precio${kit.replace(/(^|-)([a-z])/g, (_, __, l) => l.toUpperCase())}`;
+
+    function actualizar() {
+      const metraje = seleccionado(radiosMetraje);
+      const kit = seleccionado(radiosKit);
+
+      const dormitorios = Number(metraje.dataset.dormitorios ?? 0);
+      const banos = Number(metraje.dataset.banos ?? 0);
+      const aguas = Number(metraje.dataset.aguas ?? 0);
+      const m2 = Number(metraje.value);
+      const nombreKit = kit.dataset.nombre ?? kit.value;
+
+      const bruto = metraje.dataset[claveDe(kit.value)];
+      const precio = bruto ? Number(bruto) : null;
+
+      escribir('m2', String(m2));
+      escribir('kit', nombreKit);
+      escribir('dormitorios', plural(dormitorios, 'dormitorio', 'dormitorios'));
+      escribir('banos', plural(banos, 'baño', 'baños'));
+      escribir('aguas', plural(aguas, 'agua', 'aguas'));
+      escribir('precio', formatearPrecio(precio));
+
+      const mensaje = mensajeCotizacion({
+        nombreModelo,
+        metraje: m2,
+        tipoKit: nombreKit,
+        dormitorios,
+        banos,
+        precio: precioParaMensaje(precio),
+        ruta,
+        comuna: selectComuna?.value || undefined,
+      });
+
+      const href = linkWhatsApp(mensaje);
+
+      botones.forEach((boton) => {
+        boton.href = href;
+        boton.dataset.wspMetraje = String(m2);
+        boton.dataset.wspKit = kit.value;
+      });
+    }
+
+    raiz.addEventListener('change', actualizar);
+    actualizar();
+  }
+</script>
+
+<style>
+  .cotizador {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-4);
+  }
+
+  /* El metraje es el dato que la persona vino a buscar: es lo más grande de la
+     ficha, en la misma familia del titular. */
+  .cotizador__cifra {
+    display: flex;
+    align-items: baseline;
+    gap: var(--e-2);
+  }
+
+  .cotizador__m2 {
+    font-family: var(--fuente-display);
+    font-size: clamp(3rem, 2rem + 4vw, 4.4rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: var(--tracking-display);
+  }
+
+  .cotizador__unidad {
+    font-family: var(--fuente-mono);
+    font-size: var(--t-cuerpo-grande);
+    color: var(--texto-tenue);
+  }
+
+  .cotizador__resumen {
+    font-size: var(--t-chico);
+  }
+
+  .cotizador__precio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-1);
+    padding-block: var(--e-4);
+    border-block: var(--grosor-cota) solid var(--linea);
+  }
+
+  .cotizador__precio-valor {
+    font-size: var(--t-sub);
+    font-weight: 500;
+  }
+
+  .cotizador__grupo {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .cotizador__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2);
+    margin-block-start: var(--e-3);
+  }
+
+  .opcion {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding-inline: var(--e-4);
+    border: var(--grosor-cota) solid var(--linea);
+    border-radius: var(--radio);
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-corta) var(--ease-suave),
+      color var(--dur-corta) var(--ease-suave),
+      border-color var(--dur-corta) var(--ease-suave);
+  }
+
+  .opcion input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .opcion:hover {
+    border-color: var(--texto-tenue);
+    color: var(--texto);
+  }
+
+  .opcion:has(input:checked) {
+    background: var(--tinta-fieltro);
+    border-color: var(--tinta-fieltro);
+    color: var(--zinc-marga);
+  }
+
+  .opcion:has(input:focus-visible) {
+    outline: 2px solid var(--foco);
+    outline-offset: 3px;
+  }
+
+  .cotizador__comuna {
+    display: grid;
+    gap: var(--e-2);
+  }
+
+  .cotizador__comuna select {
+    min-height: 48px;
+    padding-inline: var(--e-3);
+    border: var(--grosor-cota) solid var(--linea);
+    border-radius: var(--radio);
+    background: var(--superficie);
+    font-size: var(--t-chico);
+  }
+
+  .cotizador__acciones {
+    display: grid;
+    gap: var(--e-3);
+    margin-block-start: var(--e-2);
+  }
+
+  /* --- Barra sticky de móvil ------------------------------------------- */
+  .cotizador__sticky {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: var(--z-sticky);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e-4);
+    padding: var(--e-3) var(--borde-pagina);
+    padding-block-end: max(var(--e-3), env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--zinc-marga) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .cotizador__sticky-datos {
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+  }
+
+  @media (min-width: 900px) {
+    .cotizador__sticky {
+      display: none;
+    }
+
+    .cotizador__acciones {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

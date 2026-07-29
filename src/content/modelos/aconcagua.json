@@ -1,0 +1,70 @@
+{
+  "slug": "aconcagua",
+  "nombre": "Aconcagua",
+  "orden": 8,
+  "destacado": false,
+  "resumen": "120 m² y cinco dormitorios, el modelo más grande del catálogo, en dos pisos.",
+  "descripcion": [
+    "El Aconcagua es la casa grande: cinco dormitorios, tres baños y un primer piso con estar, comedor, cocina y logia separados. Se pide para familias que se juntan en una sola casa o para terrenos rurales donde el metro cuadrado de suelo no es el problema.",
+    "En este tamaño el flete deja de ser un detalle: la casa viaja en más de un envío y el montaje se coordina por etapas. Si tu terreno tiene acceso angosto o pendiente fuerte, conviene resolverlo antes de cotizar, no después.",
+    "Se fabrica en 96 y 120 m². La versión de 120 es la única del catálogo con tres baños."
+  ],
+  "metrajeBase": 120,
+  "variantes": [
+    {
+      "m2": 96,
+      "dormitorios": 4,
+      "banos": 2,
+      "aguas": 4,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    },
+    {
+      "m2": 120,
+      "dormitorios": 5,
+      "banos": 3,
+      "aguas": 4,
+      "precios": { "kitBasico": null, "semifull": null, "llaveEnMano": null }
+    }
+  ],
+  "kitsDisponibles": ["semifull", "llave-en-mano"],
+  "caracteristicas": { "cocina": true, "livingComedor": true, "logia": true, "terraza": true },
+  "especificaciones": {
+    "estructura": "Tabiquería de pino 2×3 con papel fieltro y entrepiso estructurado",
+    "revestimientoExterior": "Paneles media luna 5\" de pino",
+    "revestimientoInterior": "Paneles interiores con volcanita",
+    "techumbre": "Cerchas de pino con plancha de zinc acanalada, dos aguas",
+    "ventanas": "Corredera de aluminio con vidrio simple",
+    "aislacion": "Papel fieltro en muros perimetrales",
+    "altura": "2,40 m libres por piso"
+  },
+  "incluye": [
+    "Paneles exteriores media luna 5\"",
+    "Tabiquería 2×3 con papel fieltro",
+    "Paneles interiores con volcanita",
+    "Entrepiso estructurado y escalera",
+    "Techumbre completa a dos aguas",
+    "Plano de distribución de los dos pisos"
+  ],
+  "noIncluye": [
+    "Radier o fundación (requiere cálculo por ser dos pisos)",
+    "Instalación eléctrica y sanitaria",
+    "Permisos municipales y regularización",
+    "Flete e izaje: se cotizan aparte y pueden requerir más de un envío",
+    "Deck, barandas y terminaciones exteriores"
+  ],
+  "imagenes": [
+    { "src": "/images/modelos/aconcagua/01-exterior.jpg", "alt": "Modelo Aconcagua de 120 m² — fachada exterior de dos pisos" },
+    { "src": "/images/modelos/aconcagua/02-interior.jpg", "alt": "Modelo Aconcagua de 120 m² — estar y comedor" },
+    { "src": "/images/modelos/aconcagua/03-cocina.jpg", "alt": "Modelo Aconcagua de 120 m² — cocina con logia separada" },
+    { "src": "/images/modelos/aconcagua/04-dormitorio.jpg", "alt": "Modelo Aconcagua de 120 m² — dormitorio principal" }
+  ],
+  "imagenTarjeta": {
+    "src": "/images/modelos/aconcagua/tarjeta.jpg",
+    "alt": "Modelo Aconcagua de 120 m² — vista general de la fachada de dos pisos"
+  },
+  "plano": {
+    "src": "/images/modelos/aconcagua/plano.jpg",
+    "alt": "Plano de distribución del modelo Aconcagua de 120 m² en dos pisos"
+  },
+  "seo": {}
+}

@@ -1,0 +1,135 @@
+---
+/**
+ * Comparación de los tres formatos de compra.
+ *
+ * Solo el Kit Básico tiene el detalle confirmado por el cliente. En vez de
+ * rellenar las otras dos columnas con supuestos, se dice con todas sus letras
+ * que el detalle lo confirma la ejecutiva. Una tabla con datos inventados haría
+ * perder ventas cuando el cliente reclame que no era lo que decía la web.
+ */
+import BotonWhatsApp from './BotonWhatsApp.astro';
+import { KITS } from '../config/site';
+import { mensajeGenerico } from '../lib/whatsapp';
+---
+
+<div class="kits">
+  {
+    KITS.map((kit) => (
+      <section class="kit" aria-labelledby={`kit-${kit.id}`}>
+        <h3 class="kit__nombre" id={`kit-${kit.id}`}>
+          {kit.nombre}
+        </h3>
+        <p class="kit__resumen">{kit.resumen}</p>
+
+        {kit.incluye.length > 0 ? (
+          <>
+            <p class="etiqueta kit__etiqueta">Incluye</p>
+            <ul class="sin-lista kit__lista">
+              {kit.incluye.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p class="kit__pendiente">
+            El detalle exacto de este formato cambia según el modelo. Te lo confirmamos por escrito
+            en el chat, con tu modelo elegido.
+          </p>
+        )}
+      </section>
+    ))
+  }
+</div>
+
+<div class="kits__cierre">
+  <p class="kits__nota">
+    Ninguno de los tres formatos incluye radier, instalaciones eléctricas y sanitarias ni permisos
+    municipales. Está detallado en la ficha de cada modelo.
+  </p>
+  <BotonWhatsApp
+    mensaje={mensajeGenerico()}
+    origen="kits"
+    texto="Preguntar por los formatos"
+    variante="secundario"
+  />
+</div>
+
+<style>
+  .kits {
+    display: grid;
+    gap: var(--e-5);
+  }
+
+  .kit {
+    padding-block-start: var(--e-5);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .kit__nombre {
+    font-size: var(--t-sub);
+  }
+
+  .kit__resumen {
+    margin-block-start: var(--e-2);
+    color: var(--texto-suave);
+    max-width: 40ch;
+  }
+
+  .kit__etiqueta {
+    margin-block-start: var(--e-5);
+  }
+
+  .kit__lista {
+    margin-block-start: var(--e-3);
+    display: grid;
+    gap: var(--e-3);
+    font-size: var(--t-chico);
+  }
+
+  /* Guion de plano en vez de bullet: coherente con el mundo de la cota. */
+  .kit__lista li {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: var(--e-3);
+    align-items: start;
+  }
+
+  .kit__lista li::before {
+    content: '';
+    margin-block-start: 0.7em;
+    height: var(--grosor-cota);
+    background: var(--cota);
+    opacity: 0.55;
+  }
+
+  .kit__pendiente {
+    margin-block-start: var(--e-5);
+    font-size: var(--t-chico);
+    color: var(--texto-tenue);
+    max-width: 38ch;
+  }
+
+  .kits__cierre {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e-4);
+    margin-block-start: var(--e-7);
+    padding-block-start: var(--e-5);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .kits__nota {
+    max-width: 56ch;
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+  }
+
+  @media (min-width: 700px) {
+    .kits {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--e-6);
+    }
+  }
+</style>

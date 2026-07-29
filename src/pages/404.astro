@@ -1,0 +1,228 @@
+---
+/**
+ * 404 útil: en vez de disculparse, ofrece los ocho modelos con un buscador que
+ * filtra sobre la lista ya impresa en el HTML.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
+import Icono from '../components/Icono.astro';
+import { obtenerModelos, rutaModelo, rangoM2 } from '../lib/catalogo';
+import { formatearM2 } from '../lib/formato';
+import { mensajeGenerico } from '../lib/whatsapp';
+import { COMUNAS } from '../data/comunas';
+
+const modelos = await obtenerModelos();
+---
+
+<BaseLayout
+  titulo="Página no encontrada | Casas Limache"
+  descripcion="La página que buscas no existe. Acá están todos los modelos de casas prefabricadas y las comunas donde despachamos."
+  ruta="/404/"
+  noIndexar
+>
+  <div class="envoltorio error">
+    <p class="error__codigo mono">404</p>
+    <h1>Esa página no existe</h1>
+    <p class="error__texto">
+      Puede que el enlace esté viejo o que el modelo haya cambiado de nombre. Busca acá abajo o
+      escríbenos y te decimos dónde quedó.
+    </p>
+
+    <label class="buscador">
+      <span class="visualmente-oculto">Buscar un modelo por nombre</span>
+      <Icono nombre="buscar" tamano={20} />
+      <input type="search" placeholder="Buscar un modelo…" data-buscador autocomplete="off" />
+    </label>
+
+    <ul class="sin-lista resultados" data-resultados>
+      {
+        modelos.map((modelo) => {
+          const rango = rangoM2(modelo.data);
+          return (
+            <li data-nombre={modelo.data.nombre.toLowerCase()}>
+              <a href={rutaModelo(modelo.data.slug)}>
+                <span>{modelo.data.nombre}</span>
+                <span class="mono resultados__m2">
+                  {rango.min === rango.max
+                    ? formatearM2(rango.min)
+                    : `${rango.min}–${formatearM2(rango.max)}`}
+                </span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <p class="resultados__vacio" data-sin-resultados hidden>
+      Ningún modelo con ese nombre. Prueba con el catálogo completo.
+    </p>
+
+    <div class="error__acciones">
+      <a class="boton boton--principal" href="/catalogo/">
+        Ver el catálogo completo
+        <Icono nombre="flecha" tamano={20} />
+      </a>
+      <BotonWhatsApp
+        mensaje={mensajeGenerico()}
+        origen="404"
+        texto="Preguntar por WhatsApp"
+        variante="secundario"
+      />
+    </div>
+
+    <nav class="error__comunas" aria-label="Comunas donde despachamos">
+      <h2 class="error__subtitulo">O revisa por comuna</h2>
+      <ul class="sin-lista enlaces-densos">
+        {
+          COMUNAS.map((comuna) => (
+            <li>
+              <a href={`/casas-prefabricadas-${comuna.slug}/`}>{comuna.nombre}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>
+
+<script>
+  const entrada = document.querySelector<HTMLInputElement>('[data-buscador]');
+  const lista = document.querySelector<HTMLElement>('[data-resultados]');
+  const vacio = document.querySelector<HTMLElement>('[data-sin-resultados]');
+
+  if (entrada && lista) {
+    const items = Array.from(lista.querySelectorAll<HTMLElement>('li'));
+
+    entrada.addEventListener('input', () => {
+      const busqueda = entrada.value
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '');
+
+      let visibles = 0;
+
+      for (const item of items) {
+        const nombre = (item.dataset.nombre ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '');
+        const calza = nombre.includes(busqueda);
+        item.hidden = !calza;
+        if (calza) visibles++;
+      }
+
+      if (vacio) vacio.hidden = visibles > 0;
+    });
+  }
+</script>
+
+<style>
+  .error {
+    padding-block: var(--e-8) var(--e-9);
+  }
+
+  .error__codigo {
+    font-size: var(--t-chico);
+    color: var(--cota);
+    letter-spacing: var(--tracking-etiqueta);
+  }
+
+  .error h1 {
+    margin-block-start: var(--e-3);
+    font-family: var(--fuente-display);
+    font-size: var(--t-titular);
+    font-weight: 700;
+  }
+
+  .error__texto {
+    margin-block-start: var(--e-4);
+    max-width: 50ch;
+    color: var(--texto-suave);
+  }
+
+  .buscador {
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+    max-width: 420px;
+    margin-block-start: var(--e-7);
+    padding-inline: var(--e-4);
+    min-height: 52px;
+    background: var(--superficie);
+    border: var(--grosor-cota) solid var(--linea);
+    border-radius: var(--radio);
+    color: var(--texto-tenue);
+  }
+
+  .buscador:focus-within {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+  }
+
+  .buscador input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: none;
+    outline: none;
+    color: var(--texto);
+  }
+
+  .resultados {
+    display: grid;
+    max-width: 420px;
+    margin-block-start: var(--e-4);
+  }
+
+  .resultados a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--e-4);
+    min-height: 48px;
+    padding-block: var(--e-2);
+    border-bottom: var(--grosor-cota) solid var(--linea);
+    color: var(--texto);
+    text-decoration: none;
+  }
+
+  .resultados a:hover {
+    color: var(--cota);
+  }
+
+  .resultados__m2 {
+    font-size: var(--t-micro);
+    color: var(--texto-tenue);
+  }
+
+  .resultados__vacio {
+    margin-block-start: var(--e-4);
+    font-size: var(--t-chico);
+    color: var(--texto-suave);
+  }
+
+  .error__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-3);
+    margin-block-start: var(--e-7);
+  }
+
+  .error__comunas {
+    margin-block-start: var(--e-8);
+    padding-block-start: var(--e-5);
+    border-top: var(--grosor-cota) solid var(--linea);
+  }
+
+  .error__subtitulo {
+    font-size: var(--t-cuerpo);
+    font-weight: 600;
+    margin-block-end: var(--e-3);
+  }
+
+  .error__comunas ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-4);
+    font-size: var(--t-chico);
+  }
+</style>
