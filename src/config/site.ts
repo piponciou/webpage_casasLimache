@@ -180,22 +180,27 @@ export const ANALITICA = {
   META_PIXEL_ID: '', // ⚠️ PENDIENTE
 } as const;
 
-/** Rangos de dormitorios que se ofrecen como entrada al catálogo desde el hero. */
+/**
+ * Modelo que se muestra en la foto del hero, con su ficha sobreimpresa.
+ * Tiene que ser el `slug` de un archivo de src/content/modelos/.
+ * Los metros, los dormitorios y los baños que aparecen sobre la foto salen de
+ * ese JSON: no hay ningún dato escrito a mano encima de la imagen.
+ *
+ * ⚠️ VERIFICAR: la foto actual es un render genérico. Cuando el cliente entregue
+ * la foto del modelo real, hay que dejar acá el slug que corresponda.
+ */
+export const HERO = {
+  modelo: 'quillota',
+} as const;
+
+/**
+ * Rangos de dormitorios que sirven de entrada al catálogo filtrado desde el
+ * hero. `min` y `max` documentan qué significa cada `id`; el filtro del catálogo
+ * lo interpreta a partir del propio id.
+ */
 export const RANGOS = [
-  {
-    id: '1-2',
-    titulo: 'Casas de 1 a 2 habitaciones',
-    detalle: 'Desde 36 m²',
-    min: 1,
-    max: 2,
-  },
-  {
-    id: '3-5',
-    titulo: 'Casas de 3 a 5 habitaciones',
-    detalle: 'Hasta 120 m²',
-    min: 3,
-    max: 5,
-  },
+  { id: '1-2', etiquetaCorta: 'de 1 a 2 habitaciones', min: 1, max: 2 },
+  { id: '3-5', etiquetaCorta: 'de 3 a 5 habitaciones', min: 3, max: 5 },
 ] as const;
 
 export const LEGAL = {

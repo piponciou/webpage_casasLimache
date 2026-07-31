@@ -29,3 +29,9 @@ Thumbs.db
 # editores
 .vscode/
 .idea/
+.vs/
+
+# fotos originales en tamaño completo, antes de optimizar. Se guardan acá para
+# poder regenerar, pero no se versionan ni se publican: pesan demasiado.
+originales/
+.tmp-logo/

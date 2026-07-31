@@ -13,6 +13,7 @@
     "check": "astro check",
     "placeholders": "node scripts/generar-placeholders.mjs",
     "optimizar-imagenes": "node scripts/optimizar-imagenes.mjs",
+    "logo": "node scripts/generar-logo.mjs",
     "fuentes": "node scripts/copiar-fuentes.mjs",
     "postinstall": "node scripts/copiar-fuentes.mjs && node scripts/generar-placeholders.mjs"
   },

@@ -117,21 +117,40 @@ npm run optimizar-imagenes
 Va a recorrer `public/images/`, dejar cada foto en su tamaño correcto y
 comprimirla, sin cambiarle el nombre. Te dice cuánto peso ahorró.
 
-### La única foto que tiene dos versiones
+### La portada del hero: reemplazas una, se generan siete
 
-La portada del sitio (`hero/portada.jpg`) es la imagen más grande y la primera
-que carga, así que existe también en versión chica: `hero/portada-800.jpg`. El
-celular descarga la chica y el computador la grande.
+`hero/portada.jpg` es la foto más importante del sitio. A partir de ella el
+script genera siete archivos más:
 
-**Tú solo reemplazas `portada.jpg`.** Después corre:
+| Archivo | Para qué |
+|---|---|
+| `portada.jpg` / `.webp` | Pantallas grandes, versión ancha (16:9) |
+| `portada-1200.jpg` / `.webp` | Pantallas medianas |
+| `portada-4x5.jpg` / `.webp` | **Celular**, versión vertical (4:5) |
+| `portada-4x5-600.jpg` / `.webp` | Celular con pantalla menos densa |
+
+Son dos recortes distintos a propósito: una foto panorámica en un celular
+vertical deja la casa diminuta. Y en WebP además del JPEG porque pesa casi la
+mitad; el navegador elige solo cuál usar.
+
+**Tú reemplazas SOLO `portada.jpg`** por tu foto (horizontal, cuanto más grande
+mejor, mínimo 2000 px de ancho). Después corre:
 
 ```bash
 npm run optimizar-imagenes
 ```
 
-y la versión de 800 px se regenera sola a partir de la que subiste. Si te olvidas
-de correrlo, la portada va a seguir viéndose bien en computador pero en celular
-va a aparecer la foto anterior.
+y los otros siete se regeneran solos. **Si no corres el comando, en el celular
+se va a seguir viendo la foto anterior.**
+
+### ⚠️ Cuidado con el nombre del archivo en Windows
+
+Si guardas una imagen PNG y le cambias el nombre a `portada.jpg`, Windows puede
+dejarla como `portada.jpg.png`. Eso rompe la portada: el sitio busca
+`portada.jpg` y no la encuentra.
+
+Comprueba que el archivo se llame exactamente `portada.jpg`, sin nada después.
+El script avisa si detecta una imagen con la extensión equivocada y la convierte.
 
 ---
 
@@ -165,7 +184,44 @@ de código.**
 
 ---
 
-## 6. El texto alternativo (importante para Google)
+## 5 bis. El logo de la empresa
+
+El logo **no se edita a mano**. Hay un solo archivo fuente y un comando que
+genera todas las piezas que usa el sitio.
+
+**El archivo fuente vive en `originales/logo-original.png`**, fuera de la carpeta
+que se publica: es material de trabajo, no algo que deba descargar quien visita
+el sitio.
+
+Para regenerar todo después de reemplazarlo:
+
+```bash
+npm run logo
+```
+
+Eso produce, solo, estas piezas:
+
+| Pieza | Dónde se usa |
+|---|---|
+| `images/brand/logo-icono.png` (+`@2x`, `@3x`) | El ícono del header |
+| `images/brand/logo-completo.png` (+`@2x`, `@3x`) | El logo entero, con eslogan |
+| `favicon-32.png` | El iconito de la pestaña del navegador |
+| `apple-touch-icon.png` | El ícono al guardar el sitio en un iPhone |
+| `images/og/portada.jpg` | La imagen que se ve al compartir el enlace |
+
+### Por qué el header no lleva el logo completo
+
+En el logo, el nombre "Casas Limache" va **en arco alrededor del ícono**, no al
+lado. A la altura de un header (44 px) esas letras quedan de 8 px: ilegibles.
+Por eso el header usa el ícono de la marca junto al nombre escrito con la
+tipografía del sitio, que se lee nítido en cualquier tamaño.
+
+### ⚠️ Lo ideal es conseguir el logo en SVG
+
+Un SVG es un archivo de dibujo vectorial: se ve perfecto a cualquier tamaño, pesa
+menos y permite separar el ícono del texto sin recortar nada. Si en algún momento
+consigues el logo en `.svg` con quien lo diseñó, es un cambio que mejora la
+nitidez en celulares y simplifica todo esto.
 
 Cada foto tiene un texto que describe lo que se ve. Lo usan Google y las personas
 ciegas. Ese texto SÍ está en un archivo, y conviene actualizarlo cuando cambies

@@ -1,0 +1,61 @@
+---
+/**
+ * LOGO DE LA MARCA
+ * ================
+ * Dos versiones, según el espacio disponible:
+ *
+ *  · "icono"    → header. Solo el ícono (casa + pino) acompañado del nombre en
+ *                 la tipografía del sitio.
+ *  · "completo" → footer. El logo entero: nombre en arco, ícono y eslogan.
+ *
+ * POR QUÉ EL HEADER NO USA EL LOGO COMPLETO
+ * En el archivo original el nombre va EN ARCO alrededor del ícono, no al lado,
+ * así que no existe un recorte que dé un lockup horizontal. Reducido a los 44px
+ * de un header, las letras del arco quedan en 8px (6,5px en móvil): ilegible.
+ * Por eso el header combina el ícono de la marca con el nombre compuesto en
+ * Archivo, que es nítido en cualquier tamaño y densidad.
+ *
+ * Los archivos los genera scripts/generar-logo.mjs. Ver IMAGENES.md.
+ */
+interface Props {
+  variante?: 'icono' | 'completo';
+  /** Alto en píxeles CSS. Las densidades 2x y 3x salen del srcset. */
+  alto?: number;
+  /** true cuando el nombre de la marca ya está escrito como texto al lado: el
+   *  lector de pantalla no debe leerlo dos veces. */
+  decorativa?: boolean;
+  class?: string;
+}
+
+const { variante = 'icono', alto = 44, decorativa = false, class: clase } = Astro.props;
+
+/** Proporciones reales de los archivos generados. */
+const PROPORCION = {
+  icono: 1270 / 635,
+  completo: 2412 / 1218,
+} as const;
+
+const base = variante === 'icono' ? '/images/brand/logo-icono' : '/images/brand/logo-completo';
+const ancho = Math.round(PROPORCION[variante] * alto);
+---
+
+<img
+  class:list={['logo', `logo--${variante}`, clase]}
+  src={`${base}.png`}
+  srcset={`${base}.png 1x, ${base}@2x.png 2x, ${base}@3x.png 3x`}
+  alt={decorativa ? '' : 'Casas Limache'}
+  width={ancho}
+  height={alto}
+  decoding="async"
+/>
+
+<style>
+  .logo {
+    display: block;
+    width: auto;
+    /* El alto lo fija el atributo height; esto evita que una hoja externa lo
+       estire y rompa la proporción. */
+    max-width: 100%;
+    background: none;
+  }
+</style>

@@ -1,26 +1,47 @@
 ---
 /**
  * HERO
- * Arquitectura de información pedida en el brief: aviso de casa piloto, titular
- * grande, dos tarjetas de rango que son enlaces reales al catálogo filtrado, y
- * una franja de CTA al pie.
+ * ====
+ * Dos columnas: a la izquierda el aviso de casa piloto, el h1, la bajada y los
+ * enlaces de rango; a la derecha la foto del modelo con su ficha sobreimpresa.
  *
- * El titular ES el <h1> y contiene "casas prefabricadas" + "Limache": así hay un
- * solo h1 por página, visible y sobre el pliegue, en vez de repetir dos veces la
- * misma frase con distinto tamaño.
+ * SOBRE LA FICHA SOBREIMPRESA
+ * Antes ese texto venía quemado dentro del JPEG, y como la caja del hero es más
+ * cuadrada que la foto, `object-fit: cover` recortaba ~17% por lado y se comía
+ * las letras. Ahora el texto es HTML: se arma con los datos del modelo elegido
+ * en site.ts, se reacomoda solo en cada breakpoint y no se puede cortar.
  *
- * La cota vertical sobre la foto mide la altura libre real de la casa piloto,
- * que sale de las especificaciones del modelo, no de un número escrito a mano.
+ * SOBRE LA LEGIBILIDAD
+ * La foto la reemplaza el cliente y su color no lo controlamos. El scrim de
+ * degradado está calculado para que el texto claro mantenga contraste AA
+ * incluso sobre una foto blanca: por eso sostiene ~82% de opacidad a lo largo
+ * de toda la banda de texto y recién ahí se suelta. Nada de text-shadow.
+ *
+ * El titular ES el <h1> y contiene "casas prefabricadas" + "Limache".
  */
 import Icono from './Icono.astro';
 import BotonWhatsApp from './BotonWhatsApp.astro';
-import { RANGOS, DIRECCION } from '../config/site';
+import { RANGOS, DIRECCION, HERO } from '../config/site';
 import { mensajeGenerico } from '../lib/whatsapp';
-import { obtenerModelos } from '../lib/catalogo';
+import { obtenerModelos, varianteBase, rutaModelo } from '../lib/catalogo';
+import { formatearM2, plural } from '../lib/formato';
 
 const modelos = await obtenerModelos();
-const modeloPiloto = modelos.find((m) => m.data.slug === 'lo-hidalgo') ?? modelos[0]!;
-const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; // "2,40"
+
+const destacado = modelos.find((m) => m.data.slug === HERO.modelo) ?? modelos[0]!;
+const datos = destacado.data;
+const base = varianteBase(datos);
+
+/** Las especificaciones salen del JSON del modelo: si cambia el modelo del
+ *  hero en site.ts, cambia esta lista sola. */
+const especificaciones = [
+  { icono: 'cama' as const, texto: plural(base.dormitorios, 'dormitorio', 'dormitorios') },
+  { icono: 'bano' as const, texto: plural(base.banos, 'baño', 'baños') },
+  ...(datos.caracteristicas.livingComedor
+    ? [{ icono: 'sofa' as const, texto: 'Living comedor' }]
+    : []),
+  ...(datos.caracteristicas.cocina ? [{ icono: 'cocina' as const, texto: 'Cocina' }] : []),
+];
 ---
 
 <section class="hero" aria-labelledby="hero-titular">
@@ -38,47 +59,78 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
         Modelos de 36 a 120 m² con entrega inmediata, y una casa piloto que puedes recorrer entera
         antes de decidir.
       </p>
+
+      {/* Reemplazan a las tarjetas de rango: mismos destinos, sin ocupar altura. */}
+      <p class="hero__rangos">
+        Ver casas
+        {
+          RANGOS.map((rango, i) => (
+            <>
+              {i > 0 && <span class="hero__separador" aria-hidden="true">·</span>}
+              <a href={`/catalogo/?rango=${rango.id}`}>{rango.etiquetaCorta}</a>
+            </>
+          ))
+        }
+      </p>
     </div>
 
     <figure class="hero__media">
-      <div class="hero__cota" aria-hidden="true">
-        <span class="hero__cota-tramo"></span>
-        <span class="hero__cota-valor mono">{alturaLibre} m</span>
-        <span class="hero__cota-tramo"></span>
-      </div>
-      {/* Es la imagen del LCP. La versión de 800px existe para que un celular no
-          descargue los 2000px de la de escritorio; la genera el mismo script que
-          optimiza las fotos, así que quien reemplaza la portada sigue tocando un
-          solo archivo. */}
-      <img
-        class="hero__foto"
-        src="/images/hero/portada.jpg"
-        srcset="/images/hero/portada-800.jpg 800w, /images/hero/portada.jpg 2000w"
-        sizes="(min-width: 980px) 52vw, 100vw"
-        alt="Casa prefabricada de Casas Limache montada en un terreno de la Región de Valparaíso"
-        width="2000"
-        height="1125"
-        fetchpriority="high"
-        decoding="async"
-      />
-      <figcaption class="visualmente-oculto">
-        Altura libre interior de {alturaLibre} metros en los modelos del catálogo.
+      <picture>
+        {/* Dos recortes distintos: en un celular vertical una foto panorámica
+            deja la casa diminuta y la ficha no cabe. */}
+        <source
+          media="(min-width: 700px)"
+          type="image/webp"
+          srcset="/images/hero/portada-1200.webp 1200w, /images/hero/portada.webp 2000w"
+          sizes="(min-width: 980px) 45vw, 100vw"
+        />
+        <source
+          media="(min-width: 700px)"
+          srcset="/images/hero/portada-1200.jpg 1200w, /images/hero/portada.jpg 2000w"
+          sizes="(min-width: 980px) 45vw, 100vw"
+        />
+        <source
+          type="image/webp"
+          srcset="/images/hero/portada-4x5-600.webp 600w, /images/hero/portada-4x5.webp 900w"
+          sizes="100vw"
+        />
+        <img
+          class="hero__foto"
+          src="/images/hero/portada-4x5.jpg"
+          srcset="/images/hero/portada-4x5-600.jpg 600w, /images/hero/portada-4x5.jpg 900w"
+          sizes="100vw"
+          alt={`Modelo ${datos.nombre} de Casas Limache montado en un terreno de la Región de Valparaíso`}
+          width="900"
+          height="1125"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+
+      <div class="hero__scrim" aria-hidden="true"></div>
+
+      <figcaption class="hero__ficha">
+        <p class="hero__superficie">
+          <Icono nombre="superficie" tamano={15} />
+          <span class="mono">{formatearM2(base.m2)}</span>
+        </p>
+
+        <p class="hero__modelo">
+          <a class="hero__enlace" href={rutaModelo(datos.slug)}>{datos.nombre}</a>
+        </p>
+
+        <ul class="sin-lista hero__specs">
+          {
+            especificaciones.map((spec) => (
+              <li>
+                <Icono nombre={spec.icono} tamano={17} />
+                <span>{spec.texto}</span>
+              </li>
+            ))
+          }
+        </ul>
       </figcaption>
     </figure>
-
-    <div class="hero__rangos">
-      {
-        RANGOS.map((rango) => (
-          <a class="rango" href={`/catalogo/?rango=${rango.id}`}>
-            <span class="rango__titulo">{rango.titulo}</span>
-            <span class="rango__detalle mono">{rango.detalle}</span>
-            <span class="rango__flecha">
-              <Icono nombre="flecha" tamano={18} />
-            </span>
-          </a>
-        ))
-      }
-    </div>
   </div>
 
   <div class="franja">
@@ -143,124 +195,136 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
     color: var(--texto-suave);
   }
 
+  /* Enlaces de rango en una línea. Conservan el filtro del catálogo sin gastar
+     la altura que necesitaban las tarjetas. */
+  .hero__rangos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--e-1) var(--e-3);
+    margin-block-start: var(--e-4);
+    font-size: var(--t-chico);
+    color: var(--texto-tenue);
+  }
+
+  .hero__rangos a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--cota);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  .hero__separador {
+    color: var(--linea);
+  }
+
   /* La foto sangra hasta el borde derecho de la ventana. Sin radio, sin marco:
      el corte es el gesto. */
   .hero__media {
     position: relative;
     margin-inline-end: calc(var(--borde-pagina) * -1);
+    overflow: hidden;
+  }
+
+  /* <picture> es inline por defecto y corta la cadena de altura: sin esto, el
+     height:100% de la foto se mide contra una caja de alto automático y la
+     imagen no llena su columna. */
+  .hero__media picture {
+    display: block;
+    height: 100%;
   }
 
   .hero__foto {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
   }
 
-  /* Cota vertical: mide la altura de la foto y dice un dato real de la casa. */
-  .hero__cota {
+  /* Scrim: sostiene ~82% de negro a lo largo de toda la banda de texto y recién
+     después se suelta. Un degradado que llega a 65% solo en el borde inferior
+     deja el nombre del modelo en 1,9:1 sobre una foto clara. */
+  .hero__scrim {
     position: absolute;
-    inset-block: 0;
-    inset-inline-start: calc(var(--margen-cota) * -0.62);
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(10, 12, 11, 0.88) 0%,
+      rgba(10, 12, 11, 0.82) 30%,
+      rgba(10, 12, 11, 0.62) 44%,
+      rgba(10, 12, 11, 0.2) 60%,
+      rgba(10, 12, 11, 0) 78%
+    );
+    pointer-events: none;
+  }
+
+  .hero__ficha {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
+    gap: var(--e-2);
+    padding: var(--e-5);
+    color: var(--neblina);
+  }
+
+  .hero__superficie {
+    display: inline-flex;
     align-items: center;
     gap: var(--e-2);
-    color: var(--cota);
-    z-index: 1;
+    font-size: var(--t-chico);
+    color: var(--neblina);
   }
 
-  .hero__cota-tramo {
-    position: relative;
-    flex: 1;
-    width: var(--grosor-cota);
-    background: currentColor;
-    opacity: 0.55;
-    transform-origin: top center;
+  .hero__modelo {
+    font-family: var(--fuente-display);
+    font-size: clamp(2rem, 1.2rem + 3.4vw, 3rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-display);
   }
 
-  .hero__cota-tramo:last-child {
-    transform-origin: bottom center;
-  }
-
-  .hero__cota-tramo::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    width: 11px;
-    height: var(--grosor-cota);
-    background: currentColor;
-    transform: translateX(-50%) rotate(45deg);
-  }
-
-  .hero__cota-tramo:first-child::after {
-    top: 0;
-  }
-
-  .hero__cota-tramo:last-child::after {
-    bottom: 0;
-  }
-
-  .hero__cota-valor {
-    font-size: var(--t-micro);
-    font-weight: 500;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-  }
-
-  .hero__rangos {
-    display: grid;
-    gap: var(--e-3);
-    grid-template-columns: 1fr;
-  }
-
-  .rango {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: var(--e-1) var(--e-4);
-    min-height: 84px;
-    padding: var(--e-4) var(--e-5);
-    background: var(--superficie);
-    border-radius: var(--radio);
-    box-shadow: var(--sombra-baja);
+  .hero__enlace {
     color: inherit;
     text-decoration: none;
-    transition:
-      box-shadow var(--dur-media) var(--ease-salida),
-      transform var(--dur-media) var(--ease-salida);
   }
 
-  .rango:hover {
-    box-shadow: var(--sombra-media);
-    transform: translateY(-2px);
+  /* Toda la foto lleva a la ficha del modelo, con un solo elemento enfocable. */
+  .hero__enlace::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
 
-  .rango__titulo {
-    font-weight: 500;
-    line-height: 1.25;
+  .hero__enlace:focus-visible {
+    outline: none;
   }
 
-  .rango__detalle {
-    grid-column: 1;
-    font-size: var(--t-micro);
-    color: var(--texto-tenue);
+  .hero__enlace:focus-visible::after {
+    outline: 2px solid var(--acento);
+    outline-offset: -4px;
+    border-radius: 2px;
   }
 
-  .rango__flecha {
-    grid-row: 1 / span 2;
-    grid-column: 2;
+  .hero__specs {
     display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-    color: var(--cota);
-    background: var(--tinta-10);
-    transition: transform var(--dur-media) var(--ease-salida);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--e-2) var(--e-4);
+    margin-block-start: var(--e-2);
+    font-size: var(--t-chico);
   }
 
-  .rango:hover .rango__flecha {
-    transform: translateX(3px);
+  .hero__specs li {
+    display: flex;
+    align-items: center;
+    gap: var(--e-2);
+  }
+
+  .hero__specs svg {
+    flex: 0 0 auto;
+    opacity: 0.85;
   }
 
   /* Franja de cierre del hero: fondo tinta, ancho completo. */
@@ -288,9 +352,6 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
 
   /* -------------------------------------------------------------------------
      El único momento coreografiado del sitio: la entrada del hero.
-     El aviso y el titular suben, la foto se descubre desde su borde izquierdo
-     (el mismo gesto del corte que la sangra a la derecha), y recién entonces la
-     cota se dibuja y aparece el numeral. Nada más se anima al cargar.
      ------------------------------------------------------------------------- */
   @media (prefers-reduced-motion: no-preference) {
     .hero__aviso {
@@ -305,24 +366,12 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
       animation: subir 560ms var(--ease-salida) 160ms both;
     }
 
+    .hero__rangos {
+      animation: subir 540ms var(--ease-salida) 240ms both;
+    }
+
     .hero__media {
       animation: descubrir 760ms var(--ease-salida) 150ms both;
-    }
-
-    .hero__cota-tramo {
-      animation: trazar 520ms var(--ease-salida) 520ms both;
-    }
-
-    .hero__cota-valor {
-      animation: subir 420ms var(--ease-suave) 800ms both;
-    }
-
-    .rango {
-      animation: subir 560ms var(--ease-salida) 260ms both;
-    }
-
-    .rango:nth-child(2) {
-      animation-delay: 350ms;
     }
   }
 
@@ -348,25 +397,22 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
     }
   }
 
-  @keyframes trazar {
-    from {
-      transform: scaleY(0);
+  @media (min-width: 700px) {
+    .hero__foto {
+      aspect-ratio: 3 / 2;
     }
-    to {
-      transform: scaleY(1);
-    }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .rango:hover,
-    .rango:hover .rango__flecha {
-      transform: none;
+    .hero__ficha {
+      padding: var(--e-6);
     }
-  }
 
-  @media (min-width: 620px) {
-    .hero__rangos {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Flex con envoltura en vez de cuatro columnas rígidas: entre 980 y ~1100px
+       la columna de la foto es angosta y las cuatro especificaciones en una
+       sola fila se salían de la caja. Así se reacomodan solas. */
+    .hero__specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--e-2) var(--e-5);
     }
   }
 
@@ -375,17 +421,12 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
       padding-block-start: var(--e-8);
     }
 
-    /* En escritorio la foto llega al borde derecho de la ventana. En vez de
-       sacarla con un margen negativo calculado con 100vw (que ignora el ancho
-       de la barra de scroll y provoca desborde horizontal), el contenedor deja
-       de estar centrado: su padding izquierdo se calcula en porcentaje —que sí
-       descuenta la barra— y el derecho es cero. */
+    /* Tiene que caer exactamente donde empieza el contenido de .envoltorio en
+       el resto del sitio: si no, el hero queda desalineado con todo lo demás
+       en pantallas anchas. */
     .hero__interior {
       max-width: none;
       margin-inline: 0;
-      /* Tiene que caer exactamente donde empieza el contenido de .envoltorio en
-         el resto del sitio: si no, el hero queda desalineado con todo lo demás
-         en pantallas anchas. */
       padding-inline-start: max(
         calc(var(--borde-pagina) + var(--margen-cota)),
         calc(
@@ -394,40 +435,35 @@ const alturaLibre = modeloPiloto.data.especificaciones.altura.split(' ')[0]!; //
         )
       );
       padding-inline-end: 0;
-      grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
-      grid-template-rows: auto 1fr;
-      gap: var(--e-8) var(--e-7);
-      align-items: start;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+      gap: var(--e-7);
+      align-items: stretch;
     }
 
     .hero__texto {
-      grid-column: 1;
-      grid-row: 1;
+      align-self: center;
+      padding-block: var(--e-4);
     }
 
-    /* La foto ocupa las dos filas y llega hasta el borde de la ventana. */
+    /* La foto llega hasta el borde de la ventana y define el alto del bloque.
+       Al sacar las tarjetas de rango, la columna de texto bajó de altura: por
+       eso la imagen puede crecer en vez de achicarse. */
     .hero__media {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-      align-self: stretch;
       margin-inline-end: 0;
-      height: 100%;
     }
 
     .hero__foto {
-      height: 100%;
       aspect-ratio: auto;
-      min-height: 460px;
-    }
-
-    .hero__rangos {
-      grid-column: 1;
-      grid-row: 2;
-      align-self: end;
+      height: 100%;
+      min-height: 540px;
     }
 
     .hero__titular {
-      max-width: 14ch;
+      max-width: 11ch;
+    }
+
+    .hero__ficha {
+      padding: var(--e-7);
     }
   }
 </style>
