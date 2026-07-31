@@ -144,29 +144,6 @@ export const ZONA_DESPACHO = [
 ] as const; // ⚠️ VERIFICAR si además se despacha fuera de la Región de Valparaíso.
 
 /**
- * Barra de confianza del home. Ningún número inventado: si el cliente confirma
- * los años de experiencia o las casas entregadas, se agregan acá.
- */
-export const CONFIANZA = [
-  {
-    titulo: 'Casa piloto visitable',
-    detalle: 'Puedes recorrerla y tocar los materiales antes de decidir.',
-  },
-  {
-    titulo: 'Entrega inmediata',
-    detalle: 'En los modelos estándar, sin lista de espera.',
-  },
-  {
-    titulo: 'Despacho en la V Región',
-    detalle: 'De Casablanca a Los Andes, con flete cotizado por comuna.',
-  },
-  {
-    titulo: 'Atención directa',
-    detalle: 'Hablas con una ejecutiva por WhatsApp, no con un formulario.',
-  },
-] as const;
-
-/**
  * ⚠️ REEMPLAZAR — testimonios de ejemplo.
  * La estructura es la definitiva: cambiar solo los textos. Si el cliente no
  * tiene testimonios reales, borrar el array completo y la sección desaparece

@@ -12,7 +12,7 @@ import Icono from '../components/Icono.astro';
 
 import { obtenerDestacados } from '../lib/catalogo';
 import { PREGUNTAS_HOME } from '../data/faq';
-import { CONFIANZA, DIRECCION, HORARIOS, TELEFONO } from '../config/site';
+import { DIRECCION, HORARIOS, TELEFONO } from '../config/site';
 import { mensajeCasaPiloto } from '../lib/whatsapp';
 import { sitioWeb, organizacion, paginaFaq } from '../lib/schema';
 
@@ -32,22 +32,6 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <Hero />
-
-  {/* B — Barra de confianza. Sin cifras: no inventamos años ni casas entregadas. */}
-  <section class="seccion confianza" aria-label="Por qué comprarnos">
-    <div class="envoltorio">
-      <ul class="sin-lista confianza__lista">
-        {
-          CONFIANZA.map((item) => (
-            <li class="confianza__item">
-              <h2 class="confianza__titulo">{item.titulo}</h2>
-              <p class="confianza__detalle">{item.detalle}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
 
   {/* C — Catálogo destacado */}
   <section class="seccion" aria-labelledby="titulo-destacados">
@@ -167,34 +151,6 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  /* B — barra de confianza. Sin tarjetas y sin íconos de relleno: cuatro
-     afirmaciones separadas por una línea, que es lo que son. */
-  .confianza {
-    padding-block: var(--e-7);
-  }
-
-  .confianza__lista {
-    display: grid;
-    gap: var(--e-5);
-  }
-
-  .confianza__item {
-    padding-block-start: var(--e-4);
-    border-top: var(--grosor-cota) solid var(--linea);
-  }
-
-  .confianza__titulo {
-    font-size: var(--t-cuerpo-grande);
-    font-weight: 600;
-  }
-
-  .confianza__detalle {
-    margin-block-start: var(--e-2);
-    font-size: var(--t-chico);
-    color: var(--texto-suave);
-    max-width: 34ch;
-  }
-
   .grilla-modelos {
     display: grid;
     gap: var(--e-5);
@@ -265,13 +221,6 @@ const jsonLd = [
     background: color-mix(in srgb, var(--zinc-marga) 16%, transparent);
   }
 
-  @media (min-width: 560px) {
-    .confianza__lista {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--e-5) var(--e-6);
-    }
-  }
-
   @media (min-width: 640px) {
     .grilla-modelos {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -284,10 +233,6 @@ const jsonLd = [
   }
 
   @media (min-width: 940px) {
-    .confianza__lista {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
     .grilla-modelos {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
