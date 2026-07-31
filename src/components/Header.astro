@@ -1,6 +1,7 @@
 ---
 import Icono from './Icono.astro';
-import { NAV, SITE } from '../config/site';
+import Logo from './Logo.astro';
+import { NAV } from '../config/site';
 import { linkWhatsApp, mensajeGenerico } from '../lib/whatsapp';
 
 const rutaActual = Astro.url.pathname;
@@ -14,12 +15,15 @@ function esActual(href: string): boolean {
 
 <header class="cabecera">
   <div class="cabecera__barra envoltorio">
-    {/* El espacio entre las dos palabras es literal y no solo un margen: si no,
-        el nombre accesible ("Casas Limache — inicio") no contendría el texto
-        visible ("CasasLimache") y un lector de pantalla leería otra cosa que la
-        que se ve. */}
-    <a class="marca" href="/" aria-label={`${SITE.nombre} — inicio`}>
-      <span class="marca__casas">Casas</span> <span class="marca__limache">Limache</span>
+    {/* El ícono va con alt vacío porque el nombre está escrito al lado como
+        texto: si los dos anunciaran la marca, un lector de pantalla leería
+        "Casas Limache Casas Limache". El nombre accesible del enlace es el
+        texto visible. */}
+    <a class="marca" href="/">
+      <Logo variante="icono" alto={44} decorativa class="marca__logo" />
+      <span class="marca__nombre">
+        <span class="marca__casas">Casas</span> <span class="marca__limache">Limache</span>
+      </span>
     </a>
 
     <nav class="nav-principal" aria-label="Navegación principal">
@@ -73,15 +77,27 @@ function esActual(href: string): boolean {
   .marca {
     display: inline-flex;
     align-items: center;
+    gap: var(--e-3);
     min-height: 44px;
+    text-decoration: none;
+    color: var(--texto);
+    white-space: nowrap;
+  }
+
+  /* 34px en móvil, 44px en escritorio. Va con :global porque el elemento lo
+     renderiza el componente Logo y no lleva el scope de este archivo; queda
+     acotado por `.marca` para que no se escape a otros logos del sitio. */
+  .marca :global(.marca__logo) {
+    height: 34px;
+    width: auto;
+  }
+
+  .marca__nombre {
     font-family: var(--fuente-display);
     font-size: 1.0625rem;
     letter-spacing: 0.01em;
     line-height: 1;
-    text-decoration: none;
-    color: var(--texto);
     text-transform: uppercase;
-    white-space: nowrap;
   }
 
   .marca__casas {
@@ -167,7 +183,11 @@ function esActual(href: string): boolean {
       min-height: 76px;
     }
 
-    .marca {
+    .marca :global(.marca__logo) {
+      height: 44px;
+    }
+
+    .marca__nombre {
       font-size: 1.1875rem;
     }
 

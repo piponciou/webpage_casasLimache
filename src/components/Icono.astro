@@ -5,7 +5,18 @@
  * mismo sistema gráfico. Si un ícono no aporta información, no se usa.
  */
 interface Props {
-  nombre: 'whatsapp' | 'flecha' | 'pin' | 'reloj' | 'mas' | 'buscar';
+  nombre:
+    | 'whatsapp'
+    | 'flecha'
+    | 'pin'
+    | 'reloj'
+    | 'mas'
+    | 'buscar'
+    | 'superficie'
+    | 'cama'
+    | 'bano'
+    | 'sofa'
+    | 'cocina';
   tamano?: number;
   class?: string;
 }
@@ -57,6 +68,54 @@ const { nombre, tamano = 20, class: clase } = Astro.props;
       <>
         <circle cx="11" cy="11" r="6.5" />
         <path d="m16 16 4.5 4.5" />
+      </>
+    )
+  }
+
+  {/* Especificaciones de la ficha del hero. Mismo trazo de 1.5px que la cota. */}
+  {
+    nombre === 'superficie' && (
+      <>
+        <path d="M4 4h16v16H4z" />
+        <path d="M10 4v6H4" />
+      </>
+    )
+  }
+  {
+    nombre === 'cama' && (
+      <>
+        <path d="M3 18v-6a2 2 0 0 1 2-2h10a4 4 0 0 1 4 4v4" />
+        <path d="M3 12V6M3 18v2M19 18v2M2.5 18h19" />
+        <path d="M7 10V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1" />
+      </>
+    )
+  }
+  {
+    nombre === 'bano' && (
+      <>
+        <path d="M3.5 12h17v2.5a4 4 0 0 1-4 4h-9a4 4 0 0 1-4-4V12Z" />
+        <path d="M7 12V6.5a2 2 0 0 1 4 0" />
+        <path d="M6.5 18.5 5.5 21M17.5 18.5l1 2.5" />
+      </>
+    )
+  }
+  {
+    nombre === 'sofa' && (
+      <>
+        <path d="M5 12V8.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V12" />
+        <path d="M3 15a2 2 0 0 1 4 0v1h10v-1a2 2 0 0 1 4 0v3.5H3V15Z" />
+        <path d="M7 12h10" />
+      </>
+    )
+  }
+  {
+    nombre === 'cocina' && (
+      <>
+        <path d="M4.5 4h15v16h-15z" />
+        <path d="M4.5 9.5h15" />
+        <path d="M9 13.5h6" />
+        <circle cx="8.5" cy="6.75" r="1" />
+        <circle cx="12.5" cy="6.75" r="1" />
       </>
     )
   }

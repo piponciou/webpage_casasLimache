@@ -9,38 +9,6 @@ de publicar; lo de la 4 se puede hacer después sin que se note.
 
 ---
 
-## 0. Lo que necesito de ti ahora
-
-### 0.1 ⚠️ Volver a copiar el archivo original del logo
-
-**Se dañó y hay que reponerlo.** Un script de optimización de imágenes que
-escribí recorría también la carpeta de marca y reescribió `logo-original.png`
-como JPEG sobre fondo blanco, recortado a otra proporción. El error ya está
-corregido (ahora la carpeta `brand/` está excluida y el script solo toca JPEG),
-pero el archivo no se recupera solo.
-
-**Qué hacer:** copiar de nuevo el logo original a `originales/logo-original.png`
-y correr `npm run logo`.
-
-**Qué pasa mientras tanto:** el ícono del header, el favicon y el ícono de iPhone
-están correctos —se reconstruyeron desde un recorte intermedio del archivo
-íntegro—. Lo que falta es la **versión completa con el arco y el eslogan**, que
-debía ir en el footer. Por eso ahí se muestra el ícono. Al reponer el archivo y
-correr el comando, cambiar `variante="icono"` por `variante="completo"` en
-`src/components/Footer.astro` devuelve el logo entero.
-
-### 0.2 ⚠️ El modelo que aparece en el hero
-
-La foto del hero es un render genérico, no una casa del catálogo. Sobre ella se
-muestran los datos del modelo **Quillota** (84 m², 4 dormitorios, 2 baños), que
-se eligió por parecerse a la casa de la foto.
-
-Cuando tengas la foto de un modelo real, cambia el `slug` en `HERO` dentro de
-`src/config/site.ts` y reemplaza `public/images/hero/portada.jpg`. Los metros,
-dormitorios y baños que se ven sobre la foto salen solos del JSON de ese modelo.
-
----
-
 ## 1. Bloquean la publicación
 
 ### 1.1 El párrafo de "Cómo partimos"

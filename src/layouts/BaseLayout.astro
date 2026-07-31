@@ -90,7 +90,10 @@ const datosEstructurados = grafo([negocioLocal(), ...jsonLd]);
     <link rel="preload" href="/fonts/archivo-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/plex-sans-400.woff2" as="font" type="font/woff2" crossorigin />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {/* Favicon con el ícono de la marca, sin texto: el nombre completo a 32px
+        es una mancha ilegible. Los genera scripts/generar-logo.mjs. */}
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#d7dcda" />
 

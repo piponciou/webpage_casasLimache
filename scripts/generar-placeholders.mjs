@@ -30,7 +30,9 @@ const MEDIDAS = {
   galeria: { w: 1600, h: 1067, nota: '3:2' },
   tarjeta: { w: 800, h: 533, nota: '3:2' },
   hero: { w: 2000, h: 1125, nota: '16:9' },
-  heroChica: { w: 800, h: 450, nota: '16:9' },
+  hero1200: { w: 1200, h: 675, nota: '16:9' },
+  hero4x5: { w: 900, h: 1125, nota: '4:5' },
+  hero4x5Chica: { w: 600, h: 750, nota: '4:5' },
   plano: { w: 1400, h: 1050, nota: '4:3' },
   og: { w: 1200, h: 630, nota: '1.91:1' },
 };
@@ -52,10 +54,12 @@ const ARCHIVOS_SUELTOS = [
   ['casa-piloto/03-terreno.jpg', 'galeria'],
   ['proceso/taller.jpg', 'galeria'],
   ['proceso/montaje.jpg', 'galeria'],
+  // La portada del hero, en sus cuatro versiones. Las tres derivadas las
+  // regenera scripts/optimizar-imagenes.mjs a partir de portada.jpg.
   ['hero/portada.jpg', 'hero'],
-  // Versión chica de la portada, la que descarga el celular. La regenera
-  // scripts/optimizar-imagenes.mjs a partir de portada.jpg.
-  ['hero/portada-800.jpg', 'heroChica'],
+  ['hero/portada-1200.jpg', 'hero1200'],
+  ['hero/portada-4x5.jpg', 'hero4x5'],
+  ['hero/portada-4x5-600.jpg', 'hero4x5Chica'],
   ['og/portada.jpg', 'og'],
 ];
 

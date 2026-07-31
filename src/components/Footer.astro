@@ -8,6 +8,7 @@
  *
  * Ni los modelos ni las comunas están escritos a mano: se iteran.
  */
+import Logo from './Logo.astro';
 import { SITE, DIRECCION, TELEFONO, HORARIOS, REDES, EMAIL, LEGAL, NAV } from '../config/site';
 import { obtenerModelos, rutaModelo } from '../lib/catalogo';
 import { COMUNAS } from '../data/comunas';
@@ -21,6 +22,18 @@ const modelos = await obtenerModelos();
   <div class="envoltorio">
     <div class="pie__grilla">
       <section class="pie__bloque pie__bloque--nap" aria-labelledby="pie-negocio">
+        {/* El logo va sobre una placa clara: el azul de la marca sobre el fondo
+            tinta del footer queda con un contraste ínfimo y el nombre en arco
+            se pierde. La placa conserva los colores originales de la marca en
+            vez de recolorearla.
+
+            ⚠️ Acá debería ir la versión completa (arco + eslogan). Va el ícono
+            porque el archivo original del logo quedó dañado; ver PENDIENTES.md.
+            Cuando se restaure, basta cambiar variante="completo". */}
+        <div class="pie__logo">
+          <Logo variante="icono" alto={52} decorativa />
+        </div>
+
         <h2 class="pie__titulo" id="pie-negocio">{SITE.nombre}</h2>
 
         <address class="pie__nap">
@@ -147,6 +160,14 @@ const modelos = await obtenerModelos();
     letter-spacing: 0.01em;
     margin-block-end: var(--e-4);
     color: var(--texto-invertido);
+  }
+
+  .pie__logo {
+    display: inline-block;
+    padding: var(--e-4) var(--e-5);
+    margin-block-end: var(--e-5);
+    background: var(--neblina);
+    border-radius: var(--radio);
   }
 
   .pie__nap {
