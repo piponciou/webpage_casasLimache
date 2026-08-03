@@ -117,24 +117,23 @@ npm run optimizar-imagenes
 Va a recorrer `public/images/`, dejar cada foto en su tamaño correcto y
 comprimirla, sin cambiarle el nombre. Te dice cuánto peso ahorró.
 
-### La portada del hero: reemplazas una, se generan siete
+### La portada del hero: reemplazas una, se generan cinco
 
 `hero/portada.jpg` es la foto más importante del sitio. A partir de ella el
-script genera siete archivos más:
+script genera cinco archivos más:
 
 | Archivo | Para qué |
 |---|---|
-| `portada.jpg` / `.webp` | Pantallas grandes, versión ancha (16:9) |
+| `portada.jpg` / `.webp` | Pantallas grandes |
 | `portada-1200.jpg` / `.webp` | Pantallas medianas |
-| `portada-4x5.jpg` / `.webp` | **Celular**, versión vertical (4:5) |
-| `portada-4x5-600.jpg` / `.webp` | Celular con pantalla menos densa |
+| `portada-800.jpg` / `.webp` | **Celular** |
 
-Son dos recortes distintos a propósito: una foto panorámica en un celular
-vertical deja la casa diminuta. Y en WebP además del JPEG porque pesa casi la
-mitad; el navegador elige solo cuál usar.
+Todas en **16:9**, la misma proporción que tiene la caja donde se muestran, para
+que la casa se vea completa y no se recorte por los lados en ningún tamaño. Y en
+WebP además del JPEG porque pesa casi la mitad; el navegador elige solo cuál usar.
 
-**Tú reemplazas SOLO `portada.jpg`** por tu foto (horizontal, cuanto más grande
-mejor, mínimo 2000 px de ancho). Después corre:
+**Tú reemplazas SOLO `portada.jpg`** por tu foto (horizontal, en 16:9, cuanto más
+grande mejor, mínimo 2000 px de ancho). Después corre:
 
 ```bash
 npm run optimizar-imagenes

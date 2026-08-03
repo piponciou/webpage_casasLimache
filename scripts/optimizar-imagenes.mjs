@@ -23,8 +23,7 @@ const MEDIDAS = {
   'plano.jpg': { w: 1400, h: 1050 },
   'hero/portada.jpg': { w: 2000, h: 1125 },
   'hero/portada-1200.jpg': { w: 1200, h: 675 },
-  'hero/portada-4x5.jpg': { w: 900, h: 1125 },
-  'hero/portada-4x5-600.jpg': { w: 600, h: 750 },
+  'hero/portada-800.jpg': { w: 800, h: 450 },
   'og/portada.jpg': { w: 1200, h: 630 },
   defecto: { w: 1600, h: 1067 },
 };
@@ -32,18 +31,16 @@ const MEDIDAS = {
 /**
  * Versiones que se generan solas a partir de la portada.
  *
- * El hero necesita dos recortes distintos: 16:9 para pantallas anchas y 4:5
- * para el celular, donde una foto panorámica deja la casa diminuta. El cliente
- * reemplaza UNA sola foto (hero/portada.jpg) y corre este script; los cuatro
- * archivos que usa el sitio salen de ahí.
+ * El hero usa un único recorte 16:9 en todos los tamaños, en tres anchos, para
+ * que un celular no descargue la versión de 2000px. El cliente reemplaza UNA
+ * sola foto (hero/portada.jpg) y corre este script.
  *
  * OJO: la imagen de og/portada.jpg NO se deriva acá, la genera
  * scripts/generar-logo.mjs porque lleva el logo encima.
  */
 const DERIVADAS = [
   { desde: 'hero/portada.jpg', hacia: 'hero/portada-1200.jpg', w: 1200, h: 675 },
-  { desde: 'hero/portada.jpg', hacia: 'hero/portada-4x5.jpg', w: 900, h: 1125 },
-  { desde: 'hero/portada.jpg', hacia: 'hero/portada-4x5-600.jpg', w: 600, h: 750 },
+  { desde: 'hero/portada.jpg', hacia: 'hero/portada-800.jpg', w: 800, h: 450 },
 ];
 
 /**
@@ -54,12 +51,7 @@ const DERIVADAS = [
  * El cliente sigue reemplazando UN archivo (hero/portada.jpg): los WebP los
  * genera este script.
  */
-const TAMBIEN_EN_WEBP = [
-  'hero/portada.jpg',
-  'hero/portada-1200.jpg',
-  'hero/portada-4x5.jpg',
-  'hero/portada-4x5-600.jpg',
-];
+const TAMBIEN_EN_WEBP = ['hero/portada.jpg', 'hero/portada-1200.jpg', 'hero/portada-800.jpg'];
 
 const CALIDAD = 78;
 
