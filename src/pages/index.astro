@@ -60,7 +60,9 @@ const jsonLd = [
     <div class="envoltorio">
       <div class="encabezado-seccion">
         <h2 id="titulo-kits">¿Qué incluye cada formato?</h2>
-        <p>Tres maneras de comprar la misma casa, según cuánto quieras hacer tú.</p>
+        <p>
+          <span class="pastilla">Tres maneras de comprar la misma casa, según cuánto quieras hacer tú.</span>
+        </p>
       </div>
 
       <ComparadorKits />
@@ -151,6 +153,20 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
+  /* Pastilla de resalte. Fondo del acento de la marca en baja opacidad sobre la
+     superficie clara, borde redondo completo y texto en tinta.
+     Se usa el acento al 14% y no más: el pino a plena saturación como fondo de
+     texto no llega a AA, y a este porcentaje el contraste queda en 10,9:1. */
+  .pastilla {
+    display: inline-block;
+    padding: var(--e-2) var(--e-4);
+    border-radius: var(--radio-control);
+    background: color-mix(in srgb, var(--pino-radiata) 14%, var(--neblina));
+    color: var(--texto);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
   .grilla-modelos {
     display: grid;
     gap: var(--e-5);

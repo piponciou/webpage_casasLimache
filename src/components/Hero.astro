@@ -32,15 +32,15 @@ const destacado = modelos.find((m) => m.data.slug === HERO.modelo) ?? modelos[0]
 const datos = destacado.data;
 const base = varianteBase(datos);
 
-/** Las especificaciones salen del JSON del modelo: si cambia el modelo del
- *  hero en site.ts, cambia esta lista sola. */
+/**
+ * Especificaciones de la ficha sobre la foto: solo dormitorios y baños.
+ * Living comedor y cocina se quitaron a propósito — están en la ficha del
+ * modelo, y sobre la foto competían con el nombre y llenaban de ruido el
+ * bloque. Los valores salen del JSON del modelo elegido en site.ts.
+ */
 const especificaciones = [
   { icono: 'cama' as const, texto: plural(base.dormitorios, 'dormitorio', 'dormitorios') },
   { icono: 'bano' as const, texto: plural(base.banos, 'baño', 'baños') },
-  ...(datos.caracteristicas.livingComedor
-    ? [{ icono: 'sofa' as const, texto: 'Living comedor' }]
-    : []),
-  ...(datos.caracteristicas.cocina ? [{ icono: 'cocina' as const, texto: 'Cocina' }] : []),
 ];
 ---
 
@@ -55,10 +55,7 @@ const especificaciones = [
 
       <h1 class="display hero__titular" id="hero-titular">Casas prefabricadas en Limache</h1>
 
-      <p class="hero__bajada">
-        Modelos de 36 a 120 m² con entrega inmediata, y una casa piloto que puedes recorrer entera
-        antes de decidir.
-      </p>
+      <p class="hero__bajada">Modelos de 36 a 120 m² con entrega inmediata.</p>
 
       {/* Reemplazan a las tarjetas de rango: mismos destinos, sin ocupar altura. */}
       <p class="hero__rangos">
@@ -75,32 +72,23 @@ const especificaciones = [
     </div>
 
     <figure class="hero__media">
+      {/* Un solo recorte 16:9 en todos los tamaños. La caja tiene esa misma
+          proporción, así que `cover` no llega a recortar nada: la casa se ve
+          entera tanto en escritorio como en celular. El navegador elige el
+          ancho por srcset y el formato por type. */}
       <picture>
-        {/* Dos recortes distintos: en un celular vertical una foto panorámica
-            deja la casa diminuta y la ficha no cabe. */}
-        <source
-          media="(min-width: 700px)"
-          type="image/webp"
-          srcset="/images/hero/portada-1200.webp 1200w, /images/hero/portada.webp 2000w"
-          sizes="(min-width: 980px) 45vw, 100vw"
-        />
-        <source
-          media="(min-width: 700px)"
-          srcset="/images/hero/portada-1200.jpg 1200w, /images/hero/portada.jpg 2000w"
-          sizes="(min-width: 980px) 45vw, 100vw"
-        />
         <source
           type="image/webp"
-          srcset="/images/hero/portada-4x5-600.webp 600w, /images/hero/portada-4x5.webp 900w"
-          sizes="100vw"
+          srcset="/images/hero/portada-800.webp 800w, /images/hero/portada-1200.webp 1200w, /images/hero/portada.webp 2000w"
+          sizes="(min-width: 980px) 60vw, 100vw"
         />
         <img
           class="hero__foto"
-          src="/images/hero/portada-4x5.jpg"
-          srcset="/images/hero/portada-4x5-600.jpg 600w, /images/hero/portada-4x5.jpg 900w"
-          sizes="100vw"
+          src="/images/hero/portada-1200.jpg"
+          srcset="/images/hero/portada-800.jpg 800w, /images/hero/portada-1200.jpg 1200w, /images/hero/portada.jpg 2000w"
+          sizes="(min-width: 980px) 60vw, 100vw"
           alt={`Modelo ${datos.nombre} de Casas Limache montado en un terreno de la Región de Valparaíso`}
-          width="900"
+          width="2000"
           height="1125"
           fetchpriority="high"
           decoding="async"
@@ -220,53 +208,60 @@ const especificaciones = [
     color: var(--linea);
   }
 
-  /* La foto sangra hasta el borde derecho de la ventana. Sin radio, sin marco:
-     el corte es el gesto. */
+  /* En móvil la foto ocupa el ancho completo de la pantalla: sangra por los dos
+     lados, incluido el margen de cota de la izquierda. Así la casa se ve lo más
+     grande posible y el bloque de texto sobre ella gana altura. */
   .hero__media {
     position: relative;
+    margin-inline-start: calc((var(--borde-pagina) + var(--margen-cota)) * -1);
     margin-inline-end: calc(var(--borde-pagina) * -1);
     overflow: hidden;
   }
 
-  /* <picture> es inline por defecto y corta la cadena de altura: sin esto, el
-     height:100% de la foto se mide contra una caja de alto automático y la
-     imagen no llena su columna. */
+  /* <picture> es inline por defecto y no propaga el tamaño a la imagen. */
   .hero__media picture {
     display: block;
-    height: 100%;
   }
 
+  /* 16:9 en TODOS los tamaños, igual que el archivo. Al coincidir la proporción
+     de la caja con la de la foto, `cover` llena el marco sin recortar: la casa
+     se ve completa y no quedan franjas vacías como dejaría `contain`. */
   .hero__foto {
+    display: block;
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
   }
 
-  /* Scrim: sostiene ~82% de negro a lo largo de toda la banda de texto y recién
+  /* Scrim: sostiene el negro a lo largo de toda la banda de texto y recién
      después se suelta. Un degradado que llega a 65% solo en el borde inferior
-     deja el nombre del modelo en 1,9:1 sobre una foto clara. */
+     deja el nombre del modelo en 1,9:1 sobre una foto clara.
+     La curva llega hasta el 52% de la altura porque en móvil, con la foto en
+     16:9, el bloque de texto ocupa la mitad del alto disponible. */
   .hero__scrim {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       to top,
-      rgba(10, 12, 11, 0.88) 0%,
-      rgba(10, 12, 11, 0.82) 30%,
-      rgba(10, 12, 11, 0.62) 44%,
-      rgba(10, 12, 11, 0.2) 60%,
-      rgba(10, 12, 11, 0) 78%
+      rgba(10, 12, 11, 0.92) 0%,
+      rgba(10, 12, 11, 0.88) 40%,
+      rgba(10, 12, 11, 0.74) 62%,
+      rgba(10, 12, 11, 0.36) 78%,
+      rgba(10, 12, 11, 0) 96%
     );
     pointer-events: none;
   }
 
+  /* En móvil la foto 16:9 mide ~211px de alto en un celular de 375px, así que
+     el bloque va apretado: padding corto y sin espacios muertos entre líneas. */
   .hero__ficha {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--e-2);
-    padding: var(--e-5);
+    gap: var(--e-1);
+    padding: var(--e-4);
     color: var(--neblina);
   }
 
@@ -280,7 +275,7 @@ const especificaciones = [
 
   .hero__modelo {
     font-family: var(--fuente-display);
-    font-size: clamp(2rem, 1.2rem + 3.4vw, 3rem);
+    font-size: clamp(1.75rem, 1.1rem + 2.8vw, 3rem);
     font-weight: 700;
     line-height: 1;
     letter-spacing: var(--tracking-display);
@@ -308,10 +303,11 @@ const especificaciones = [
     border-radius: 2px;
   }
 
+  /* Con solo dos especificaciones caben en una fila incluso a 320px. */
   .hero__specs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--e-2) var(--e-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-1) var(--e-4);
     margin-block-start: var(--e-2);
     font-size: var(--t-chico);
   }
@@ -398,17 +394,10 @@ const especificaciones = [
   }
 
   @media (min-width: 700px) {
-    .hero__foto {
-      aspect-ratio: 3 / 2;
-    }
-
     .hero__ficha {
       padding: var(--e-6);
     }
 
-    /* Flex con envoltura en vez de cuatro columnas rígidas: entre 980 y ~1100px
-       la columna de la foto es angosta y las cuatro especificaciones en una
-       sola fila se salían de la caja. Así se reacomodan solas. */
     .hero__specs {
       display: flex;
       flex-wrap: wrap;
@@ -435,27 +424,20 @@ const especificaciones = [
         )
       );
       padding-inline-end: 0;
-      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+      /* 40% para el texto y 60% para la foto: la imagen es la protagonista. */
+      grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
       gap: var(--e-7);
-      align-items: stretch;
+      align-items: center;
     }
 
     .hero__texto {
-      align-self: center;
       padding-block: var(--e-4);
     }
 
-    /* La foto llega hasta el borde de la ventana y define el alto del bloque.
-       Al sacar las tarjetas de rango, la columna de texto bajó de altura: por
-       eso la imagen puede crecer en vez de achicarse. */
+    /* En escritorio vuelve a su columna y llega al borde derecho de la ventana. */
     .hero__media {
+      margin-inline-start: 0;
       margin-inline-end: 0;
-    }
-
-    .hero__foto {
-      aspect-ratio: auto;
-      height: 100%;
-      min-height: 540px;
     }
 
     .hero__titular {
