@@ -7,6 +7,7 @@ import ModeloLayout from '../../layouts/ModeloLayout.astro';
 import Galeria from '../../components/Galeria.astro';
 import CotizadorWhatsApp from '../../components/CotizadorWhatsApp.astro';
 import FichaTecnica from '../../components/FichaTecnica.astro';
+import ComparadorKits from '../../components/ComparadorKits.astro';
 import ModeloCard from '../../components/ModeloCard.astro';
 import BotonWhatsApp from '../../components/BotonWhatsApp.astro';
 import Cota from '../../components/Cota.astro';
@@ -75,6 +76,28 @@ const textoRango =
 
       <FichaTecnica datos={datos} />
 
+      {/*
+        Comparador de formatos, migrado desde el home. Ocupa el lugar exacto que
+        tenía "Qué incluye y qué no" y responde la misma pregunta, pero por
+        formato de compra en vez de por modelo.
+        El id es el destino de los dos enlaces de la UI de compra: el del
+        cotizador sticky y el del cierre de la página.
+        Va acá arriba a propósito: tiene que renderizar antes que el apartado de
+        cotización del cierre, para que ese salto sea siempre hacia arriba.
+      */}
+      <section class="seccion-formatos" id="formatos-incluidos" aria-labelledby="titulo-kits">
+        <div class="encabezado-seccion">
+          <h2 id="titulo-kits">¿Qué incluye cada formato?</h2>
+          <p>
+            <span class="pastilla">
+              Tres maneras de comprar la misma casa, según cuánto quieras hacer tú.
+            </span>
+          </p>
+        </div>
+
+        <ComparadorKits />
+      </section>
+
       {
         datos.plano && (
           <section class="plano" aria-labelledby="titulo-plano">
@@ -117,6 +140,16 @@ const textoRango =
           Visitar la casa piloto
         </a>
       </div>
+
+      {/* Salto hacia arriba, al comparador de formatos. Va como enlace de
+          texto y no como tercer botón: dos botones ya compiten en este bloque
+          y un tercero del mismo peso convertiría el cierre en un menú. */}
+      <p class="cierre__volver">
+        <a href="#formatos-incluidos">
+          <Icono nombre="flecha" tamano={18} class="cierre__flecha" />
+          Ver antes qué incluye cada formato
+        </a>
+      </p>
     </div>
   </section>
 
@@ -198,12 +231,25 @@ const textoRango =
     margin-block-end: var(--e-5);
   }
 
+  /* Pastilla de resalte, migrada junto con la sección de formatos para que se
+     vea igual que en el home: madera diluida sobre blanco, borde redondo
+     completo y texto en carbón (12,4:1). */
+  .pastilla {
+    display: inline-block;
+    padding: var(--e-2) var(--e-4);
+    border-radius: var(--radio-control);
+    background: var(--superficie-calida);
+    color: var(--texto);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
   .plano__imagen {
     width: 100%;
     max-width: 900px;
     aspect-ratio: 4 / 3;
     object-fit: contain;
-    background: var(--tinta-10);
+    background: var(--carbon-10);
     border-radius: var(--radio);
   }
 
@@ -227,6 +273,29 @@ const textoRango =
     flex-wrap: wrap;
     gap: var(--e-3);
     align-content: center;
+  }
+
+  /* El enlace vive sobre carbón: el azul de enlace por defecto queda en 2,9:1
+     ahí, así que toma el texto invertido suave (8,2:1). */
+  .cierre__volver a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e-2);
+    min-height: 44px;
+    font-size: var(--t-chico);
+    color: var(--texto-invertido-suave);
+    text-decoration: none;
+  }
+
+  .cierre__volver a:hover {
+    color: var(--texto-invertido);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  /* La flecha del set apunta a la derecha; acá el salto es hacia arriba. */
+  .cierre__volver :global(.cierre__flecha) {
+    rotate: -90deg;
   }
 
   .grilla-relacionados {

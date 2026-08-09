@@ -51,7 +51,7 @@ img {
   height: auto;
   /* Mientras la foto real no carga, el hueco tiene el color del sitio en vez
      de blanco: no hay flash. */
-  background-color: var(--tinta-10);
+  background-color: var(--carbon-10);
 }
 
 input,
@@ -167,9 +167,11 @@ a:hover {
   border-radius: 2px;
 }
 
-/* Sobre fondo tinta el azul del lápiz no se ve: el foco pasa a pino. */
-.invertido :focus-visible {
-  outline-color: var(--acento);
+/* Sobre carbón la arcilla queda en 2.9:1 y desaparece: el foco pasa a madera,
+   que sobre el mismo fondo da 6.9:1. */
+.invertido :focus-visible,
+.seccion--invertida :focus-visible {
+  outline-color: var(--madera);
 }
 
 .saltar-al-contenido {
@@ -178,8 +180,8 @@ a:hover {
   top: var(--e-4);
   z-index: 999;
   padding: var(--e-3) var(--e-4);
-  background: var(--tinta-fieltro);
-  color: var(--zinc-marga);
+  background: var(--carbon);
+  color: var(--lino);
   border-radius: var(--radio);
   transform: translateY(-200%);
   transition: transform var(--dur-media) var(--ease-salida);
@@ -238,14 +240,16 @@ a:hover {
   color: var(--texto-invertido);
 }
 
-/* Encabezado de sección: el título va solo. Sin etiqueta encima. */
+/* Encabezado de sección: el título va solo. Sin etiqueta encima.
+   En pantalla ancha el título y su bajada se separan a los extremos y dejan el
+   centro vacío: ese hueco es el que anuncia que empieza otra cosa. */
 .encabezado-seccion {
   display: flex;
   flex-wrap: wrap;
   align-items: end;
   justify-content: space-between;
-  gap: var(--e-4);
-  margin-block-end: var(--e-6);
+  gap: var(--e-4) var(--e-8);
+  margin-block-end: var(--encabezado-y);
 }
 
 .encabezado-seccion p {
@@ -317,7 +321,7 @@ a:hover {
 
 .invertido .cota,
 .seccion--invertida .cota {
-  --cota-color: var(--lapiz-claro);
+  --cota-color: var(--arcilla-clara);
 }
 
 /* Entrada: la cota se dibuja una vez, desde los extremos hacia el centro. */
@@ -376,30 +380,35 @@ a:hover {
   flex: 0 0 auto;
 }
 
-/* Principal: relleno de pino con texto tinta (5.3:1).
-   Al pasar el mouse se invierte el material en vez de oscurecerse, porque un
-   pino más oscuro bajaría el contraste por debajo de AA. */
+/* Principal: relleno de arcilla con texto nieve (5.5:1).
+   Es el único elemento saturado de toda la página. En un fondo de lino y
+   blanco, un solo bloque de tierra basta para que el ojo lo encuentre sin
+   agrandarlo ni ponerle sombra. Al pasar el mouse se va a carbón, no a una
+   arcilla más oscura: mantiene el texto blanco por sobre AA. */
 .boton--principal {
   background: var(--acento);
-  color: var(--tinta-fieltro);
+  color: var(--nieve);
   border: var(--grosor-cota) solid var(--acento);
 }
 
 .boton--principal:hover {
-  background: var(--tinta-fieltro);
-  color: var(--acento);
-  border-color: var(--tinta-fieltro);
+  background: var(--carbon);
+  color: var(--nieve);
+  border-color: var(--carbon);
 }
 
+/* Secundario: el borde bajó de carbón pleno a una línea de 40%. Dos botones
+   con el mismo peso de trazo competían, y en esta dirección la jerarquía la
+   marca el relleno, no el grosor. */
 .boton--secundario {
   background: transparent;
   color: var(--texto);
-  border: var(--grosor-cota) solid var(--texto);
+  border: var(--grosor-cota) solid color-mix(in srgb, var(--carbon) 40%, transparent);
 }
 
 .boton--secundario:hover {
-  background: var(--tinta-fieltro);
-  color: var(--zinc-marga);
+  background: var(--carbon);
+  color: var(--lino);
 }
 
 .invertido .boton--secundario,
@@ -410,9 +419,9 @@ a:hover {
 
 .invertido .boton--secundario:hover,
 .seccion--invertida .boton--secundario:hover {
-  background: var(--zinc-marga);
-  color: var(--tinta-fieltro);
-  border-color: var(--zinc-marga);
+  background: var(--lino);
+  color: var(--carbon);
+  border-color: var(--lino);
 }
 
 .boton--grande {
@@ -438,10 +447,14 @@ a:hover {
    La elevación se declara una sola vez: o borde, o sombra. Nunca las dos.
    ============================================================================= */
 
+/* La tarjeta es blanco puro sobre lino. Esa diferencia de dos pasos de valor
+   ya la separa del fondo, así que no lleva sombra en reposo: la sombra aparece
+   solo al pasar el mouse, como confirmación de que el elemento es tocable.
+   Un tapiz de tarjetas con sombra permanente sobre fondo claro es exactamente
+   lo que hace que un catálogo se vea sucio. */
 .tarjeta {
   background: var(--superficie);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra-baja);
+  border-radius: var(--radio-bento);
   transition:
     box-shadow var(--dur-media) var(--ease-salida),
     transform var(--dur-media) var(--ease-salida);
@@ -449,7 +462,7 @@ a:hover {
 
 .tarjeta--enlace:hover {
   box-shadow: var(--sombra-media);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 @media (prefers-reduced-motion: reduce) {

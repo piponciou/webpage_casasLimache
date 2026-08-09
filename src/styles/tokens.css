@@ -1,8 +1,10 @@
 /* =============================================================================
    TOKENS — Casas Limache
-   Dirección de diseño: "Cota".
-   La casa se vende por metro cuadrado, así que la interfaz mide: líneas de cota,
-   acotaciones y numerales monoespaciados anotan datos reales del catálogo.
+   Dirección de diseño: "Minimalismo cálido".
+   Minimalismo arquitectónico en la estructura —aire, retícula, una sola familia
+   de formas— y paleta escandinava en el color: blancos, grises claros y toques
+   de madera y tierra. La página es el fondo blanco; las fotos de las casas son
+   lo único que grita.
    Ningún token decorativo: si un valor no se usa, no está.
    ============================================================================= */
 
@@ -57,46 +59,58 @@
 
 :root {
   /* ---------- Color -------------------------------------------------------
-     Cinco tonos, todos sacados de materiales que existen en la obra.
-     Contraste verificado:
-       tinta sobre zinc   → 11.9:1   (texto normal, AA y AAA)
-       tinta sobre neblina→ 13.6:1
-       lapiz sobre zinc   →  6.4:1   (enlaces y foco, AA)
-       pino sobre tinta   →  5.3:1   (relleno de botón con texto tinta)
-     REGLA: el pino NUNCA se usa como color de texto sobre fondo claro
-     (daría 2.4:1). Solo como relleno, o como texto sobre tinta.            */
+     Cinco tonos. Ninguno es frío: hasta el "gris" tiene tierra adentro. Es lo
+     que separa un interior escandinavo de un laboratorio.
 
-  --tinta-fieltro: #1c1f1d; /* papel fieltro entre panel y tabiquería */
-  --zinc-marga: #d7dcda; /* zinc galvanizado con la humedad de la mañana */
-  --neblina: #f1f3f1; /* la bruma sobre el cerro */
-  --pino-radiata: #c08a3e; /* pino sin pintar bajo sol */
-  --lapiz-carpintero: #2e4e5c; /* el lápiz plano azul del carpintero */
+     Contraste verificado (fórmula WCAG 2.1, sRGB):
+       carbón sobre lino   → 13.6:1   (texto normal, AA y AAA)
+       carbón sobre nieve  → 15.1:1
+       arcilla sobre lino  →  4.9:1   (enlaces y foco, AA)
+       nieve sobre arcilla →  5.5:1   (relleno del botón de cotizar)
+       carbón sobre roble  →  6.8:1   (relleno de madera con texto carbón)
+       roble sobre carbón  →  6.9:1   (madera como texto en bloques oscuros)
+
+     REGLA: el roble NUNCA se usa como color de texto sobre fondo claro
+     (daría 2.1:1). Solo como relleno, superficie o texto sobre carbón.     */
+
+  --carbon: #23201c; /* casi negro, pero con marrón: la sombra de una viga */
+  --lino: #f6f3ee; /* tela de lino sin teñir — el fondo de toda la página */
+  --nieve: #ffffff; /* blanco puro, reservado a las superficies que flotan */
+  --roble: #c8a27c; /* roble claro barnizado: la madera, siempre en toques */
+  --arcilla: #a8503a; /* greda cocida: el color con el que se pide una casa */
 
   /* Derivados. Solo mezclas de los cinco de arriba, ningún color nuevo. */
   /* Los dos niveles de texto secundario están calculados para pasar AA sobre
-     zinc y sobre neblina: 88% → 8.0:1 y 70% → 5.1:1. Un gris más claro se veía
+     lino y sobre nieve: 88% → 10.4:1 y 70% → 5.7:1. Un gris más claro se veía
      mejor en la maqueta y era ilegible en un celular al sol. */
-  --tinta-88: color-mix(in srgb, var(--tinta-fieltro) 88%, var(--zinc-marga));
-  --tinta-70: color-mix(in srgb, var(--tinta-fieltro) 70%, var(--zinc-marga));
-  --tinta-18: color-mix(in srgb, var(--tinta-fieltro) 18%, var(--zinc-marga));
-  --tinta-10: color-mix(in srgb, var(--tinta-fieltro) 10%, var(--zinc-marga));
-  --pino-oscuro: color-mix(in srgb, var(--pino-radiata) 82%, var(--tinta-fieltro));
-  --lapiz-claro: color-mix(in srgb, var(--lapiz-carpintero) 55%, var(--neblina));
+  --carbon-88: color-mix(in srgb, var(--carbon) 88%, var(--lino));
+  --carbon-70: color-mix(in srgb, var(--carbon) 70%, var(--lino));
+  --carbon-18: color-mix(in srgb, var(--carbon) 18%, var(--lino));
+  --carbon-10: color-mix(in srgb, var(--carbon) 10%, var(--lino));
+  /* La arcilla plena sobre carbón da 2.9:1: en bloque oscuro se aclara. */
+  --arcilla-clara: color-mix(in srgb, var(--arcilla) 55%, var(--nieve));
+
+  /* La superficie cálida. Es madera diluida, no un color nuevo: sirve para que
+     una celda del bento pese distinto sin romper la paleta. Al 18% el carbón
+     encima queda en 12,4:1; más saturada, la tipografía empieza a sufrir. */
+  --arena: color-mix(in srgb, var(--roble) 18%, var(--nieve));
 
   /* Roles */
-  --fondo: var(--zinc-marga);
-  --superficie: var(--neblina);
-  --superficie-oscura: var(--tinta-fieltro);
-  --texto: var(--tinta-fieltro);
-  --texto-suave: var(--tinta-88);
-  --texto-tenue: var(--tinta-70);
-  --texto-invertido: var(--zinc-marga);
-  --texto-invertido-suave: color-mix(in srgb, var(--zinc-marga) 72%, var(--tinta-fieltro));
-  --linea: var(--tinta-18);
-  --linea-tenue: var(--tinta-10);
-  --acento: var(--pino-radiata);
-  --cota: var(--lapiz-carpintero);
-  --foco: var(--lapiz-carpintero);
+  --fondo: var(--lino);
+  --superficie: var(--nieve);
+  --superficie-calida: var(--arena);
+  --superficie-oscura: var(--carbon);
+  --texto: var(--carbon);
+  --texto-suave: var(--carbon-88);
+  --texto-tenue: var(--carbon-70);
+  --texto-invertido: var(--lino);
+  --texto-invertido-suave: color-mix(in srgb, var(--lino) 72%, var(--carbon));
+  --linea: var(--carbon-18);
+  --linea-tenue: var(--carbon-10);
+  --acento: var(--arcilla); /* el color de la acción: cotizar */
+  --madera: var(--roble); /* el color del calor: superficies y detalles */
+  --cota: var(--arcilla);
+  --foco: var(--arcilla);
 
   /* ---------- Tipografía --------------------------------------------------
      Archivo (variable) solo en titulares y numerales grandes.
@@ -142,8 +156,14 @@
   --e-9: 6rem;
   --e-10: 8rem;
 
-  /* Aire vertical entre secciones, fluido. */
-  --seccion-y: clamp(3.5rem, 2rem + 6vw, 7rem);
+  /* Aire vertical entre secciones, fluido.
+     El techo subió de 7rem a 10rem: el vacío es el material principal de esta
+     dirección, y con secciones apretadas las fotos de las casas se leían como
+     una lista en vez de como una obra. */
+  --seccion-y: clamp(4.5rem, 2.5rem + 7.5vw, 10rem);
+
+  /* Aire entre el titular de una sección y su contenido. */
+  --encabezado-y: clamp(2rem, 1.2rem + 2.4vw, 3.5rem);
 
   /* ---------- Retícula ----------------------------------------------------
      El margen de cota es el carril izquierdo reservado a las acotaciones.
@@ -155,15 +175,20 @@
   --canal: clamp(1rem, 0.5rem + 2vw, 2rem); /* separación entre columnas */
 
   /* ---------- Forma -------------------------------------------------------
-     Radio corto: el mundo es de plano técnico, no de app. La elevación se
+     El bento pide una esquina blanda: con 4px las celdas parecían recortes de
+     papel y con 24px, widgets de teléfono. 14px es el punto donde una tarjeta
+     grande se lee como mueble y una chica no se deforma. La elevación se
      declara UNA vez por elemento: o borde, o sombra. Nunca las dos.         */
-  --radio: 4px;
-  --radio-chico: 3px;
+  --radio-bento: 14px; /* celdas del bento y bloques grandes */
+  --radio: 10px; /* tarjetas y botones */
+  --radio-chico: 6px;
   --radio-control: 999px; /* solo controles chicos tipo chip */
 
-  --sombra-baja: 0 1px 2px rgb(28 31 29 / 0.05), 0 2px 8px rgb(28 31 29 / 0.05);
-  --sombra-media: 0 2px 4px rgb(28 31 29 / 0.06), 0 8px 24px rgb(28 31 29 / 0.09);
-  --sombra-alta: 0 4px 8px rgb(28 31 29 / 0.08), 0 18px 44px rgb(28 31 29 / 0.14);
+  /* Sombras cálidas: el gris del carbón, nunca negro puro. Sobre lino un
+     negro neutro deja un halo azulado que rompe la temperatura de la paleta. */
+  --sombra-baja: 0 1px 2px rgb(35 32 28 / 0.04), 0 2px 10px rgb(35 32 28 / 0.04);
+  --sombra-media: 0 2px 4px rgb(35 32 28 / 0.05), 0 10px 28px rgb(35 32 28 / 0.08);
+  --sombra-alta: 0 4px 8px rgb(35 32 28 / 0.07), 0 20px 48px rgb(35 32 28 / 0.12);
 
   --grosor-cota: 1.5px;
 

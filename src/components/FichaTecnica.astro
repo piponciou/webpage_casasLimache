@@ -1,13 +1,12 @@
 ---
 /**
- * Especificaciones técnicas y tabla de variantes.
+ * Especificaciones técnicas del modelo.
  *
- * La tabla de variantes no está oculta a propósito: es contenido útil y además
- * garantiza que cada combinación de metraje y formato exista en el HTML, con su
- * precio, para que Google la indexe sin ejecutar JavaScript.
+ * Antes este componente traía además la tabla de metrajes y valores y el
+ * bloque de "qué incluye y qué no". Los dos se quitaron de la ficha: el
+ * detalle de qué entra en cada compra ahora lo responde el comparador de
+ * formatos que vive en la plantilla del modelo (#formatos-incluidos).
  */
-import { formatearPrecio } from '../lib/formato';
-import { kitsDe, precioDeVariante } from '../lib/catalogo';
 import type { DatosModelo } from '../lib/catalogo';
 
 interface Props {
@@ -15,7 +14,6 @@ interface Props {
 }
 
 const { datos } = Astro.props;
-const kits = kitsDe(datos);
 
 const FILAS: { etiqueta: string; valor: string }[] = [
   { etiqueta: 'Estructura', valor: datos.especificaciones.estructura },
@@ -49,61 +47,6 @@ const FILAS: { etiqueta: string; valor: string }[] = [
     </p>
   </section>
 
-  <section aria-labelledby="titulo-variantes">
-    <h2 id="titulo-variantes">Metrajes y valores</h2>
-
-    <div class="tabla-envoltura">
-      <table class="tabla">
-        <caption class="visualmente-oculto">
-          Metrajes disponibles del modelo {datos.nombre} y su valor por formato de compra
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">Superficie</th>
-            <th scope="col">Dorm.</th>
-            <th scope="col">Baños</th>
-            {kits.map((kit) => <th scope="col">{kit.nombre}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {
-            datos.variantes.map((variante) => (
-              <tr>
-                <th scope="row" class="mono">
-                  {variante.m2} m²
-                </th>
-                <td class="mono">{variante.dormitorios}</td>
-                <td class="mono">{variante.banos}</td>
-                {kits.map((kit) => (
-                  <td class="mono">{formatearPrecio(precioDeVariante(variante, kit.id))}</td>
-                ))}
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section aria-labelledby="titulo-incluye" id="formatos-modelo">
-    <h2 id="titulo-incluye">Qué incluye y qué no</h2>
-
-    <div class="incluye">
-      <div>
-        <h3 class="incluye__titulo">Incluye</h3>
-        <ul class="sin-lista incluye__lista">
-          {datos.incluye.map((item) => <li>{item}</li>)}
-        </ul>
-      </div>
-
-      <div>
-        <h3 class="incluye__titulo">No incluye</h3>
-        <ul class="sin-lista incluye__lista incluye__lista--no">
-          {datos.noIncluye.map((item) => <li>{item}</li>)}
-        </ul>
-      </div>
-    </div>
-  </section>
 </div>
 
 <style>
@@ -156,97 +99,11 @@ const FILAS: { etiqueta: string; valor: string }[] = [
     max-width: 58ch;
   }
 
-  /* La tabla puede desbordar en móvil: se desplaza dentro de su caja, nunca
-     empuja el ancho de la página. */
-  .tabla-envoltura {
-    max-width: 100%;
-    overflow-x: auto;
-    scrollbar-width: thin;
-  }
-
-  .tabla {
-    width: 100%;
-    min-width: 480px;
-    border-collapse: collapse;
-    font-size: var(--t-chico);
-  }
-
-  .tabla th,
-  .tabla td {
-    padding: var(--e-3) var(--e-4);
-    text-align: left;
-    border-bottom: var(--grosor-cota) solid var(--linea);
-  }
-
-  .tabla thead th {
-    font-family: var(--fuente-mono);
-    font-size: var(--t-micro);
-    font-weight: 500;
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-    color: var(--texto-tenue);
-    white-space: nowrap;
-  }
-
-  .tabla tbody th {
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .tabla tbody tr:hover {
-    background: var(--tinta-10);
-  }
-
-  .incluye {
-    display: grid;
-    gap: var(--e-6);
-  }
-
-  .incluye__titulo {
-    font-size: var(--t-cuerpo-grande);
-    margin-block-end: var(--e-4);
-  }
-
-  .incluye__lista {
-    display: grid;
-    gap: var(--e-3);
-    font-size: var(--t-chico);
-    color: var(--texto-suave);
-  }
-
-  .incluye__lista li {
-    display: grid;
-    grid-template-columns: 14px 1fr;
-    gap: var(--e-3);
-    align-items: start;
-  }
-
-  .incluye__lista li::before {
-    content: '';
-    margin-block-start: 0.7em;
-    height: var(--grosor-cota);
-    background: var(--cota);
-    opacity: 0.55;
-  }
-
-  /* Lo que no incluye se marca con una cruz, no con un color de alerta: es
-     información, no un error. */
-  .incluye__lista--no li::before {
-    background: var(--texto-tenue);
-    opacity: 0.9;
-    rotate: -45deg;
-  }
-
   @media (min-width: 640px) {
     .especificaciones__fila {
       grid-template-columns: 20ch 1fr;
       gap: var(--e-4);
       align-items: baseline;
-    }
-
-    .incluye {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--e-7);
     }
   }
 </style>
