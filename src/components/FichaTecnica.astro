@@ -1,12 +1,19 @@
 ---
 /**
- * Especificaciones técnicas del modelo.
+ * Especificaciones del modelo: TODO lo que decide una compra, en una sola tabla.
  *
- * Antes este componente traía además la tabla de metrajes y valores y el
- * bloque de "qué incluye y qué no". Los dos se quitaron de la ficha: el
- * detalle de qué entra en cada compra ahora lo responde el comparador de
- * formatos que vive en la plantilla del modelo (#formatos-incluidos).
+ * Este componente absorbió el trabajo que antes hacía la sección "Sobre el
+ * modelo X". Esa sección eran tres párrafos de prosa que nadie leía; los datos
+ * que la gente sí busca —cuántos metros, cuántos dormitorios, qué ambientes
+ * trae, de qué está hecha— estaban repartidos entre el texto y la ficha. Ahora
+ * están todos acá y se leen de un vistazo.
+ *
+ * El orden no es casual: arriba lo que se compara entre modelos (metraje,
+ * dormitorios, baños, ambientes) y abajo lo constructivo, que se consulta
+ * después y solo si la casa ya gustó.
  */
+import { formatearM2 } from '../lib/formato';
+import { metrajes, dormitoriosDisponibles } from '../lib/catalogo';
 import type { DatosModelo } from '../lib/catalogo';
 
 interface Props {
@@ -15,48 +22,101 @@ interface Props {
 
 const { datos } = Astro.props;
 
-const FILAS: { etiqueta: string; valor: string }[] = [
+/**
+ * "63, 72 y 84" — enumera en castellano, sin coma antes del nexo.
+ *
+ * El nexo cambia según lo que se enumera. Los metrajes son una oferta ("viene
+ * en 63, 72 y 84 m²") y llevan "y". Los dormitorios o los baños son excluyentes
+ * —una casa concreta tiene uno u otro, nunca los dos— y llevan "o": "1 y 2
+ * baños" se lee como si trajera tres.
+ */
+function enumerar(valores: (string | number)[], nexo: 'y' | 'o' = 'y'): string {
+  if (valores.length === 0) return '';
+  if (valores.length === 1) return String(valores[0]);
+  return `${valores.slice(0, -1).join(', ')} ${nexo} ${valores[valores.length - 1]}`;
+}
+
+/** Valores únicos de una propiedad que puede cambiar entre variantes. */
+function unicos(clave: 'banos' | 'aguas'): number[] {
+  return [...new Set(datos.variantes.map((v) => v[clave]))].sort((a, b) => a - b);
+}
+
+const listaM2 = metrajes(datos);
+const dormitorios = dormitoriosDisponibles(datos);
+const banos = unicos('banos');
+const aguas = unicos('aguas');
+
+/** Solo los ambientes que el modelo trae. Los que no, no se listan. */
+const AMBIENTES: { clave: keyof typeof datos.caracteristicas; etiqueta: string }[] = [
+  { clave: 'cocina', etiqueta: 'Cocina' },
+  { clave: 'livingComedor', etiqueta: 'Living comedor' },
+  { clave: 'logia', etiqueta: 'Logia' },
+  { clave: 'terraza', etiqueta: 'Terraza' },
+];
+const ambientes = AMBIENTES.filter((a) => datos.caracteristicas[a.clave]).map((a) => a.etiqueta);
+
+/** Lo que se compara entre modelos. Las filas vacías no se imprimen. */
+const FILAS_RAPIDAS = [
+  {
+    etiqueta: 'Metrajes',
+    valor:
+      listaM2.length === 1
+        ? formatearM2(listaM2[0]!)
+        : `${enumerar(listaM2)} m²`,
+    dato: true,
+  },
+  { etiqueta: 'Dormitorios', valor: enumerar(dormitorios, 'o'), dato: true },
+  { etiqueta: 'Baños', valor: enumerar(banos, 'o'), dato: true },
+  { etiqueta: 'Ambientes', valor: ambientes.join(' · '), dato: false },
+].filter((fila) => fila.valor !== '');
+
+/** Lo constructivo. Sale tal cual del JSON del modelo. */
+const FILAS_TECNICAS = [
   { etiqueta: 'Estructura', valor: datos.especificaciones.estructura },
   { etiqueta: 'Revestimiento exterior', valor: datos.especificaciones.revestimientoExterior },
   { etiqueta: 'Revestimiento interior', valor: datos.especificaciones.revestimientoInterior },
   { etiqueta: 'Techumbre', valor: datos.especificaciones.techumbre },
+  // Las aguas salen de las variantes, no de `especificaciones`, pero se leen
+  // como dato constructivo: van con la techumbre, no entre los de decisión.
+  { etiqueta: 'Aguas de techumbre', valor: enumerar(aguas, 'o') },
   { etiqueta: 'Ventanas', valor: datos.especificaciones.ventanas },
   { etiqueta: 'Aislación', valor: datos.especificaciones.aislacion },
   { etiqueta: 'Altura interior', valor: datos.especificaciones.altura },
 ];
 ---
 
-<div class="ficha">
-  <section aria-labelledby="titulo-especificaciones">
-    <h2 id="titulo-especificaciones">Especificaciones</h2>
+<section class="ficha" aria-labelledby="titulo-especificaciones">
+  <h2 id="titulo-especificaciones">Especificaciones del modelo {datos.nombre}</h2>
 
-    <dl class="especificaciones">
-      {
-        FILAS.map((fila) => (
-          <div class="especificaciones__fila">
-            <dt>{fila.etiqueta}</dt>
-            <dd>{fila.valor}</dd>
-          </div>
-        ))
-      }
-    </dl>
+  {/* Una sola lista de definiciones para los dos grupos: para un lector de
+      pantalla y para un rastreador es una tabla continua de dato/valor, que es
+      exactamente lo que es. La separación visual la da la clase, no el marcado. */}
+  <dl class="especificaciones">
+    {
+      FILAS_RAPIDAS.map((fila) => (
+        <div class="especificaciones__fila especificaciones__fila--rapida">
+          <dt>{fila.etiqueta}</dt>
+          <dd class:list={[fila.dato && 'mono']}>{fila.valor}</dd>
+        </div>
+      ))
+    }
+    {
+      FILAS_TECNICAS.map((fila) => (
+        <div class="especificaciones__fila">
+          <dt>{fila.etiqueta}</dt>
+          <dd>{fila.valor}</dd>
+        </div>
+      ))
+    }
+  </dl>
 
-    <p class="ficha__nota">
-      Especificaciones referenciales del modelo. Las terminaciones definitivas se confirman en la
-      cotización, porque dependen del formato de compra que elijas.
-    </p>
-  </section>
-
-</div>
+  <p class="ficha__nota">
+    Especificaciones referenciales del modelo {datos.nombre}. Las terminaciones definitivas se
+    confirman en la cotización, porque dependen del formato de compra que elijas.
+  </p>
+</section>
 
 <style>
-  .ficha {
-    display: grid;
-    gap: var(--e-8);
-  }
-
-  /* Sin esto, la tabla de variantes (que tiene min-width para no aplastarse)
-     estira la grilla y saca la página entera de la pantalla en 320px. */
   .ficha > * {
     min-width: 0;
   }
@@ -90,6 +150,12 @@ const FILAS: { etiqueta: string; valor: string }[] = [
 
   .especificaciones dd {
     margin: 0;
+  }
+
+  /* Los datos de comparación pesan más: son los que se leen en diagonal. */
+  .especificaciones__fila--rapida dd {
+    font-size: var(--t-cuerpo-grande);
+    font-weight: 500;
   }
 
   .ficha__nota {

@@ -8,32 +8,23 @@ import Galeria from '../../components/Galeria.astro';
 import CotizadorWhatsApp from '../../components/CotizadorWhatsApp.astro';
 import FichaTecnica from '../../components/FichaTecnica.astro';
 import ComparadorKits from '../../components/ComparadorKits.astro';
-import ModeloCard from '../../components/ModeloCard.astro';
-import BotonWhatsApp from '../../components/BotonWhatsApp.astro';
 import Cota from '../../components/Cota.astro';
-import Icono from '../../components/Icono.astro';
 
-import { obtenerModelos, rutaModelo, rangoM2 } from '../../lib/catalogo';
-import { mensajeModeloSimple } from '../../lib/whatsapp';
+import { obtenerModelos, rangoM2 } from '../../lib/catalogo';
 import { formatearM2 } from '../../lib/formato';
 
 export async function getStaticPaths() {
   const modelos = await obtenerModelos();
 
-  return modelos.map((modelo) => {
-    // Tres relacionados: los que vienen después en el catálogo, dando la vuelta
-    // al final. Así todos los modelos quedan enlazados entre sí.
-    const indice = modelos.findIndex((m) => m.id === modelo.id);
-    const relacionados = [...modelos.slice(indice + 1), ...modelos.slice(0, indice)].slice(0, 3);
-
-    return {
-      params: { slug: modelo.data.slug },
-      props: { modelo, relacionados },
-    };
-  });
+  // Ya no se calculan modelos relacionados: la grilla "Otros modelos" se quitó
+  // de la ficha y el enlace entre fichas lo hace el footer, que las lista todas.
+  return modelos.map((modelo) => ({
+    params: { slug: modelo.data.slug },
+    props: { modelo },
+  }));
 }
 
-const { modelo, relacionados } = Astro.props;
+const { modelo } = Astro.props;
 const datos = modelo.data;
 const rango = rangoM2(datos);
 const textoRango =
@@ -67,13 +58,9 @@ const textoRango =
     </div>
 
     <div class="modelo-detalle__cuerpo">
-      <section class="descripcion" aria-labelledby="titulo-descripcion">
-        <h2 id="titulo-descripcion">Sobre el modelo {datos.nombre}</h2>
-        <div class="prosa">
-          {datos.descripcion.map((parrafo) => <p>{parrafo}</p>)}
-        </div>
-      </section>
-
+      {/* La sección "Sobre el modelo" (tres párrafos de prosa) se eliminó: los
+          datos que buscaba esa lectura ahora están en Especificaciones, que
+          absorbió metrajes, dormitorios, baños y ambientes. */}
       <FichaTecnica datos={datos} />
 
       {/*
@@ -117,54 +104,11 @@ const textoRango =
     </div>
   </div>
 
-  <section class="seccion seccion--invertida cierre" aria-labelledby="titulo-cierre">
-    <div class="envoltorio cierre__interior">
-      <div>
-        <h2 id="titulo-cierre">¿Te sirve este modelo?</h2>
-        <p class="cierre__texto">
-          Escríbenos con el metraje y el formato que te interesan y te llega la cotización con el
-          flete a tu comuna incluido. Si prefieres verlo antes, la casa piloto está abierta de lunes
-          a sábado.
-        </p>
-      </div>
-
-      <div class="cierre__acciones">
-        <BotonWhatsApp
-          mensaje={mensajeModeloSimple(datos.nombre)}
-          origen="ficha-cierre"
-          modelo={datos.nombre}
-          texto="Cotizar por WhatsApp"
-        />
-        <a class="boton boton--secundario" href="/casa-piloto/">
-          <Icono nombre="pin" tamano={20} />
-          Visitar la casa piloto
-        </a>
-      </div>
-
-      {/* Salto hacia arriba, al comparador de formatos. Va como enlace de
-          texto y no como tercer botón: dos botones ya compiten en este bloque
-          y un tercero del mismo peso convertiría el cierre en un menú. */}
-      <p class="cierre__volver">
-        <a href="#formatos-incluidos">
-          <Icono nombre="flecha" tamano={18} class="cierre__flecha" />
-          Ver antes qué incluye cada formato
-        </a>
-      </p>
-    </div>
-  </section>
-
-  <section class="seccion" aria-labelledby="titulo-relacionados">
-    <div class="envoltorio">
-      <div class="encabezado-seccion">
-        <h2 id="titulo-relacionados">Otros modelos</h2>
-        <p><a href="/catalogo/">Ver el catálogo completo</a></p>
-      </div>
-
-      <div class="grilla-relacionados">
-        {relacionados.map((otro) => <ModeloCard modelo={otro} />)}
-      </div>
-    </div>
-  </section>
+  {/* Se eliminaron el cierre "¿Te sirve este modelo?" y la grilla "Otros
+      modelos". El cotizador de arriba ya es sticky y acompaña toda la lectura,
+      así que el cierre repetía un botón que nunca se pierde de vista.
+      El enlace entre fichas lo sigue haciendo el footer, que lista los ocho
+      modelos en todas las páginas del sitio. */}
 </ModeloLayout>
 
 <style>
@@ -227,10 +171,6 @@ const textoRango =
     padding-block-end: var(--e-8);
   }
 
-  .descripcion h2 {
-    margin-block-end: var(--e-5);
-  }
-
   /* Pastilla de resalte, migrada junto con la sección de formatos para que se
      vea igual que en el home: madera diluida sobre blanco, borde redondo
      completo y texto en carbón (12,4:1). */
@@ -257,59 +197,6 @@ const textoRango =
     margin-block-end: var(--e-5);
   }
 
-  .cierre__interior {
-    display: grid;
-    gap: var(--e-6);
-  }
-
-  .cierre__texto {
-    margin-block-start: var(--e-4);
-    max-width: 54ch;
-    color: var(--texto-invertido-suave);
-  }
-
-  .cierre__acciones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-3);
-    align-content: center;
-  }
-
-  /* El enlace vive sobre carbón: el azul de enlace por defecto queda en 2,9:1
-     ahí, así que toma el texto invertido suave (8,2:1). */
-  .cierre__volver a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--e-2);
-    min-height: 44px;
-    font-size: var(--t-chico);
-    color: var(--texto-invertido-suave);
-    text-decoration: none;
-  }
-
-  .cierre__volver a:hover {
-    color: var(--texto-invertido);
-    text-decoration: underline;
-    text-underline-offset: 0.22em;
-  }
-
-  /* La flecha del set apunta a la derecha; acá el salto es hacia arriba. */
-  .cierre__volver :global(.cierre__flecha) {
-    rotate: -90deg;
-  }
-
-  .grilla-relacionados {
-    display: grid;
-    gap: var(--e-5);
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 640px) {
-    .grilla-relacionados {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
   @media (min-width: 900px) {
     .modelo-detalle {
       grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
@@ -326,12 +213,6 @@ const textoRango =
 
     .modelo-detalle__cuerpo {
       max-width: 62rem;
-    }
-  }
-
-  @media (min-width: 1000px) {
-    .grilla-relacionados {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>
