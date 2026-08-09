@@ -251,6 +251,33 @@ escribas "imagen" o "foto".
 | La foto sale cortada | La proporción no es la de la tabla | Recórtala a 3:2 (o la que corresponda) antes de subirla |
 | El sitio quedó lento | Las fotos pesan demasiado | Corre `npm run optimizar-imagenes` o pásalas por squoosh.app |
 | Quiero volver a los rectángulos grises | Se borró o dañó una foto | Corre `npm run placeholders`: regenera solo los archivos que falten |
+| Cambié la foto, se subió bien, pero online sigo viendo la anterior | Tu navegador la tiene en caché | `Ctrl + Shift + R`. Ver la sección 7 bis |
+
+---
+
+## 7 bis. Por qué a veces sigues viendo la foto vieja online
+
+Las fotos conservan el nombre cuando las reemplazas —esa es la gracia, no hay
+que tocar ningún JSON—, pero eso significa que la **URL no cambia**. Para el
+navegador `tarjeta.jpg` sigue siendo el mismo archivo de siempre, así que sirve
+la copia que ya tenía guardada sin preguntarle al servidor.
+
+El tiempo que la guarda lo fija `vercel.json`:
+
+```json
+{ "source": "/images/(.*)",
+  "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }] }
+```
+
+`max-age=3600` es **una hora**. Estuvo en 604800 (una semana) y se bajó: con las
+fotos todavía provisionales, cada reemplazo tardaba hasta siete días en verse
+para quien ya había visitado el sitio. Ojo: `must-revalidate` no obliga a
+revalidar mientras el archivo está fresco, solo prohíbe servirlo vencido.
+
+**Cuando las fotos sean las definitivas, conviene volver a subirlo a 604800**:
+son archivos que ya no van a cambiar y una semana de caché ahorra descargas.
+
+Mientras tanto, si acabas de subir una foto y quieres verla ya: `Ctrl + Shift + R`.
 
 ---
 
