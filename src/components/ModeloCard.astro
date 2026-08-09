@@ -1,16 +1,27 @@
 ---
 /**
- * Tarjeta de modelo. La usan el home y el catálogo.
+ * Tarjeta de modelo. La usan el bento del home y la grilla del catálogo.
  *
- * La cota de abajo mide el metraje real del modelo: es el único adorno de la
- * tarjeta y no es adorno, es el dato que la persona vino a buscar.
+ * QUÉ MUESTRA, Y POR QUÉ SOLO ESO
+ * Foto, metraje, dormitorios y precio. Nada más. Antes la tarjeta también traía
+ * el resumen del modelo y la cantidad de baños; en una grilla de ocho eso son
+ * ocho párrafos compitiendo entre sí y ninguna foto se ve. El resumen y el
+ * detalle completo viven en la ficha, que es donde alguien los va a leer.
+ *
+ * LOS TRES FORMATOS
+ * No cambian el contenido ni el orden: solo la proporción de la foto. Es lo que
+ * permite que el bento tenga celdas de distinto tamaño sin que existan dos
+ * tarjetas distintas que mantener.
+ *   normal      → 4/3, la celda base
+ *   alta        → 4/5, para columnas angostas
+ *   panoramica  → 16/9, para celdas anchas
  *
  * Los data-* sirven al filtrado del catálogo, que ocurre sobre nodos que ya
  * están en el HTML: nada se carga por fetch y nada desaparece del código fuente
  * que ve Google.
  */
-import Cota from './Cota.astro';
-import { rutaModelo, rangoM2, dormitoriosDisponibles, precioDesde, varianteBase } from '../lib/catalogo';
+import Icono from './Icono.astro';
+import { rutaModelo, rangoM2, dormitoriosDisponibles, precioDesde } from '../lib/catalogo';
 import { formatearPrecio, formatearM2, plural } from '../lib/formato';
 import type { Modelo } from '../lib/catalogo';
 
@@ -18,25 +29,32 @@ interface Props {
   modelo: Modelo;
   /** true solo en la primera tarjeta visible: evita competir con el LCP. */
   prioridad?: boolean;
+  formato?: 'normal' | 'alta' | 'panoramica';
 }
 
-const { modelo, prioridad = false } = Astro.props;
+const { modelo, prioridad = false, formato = 'normal' } = Astro.props;
 const datos = modelo.data;
 
 const rango = rangoM2(datos);
 const dormitorios = dormitoriosDisponibles(datos);
-const base = varianteBase(datos);
 const desde = precioDesde(datos);
 
-const textoM2 = rango.min === rango.max ? formatearM2(rango.min) : `${rango.min} – ${formatearM2(rango.max)}`;
+const textoM2 = rango.min === rango.max ? formatearM2(rango.min) : `${rango.min}–${formatearM2(rango.max)}`;
 const textoDormitorios =
   dormitorios.length === 1
     ? plural(dormitorios[0]!, 'dormitorio', 'dormitorios')
     : `${dormitorios[0]}–${dormitorios[dormitorios.length - 1]} dormitorios`;
+
+/** Proporción de la foto según el formato. Es lo único que cambia entre ellos. */
+const PROPORCION = {
+  normal: '4 / 3',
+  alta: '4 / 5',
+  panoramica: '16 / 9',
+} as const;
 ---
 
 <article
-  class="tarjeta tarjeta--enlace modelo"
+  class:list={['tarjeta', 'tarjeta--enlace', 'modelo', `modelo--${formato}`]}
   data-modelo
   data-slug={datos.slug}
   data-nombre={datos.nombre}
@@ -49,31 +67,43 @@ const textoDormitorios =
   data-destacado={datos.destacado ? '1' : '0'}
 >
   <a class="modelo__enlace" href={rutaModelo(datos.slug)}>
-    <img
-      class="modelo__foto"
-      src={datos.imagenTarjeta.src}
-      alt={datos.imagenTarjeta.alt}
-      width="800"
-      height="533"
-      loading={prioridad ? 'eager' : 'lazy'}
-      decoding="async"
-      fetchpriority={prioridad ? 'high' : 'auto'}
-    />
+    <div class="modelo__marco" style={`aspect-ratio: ${PROPORCION[formato]}`}>
+      <img
+        class="modelo__foto"
+        src={datos.imagenTarjeta.src}
+        alt={datos.imagenTarjeta.alt}
+        width="800"
+        height="533"
+        loading={prioridad ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={prioridad ? 'high' : 'auto'}
+      />
+    </div>
 
     <div class="modelo__cuerpo">
       <h3 class="modelo__nombre">{datos.nombre}</h3>
-      <p class="modelo__resumen">{datos.resumen}</p>
 
-      <p class="fila-mono modelo__ficha">
-        <span>{textoDormitorios}</span>
-        <span aria-hidden="true">·</span>
-        <span>{plural(base.banos, 'baño', 'baños')}</span>
-      </p>
+      {/* Los dos datos que decide una persona antes de escribir: cuánto mide y
+          cuánta gente cabe. Van en mono y con numerales tabulares para que en
+          la grilla queden alineados en vertical de tarjeta a tarjeta. */}
+      <ul class="sin-lista modelo__datos">
+        <li>
+          <Icono nombre="superficie" tamano={16} />
+          <span class="mono">{textoM2}</span>
+        </li>
+        <li>
+          <Icono nombre="cama" tamano={16} />
+          <span class="mono">{textoDormitorios}</span>
+        </li>
+      </ul>
 
       <p class="modelo__precio">
         {
           desde === null ? (
-            <span class="modelo__cotizar">Cotizar</span>
+            /* El catálogo todavía no tiene precios cargados. Un precio que no
+               existe no se muestra como $0 ni se inventa: se muestra como lo
+               que es, y de paso como la acción que queremos que ocurra. */
+            <span class="modelo__cotizar">Precio a cotizar</span>
           ) : (
             <>
               <span class="modelo__desde">Desde</span>
@@ -82,8 +112,6 @@ const textoDormitorios =
           )
         }
       </p>
-
-      <Cota valor={textoM2} etiqueta="Superficie" class="modelo__cota" />
     </div>
   </a>
 </article>
@@ -91,6 +119,9 @@ const textoDormitorios =
 <style>
   .modelo {
     overflow: hidden;
+    /* La tarjeta ocupa el alto de su celda del bento aunque su foto sea más
+       baja: el precio queda anclado abajo y las filas se leen parejas. */
+    height: 100%;
   }
 
   .modelo__enlace {
@@ -101,41 +132,76 @@ const textoDormitorios =
     text-decoration: none;
   }
 
+  /* El marco fija la proporción (la trae el formato como estilo en línea) y
+     recorta el zoom de la foto sin mover la caja de la tarjeta. */
+  .modelo__marco {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: var(--carbon-10);
+  }
+
   .modelo__foto {
     width: 100%;
-    aspect-ratio: 3 / 2;
+    height: 100%;
     object-fit: cover;
+    transition: transform var(--dur-larga) var(--ease-salida);
+  }
+
+  /* Único movimiento de la tarjeta además del alza: la foto respira un 3%.
+     Es lo que confirma que la imagen es el contenido y no un adorno. */
+  .modelo:hover .modelo__foto {
+    transform: scale(1.03);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modelo:hover .modelo__foto {
+      transform: none;
+    }
   }
 
   .modelo__cuerpo {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: var(--e-2);
+    gap: var(--e-3);
     padding: var(--e-5);
   }
 
   .modelo__nombre {
     font-size: var(--t-sub);
     font-weight: 600;
+    letter-spacing: var(--tracking-titular);
   }
 
-  .modelo__resumen {
-    color: var(--texto-suave);
+  .modelo__datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-2) var(--e-5);
+    margin: 0;
     font-size: var(--t-chico);
-    max-width: 42ch;
+    color: var(--texto-suave);
   }
 
-  .modelo__ficha {
-    margin-block-start: var(--e-2);
-    font-size: var(--t-micro);
+  .modelo__datos li {
+    display: flex;
+    align-items: center;
+    gap: var(--e-2);
   }
 
+  .modelo__datos svg {
+    flex: 0 0 auto;
+    color: var(--texto-tenue);
+  }
+
+  /* El precio se pega al fondo y va separado por una línea: es el último dato
+     que se lee y el que decide si la persona escribe o no. */
   .modelo__precio {
-    margin-block-start: var(--e-3);
     display: flex;
     align-items: baseline;
     gap: var(--e-2);
+    margin-block-start: auto;
+    padding-block-start: var(--e-4);
+    border-top: 1px solid var(--linea-tenue);
   }
 
   .modelo__desde {
@@ -149,20 +215,26 @@ const textoDormitorios =
   }
 
   .modelo__cotizar {
-    font-family: var(--fuente-mono);
     font-size: var(--t-chico);
     font-weight: 500;
-    color: var(--cota);
+    color: var(--acento);
   }
 
-  /* La cota se pega al fondo de la tarjeta y la mide de lado a lado. */
-  .modelo__cota {
-    margin-block-start: auto;
-    padding-block-start: var(--e-5);
+  /* En la celda ancha del bento el nombre sube de tamaño: es la tarjeta que
+     ancla la composición y necesita ganarle a las tres de al lado. */
+  .modelo--panoramica .modelo__cuerpo {
+    padding: var(--e-6);
+  }
+
+  .modelo--panoramica .modelo__nombre {
+    font-family: var(--fuente-display);
+    font-size: var(--t-seccion);
+    font-weight: 700;
   }
 
   /* El foco tiene que verse sobre la tarjeta completa, no sobre el texto. */
   .modelo__enlace:focus-visible {
     outline-offset: -3px;
+    border-radius: var(--radio-bento);
   }
 </style>

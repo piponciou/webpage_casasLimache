@@ -143,7 +143,11 @@ const enlaceInicial = linkWhatsApp(
       <span class="visualmente-oculto">(se abre WhatsApp)</span>
     </a>
 
-    <a class="boton boton--secundario boton--ancho" href="#formatos-modelo">Ver qué incluye cada formato</a>
+    {/* Apuntaba a #formatos-modelo, el id de "Qué incluye y qué no". Esa
+        sección ya no existe: ahora el destino es el comparador de formatos. */}
+    <a class="boton boton--secundario boton--ancho" href="#formatos-incluidos"
+      >Ver qué incluye cada formato</a
+    >
   </div>
 </section>
 
@@ -335,9 +339,9 @@ const enlaceInicial = linkWhatsApp(
   }
 
   .opcion:has(input:checked) {
-    background: var(--tinta-fieltro);
-    border-color: var(--tinta-fieltro);
-    color: var(--zinc-marga);
+    background: var(--carbon);
+    border-color: var(--carbon);
+    color: var(--lino);
   }
 
   .opcion:has(input:focus-visible) {
@@ -377,7 +381,7 @@ const enlaceInicial = linkWhatsApp(
     gap: var(--e-4);
     padding: var(--e-3) var(--borde-pagina);
     padding-block-end: max(var(--e-3), env(safe-area-inset-bottom));
-    background: color-mix(in srgb, var(--zinc-marga) 92%, transparent);
+    background: color-mix(in srgb, var(--lino) 92%, transparent);
     backdrop-filter: blur(10px);
     border-top: var(--grosor-cota) solid var(--linea);
   }

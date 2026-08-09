@@ -191,6 +191,24 @@ export const ANALITICA = {
  */
 export const HERO = {
   modelo: 'quillota',
+
+  /**
+   * Precio destacado sobre la foto del hero.
+   *
+   * ⚠️ VERIFICAR con el cliente antes de publicar: es el único precio visible
+   * de todo el sitio. Las fichas de modelo siguen diciendo "Precio a cotizar"
+   * porque los JSON de src/content/modelos/ tienen `precios` en null. Mientras
+   * eso siga así, alguien puede ver $3.990.990 en la portada y no encontrar
+   * ningún precio en la ficha del Quillota.
+   *
+   * `referencia` es el valor tachado (precio lista) y `oferta` el vigente.
+   * Si `oferta` se deja en null, el bloque de precio desaparece del hero solo
+   * y no queda un hueco ni un $0.
+   */
+  precio: {
+    referencia: 4_990_990,
+    oferta: 3_990_990,
+  },
 } as const;
 
 /**

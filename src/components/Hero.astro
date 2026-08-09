@@ -24,7 +24,7 @@ import BotonWhatsApp from './BotonWhatsApp.astro';
 import { RANGOS, DIRECCION, HERO } from '../config/site';
 import { mensajeGenerico } from '../lib/whatsapp';
 import { obtenerModelos, varianteBase, rutaModelo } from '../lib/catalogo';
-import { formatearM2, plural } from '../lib/formato';
+import { formatearM2, formatearPrecio, plural } from '../lib/formato';
 
 const modelos = await obtenerModelos();
 
@@ -37,11 +37,28 @@ const base = varianteBase(datos);
  * Living comedor y cocina se quitaron a propósito — están en la ficha del
  * modelo, y sobre la foto competían con el nombre y llenaban de ruido el
  * bloque. Los valores salen del JSON del modelo elegido en site.ts.
+ *
+ * Sobre la foto se ve ÍCONO + NÚMERO, sin la palabra. `lectura` es el texto
+ * completo para quien navega con lector de pantalla: un "4" suelto no dice
+ * nada, y el ícono es decorativo (va con aria-hidden desde el componente).
  */
 const especificaciones = [
-  { icono: 'cama' as const, texto: plural(base.dormitorios, 'dormitorio', 'dormitorios') },
-  { icono: 'bano' as const, texto: plural(base.banos, 'baño', 'baños') },
+  {
+    icono: 'cama' as const,
+    valor: base.dormitorios,
+    lectura: plural(base.dormitorios, 'dormitorio', 'dormitorios'),
+  },
+  {
+    icono: 'bano' as const,
+    valor: base.banos,
+    lectura: plural(base.banos, 'baño', 'baños'),
+  },
 ];
+
+/** El bloque de precio existe solo si hay una oferta cargada en site.ts. */
+const precio = HERO.precio;
+const hayOferta = typeof precio?.oferta === 'number';
+const hayReferencia = typeof precio?.referencia === 'number' && precio.referencia > precio.oferta;
 ---
 
 <section class="hero" aria-labelledby="hero-titular">
@@ -95,28 +112,45 @@ const especificaciones = [
         />
       </picture>
 
-      <div class="hero__scrim" aria-hidden="true"></div>
-
       <figcaption class="hero__ficha">
-        <p class="hero__superficie">
-          <Icono nombre="superficie" tamano={15} />
-          <span class="mono">{formatearM2(base.m2)}</span>
-        </p>
+        <div class="hero__identidad">
+          <p class="hero__superficie">
+            <Icono nombre="superficie" tamano={14} />
+            <span>{formatearM2(base.m2)}</span>
+          </p>
 
-        <p class="hero__modelo">
-          <a class="hero__enlace" href={rutaModelo(datos.slug)}>{datos.nombre}</a>
-        </p>
+          <p class="hero__modelo">
+            <a class="hero__enlace" href={rutaModelo(datos.slug)}>{datos.nombre}</a>
+          </p>
 
-        <ul class="sin-lista hero__specs">
-          {
-            especificaciones.map((spec) => (
-              <li>
-                <Icono nombre={spec.icono} tamano={17} />
-                <span>{spec.texto}</span>
-              </li>
-            ))
-          }
-        </ul>
+          <ul class="sin-lista hero__specs">
+            {
+              especificaciones.map((spec) => (
+                <li>
+                  <Icono nombre={spec.icono} tamano={20} />
+                  <span class="hero__spec-valor" aria-hidden="true">
+                    {spec.valor}
+                  </span>
+                  <span class="visualmente-oculto">{spec.lectura}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        {
+          hayOferta && (
+            <p class="hero__precio">
+              <span class="hero__precio-etiqueta">Precio oferta</span>
+              <span class="hero__precio-valor">{formatearPrecio(precio.oferta)}</span>
+              {hayReferencia && (
+                <span class="hero__precio-antes">
+                  Antes <s>{formatearPrecio(precio.referencia)}</s>
+                </span>
+              )}
+            </p>
+          )
+        }
       </figcaption>
     </figure>
   </div>
@@ -233,52 +267,153 @@ const especificaciones = [
     object-fit: cover;
   }
 
-  /* Scrim: sostiene el negro a lo largo de toda la banda de texto y recién
-     después se suelta. Un degradado que llega a 65% solo en el borde inferior
-     deja el nombre del modelo en 1,9:1 sobre una foto clara.
-     La curva llega hasta el 52% de la altura porque en móvil, con la foto en
-     16:9, el bloque de texto ocupa la mitad del alto disponible. */
-  .hero__scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(10, 12, 11, 0.92) 0%,
-      rgba(10, 12, 11, 0.88) 40%,
-      rgba(10, 12, 11, 0.74) 62%,
-      rgba(10, 12, 11, 0.36) 78%,
-      rgba(10, 12, 11, 0) 96%
-    );
-    pointer-events: none;
-  }
-
   /* En móvil la foto 16:9 mide ~211px de alto en un celular de 375px, así que
-     el bloque va apretado: padding corto y sin espacios muertos entre líneas. */
+     el bloque va apretado: padding corto y sin espacios muertos entre líneas.
+
+     EL DEGRADADO VIVE ACÁ, NO EN UNA CAPA SOBRE LA FOTO.
+     Antes había un `.hero__scrim` con `inset: 0` que sostenía 0.88 de negro
+     hasta el 40% de la altura y 0.74 hasta el 62%. Ese velo no cubría el
+     texto: cubría la casa, y dejaba la fachada prácticamente negra.
+     Era así de alto por el móvil, donde el bloque de texto arranca al 49% de
+     la foto y no al 62% como en escritorio; una capa de tamaño fijo tenía que
+     cubrir el peor de los dos casos en los dos.
+
+     Colgando el degradado de la ficha —que está anclada abajo y mide lo que
+     mide su contenido— el velo se ajusta solo a cada breakpoint: alto donde el
+     texto es alto, corto donde es corto, y cero por encima. La casa queda
+     limpia en toda la mitad superior en cualquier pantalla.
+
+     El padding superior es el que le da recorrido al degradado para nacer
+     antes de la primera línea; sin él la transición cae encima del "m²". */
   .hero__ficha {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
+    /* Identidad a la izquierda, precio a la derecha, enfrentados en los
+       extremos y apoyados sobre la misma base.
+
+       Van en FILA también en móvil, y no apilados: sobre una foto 16:9 a 375px
+       la caja mide 211px de alto, y el precio en su propia fila hacía que la
+       ficha creciera a 255px — más alta que la propia foto. Se salía por
+       arriba del degradado y el metraje caía a 3:1. En fila, los dos bloques
+       comparten las mismas tres líneas y todo entra. */
     display: flex;
-    flex-direction: column;
-    gap: var(--e-1);
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--e-3);
     padding: var(--e-4);
-    color: var(--neblina);
+    padding-block-start: calc(var(--e-4) + 2.5rem);
+    color: var(--nieve);
+    background: linear-gradient(
+      to top,
+      rgba(10, 12, 11, 0.9) 0%,
+      rgba(10, 12, 11, 0.82) 32%,
+      rgba(10, 12, 11, 0.6) 58%,
+      rgba(10, 12, 11, 0.28) 80%,
+      rgba(10, 12, 11, 0) 100%
+    );
+    pointer-events: none;
   }
 
+  /* El degradado no debe comerse el clic: la foto entera es un enlace. */
+  .hero__ficha a {
+    pointer-events: auto;
+  }
+
+  .hero__identidad {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-2);
+    min-width: 0;
+  }
+
+  /* El metraje pasa a leerse como una acotación de plano: mono, versalitas y
+     tracking abierto. Antes era texto corrido del mismo tamaño que las specs y
+     competía con el nombre; ahora lo anuncia. */
   .hero__superficie {
     display: inline-flex;
     align-items: center;
     gap: var(--e-2);
-    font-size: var(--t-chico);
-    color: var(--neblina);
+    font-family: var(--fuente-mono);
+    font-size: var(--t-micro);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--tracking-etiqueta);
+    text-transform: uppercase;
+    color: var(--nieve);
+    opacity: 0.92;
   }
 
+  /* El nombre del modelo en caja alta y apretado. Es la palabra que tiene que
+     leerse desde lejos, y en versalitas Archivo gana peso óptico sin subir de
+     tamaño: la misma altura ocupa más ancho y ancla la composición. */
   .hero__modelo {
     font-family: var(--fuente-display);
-    font-size: clamp(1.75rem, 1.1rem + 2.8vw, 3rem);
+    font-size: clamp(1.9rem, 1.1rem + 3.2vw, 3.4rem);
     font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+  }
+
+  /* Specs reducidas a ícono + número. El ícono queda un punto más grande que
+     antes porque ahora carga todo el significado: ya no hay palabra al lado. */
+  .hero__spec-valor {
+    font-family: var(--fuente-mono);
+    font-size: var(--t-cuerpo);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
     line-height: 1;
-    letter-spacing: var(--tracking-display);
+  }
+
+  /* ---- Precio ------------------------------------------------------------
+     Va a la derecha y alineado a la base del nombre: son los dos datos que
+     deciden, y enfrentados en los extremos ninguno le roba peso al otro.
+     En mono, como todos los números del sitio. */
+  .hero__precio {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    text-align: right;
+    flex: 0 0 auto;
+    gap: var(--e-1);
+  }
+
+  /* La madera plena da 4,8:1 acá: pasa, pero sin margen. El bloque de precio
+     cae sobre el lado derecho de la foto, que es el más claro (cielo entre los
+     árboles), y encima la etiqueta es la línea más alta del bloque, donde el
+     degradado todavía no cerró. Aclarada un 30% sube a 6,3:1 y conserva el
+     acento cálido. */
+  .hero__precio-etiqueta {
+    font-family: var(--fuente-mono);
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: var(--tracking-etiqueta);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--madera) 70%, var(--nieve));
+  }
+
+  .hero__precio-valor {
+    font-family: var(--fuente-mono);
+    font-size: clamp(1.5rem, 0.95rem + 2.2vw, 2.4rem);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  /* El precio anterior tachado. Va en madera clara y no en un rojo de rebaja:
+     el descuento se entiende por el tachado, no por el color. */
+  .hero__precio-antes {
+    font-family: var(--fuente-mono);
+    font-size: var(--t-micro);
+    font-variant-numeric: tabular-nums;
+    color: var(--nieve);
+    opacity: 0.78;
+  }
+
+  .hero__precio-antes s {
+    text-decoration-thickness: 1px;
   }
 
   .hero__enlace {
@@ -298,7 +433,7 @@ const especificaciones = [
   }
 
   .hero__enlace:focus-visible::after {
-    outline: 2px solid var(--acento);
+    outline: 2px solid var(--madera);
     outline-offset: -4px;
     border-radius: 2px;
   }
@@ -307,9 +442,8 @@ const especificaciones = [
   .hero__specs {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--e-1) var(--e-4);
-    margin-block-start: var(--e-2);
-    font-size: var(--t-chico);
+    gap: var(--e-1) var(--e-5);
+    margin-block-start: var(--e-1);
   }
 
   .hero__specs li {
@@ -320,7 +454,7 @@ const especificaciones = [
 
   .hero__specs svg {
     flex: 0 0 auto;
-    opacity: 0.85;
+    opacity: 0.9;
   }
 
   /* Franja de cierre del hero: fondo tinta, ancho completo. */
@@ -394,8 +528,12 @@ const especificaciones = [
   }
 
   @media (min-width: 700px) {
+    /* El shorthand `padding` reinicia el borde superior, así que el recorrido
+       del degradado se vuelve a declarar en cada breakpoint. */
     .hero__ficha {
       padding: var(--e-6);
+      padding-block-start: calc(var(--e-6) + 2.75rem);
+      gap: var(--e-5);
     }
 
     .hero__specs {
@@ -446,6 +584,7 @@ const especificaciones = [
 
     .hero__ficha {
       padding: var(--e-7);
+      padding-block-start: calc(var(--e-7) + 2.75rem);
     }
   }
 </style>
