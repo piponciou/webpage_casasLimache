@@ -59,14 +59,17 @@
     "Muebles de cocina y closets"
   ],
   "imagenes": [
-    { "src": "/images/modelos/quillota/01-exterior.jpg", "alt": "Modelo Quillota de 84 m² — fachada exterior" },
+    {
+      "src": "/images/modelos/quillota/01-exterior.jpg",
+      "alt": "Casa prefabricada Quillota de 84 m² montada sobre pilotes: fachada de madera, techo de zinc verde a dos aguas y terraza con escalera de acceso"
+    },
     { "src": "/images/modelos/quillota/02-interior.jpg", "alt": "Modelo Quillota de 84 m² — estar central" },
     { "src": "/images/modelos/quillota/03-cocina.jpg", "alt": "Modelo Quillota de 84 m² — cocina con logia" },
     { "src": "/images/modelos/quillota/04-dormitorio.jpg", "alt": "Modelo Quillota de 84 m² — dormitorio principal" }
   ],
   "imagenTarjeta": {
     "src": "/images/modelos/quillota/tarjeta.jpg",
-    "alt": "Modelo Quillota de 84 m² — vista general de la fachada"
+    "alt": "Casa prefabricada Quillota de 84 m²: fachada de madera con techo de zinc verde, terraza con escalera y ventanales"
   },
   "plano": {
     "src": "/images/modelos/quillota/plano.jpg",

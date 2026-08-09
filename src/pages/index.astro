@@ -2,13 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import ModelosBento from '../components/ModelosBento.astro';
-import MapaCasaPiloto from '../components/MapaCasaPiloto.astro';
 import Testimonios from '../components/Testimonios.astro';
-import BotonWhatsApp from '../components/BotonWhatsApp.astro';
 
 import { obtenerDestacados } from '../lib/catalogo';
-import { HORARIOS, TELEFONO } from '../config/site';
-import { mensajeCasaPiloto } from '../lib/whatsapp';
 import { sitioWeb, organizacion } from '../lib/schema';
 
 const destacados = await obtenerDestacados();
@@ -46,52 +42,9 @@ const jsonLd = [sitioWeb(), organizacion()];
     </div>
   </section>
 
-  {/* D — Casa piloto */}
-  <section class="seccion seccion--invertida" aria-labelledby="titulo-piloto">
-    <div class="envoltorio piloto">
-      <div class="piloto__texto">
-        <h2 id="titulo-piloto">Ven a recorrer la casa piloto</h2>
-        <p class="piloto__parrafo">
-          Es la diferencia con comprar por internet: acá entras, tocas los materiales, ves cómo se
-          ve un panel media luna por dentro y mides con tu propio cuerpo cuánto es un dormitorio de
-          verdad. No cuesta nada y no hay que comprar nada.
-        </p>
-
-        <dl class="piloto__datos">
-          {
-            HORARIOS.map((h) => (
-              <div class="piloto__dato">
-                <dt>{h.dias}</dt>
-                <dd class="mono">
-                  {h.desde}–{h.hasta}
-                  {h.nota && <span class="piloto__nota"> ({h.nota})</span>}
-                </dd>
-              </div>
-            ))
-          }
-          <div class="piloto__dato">
-            <dt>Teléfono</dt>
-            <dd><a class="mono" href={`tel:${TELEFONO.tel}`}>{TELEFONO.visible}</a></dd>
-          </div>
-        </dl>
-
-        <div class="piloto__acciones">
-          <BotonWhatsApp
-            mensaje={mensajeCasaPiloto()}
-            origen="home-casa-piloto"
-            texto="Coordinar una visita"
-          />
-          <a class="boton boton--secundario" href="/casa-piloto/">Ver la página de la casa piloto</a>
-        </div>
-      </div>
-
-      <div class="piloto__mapa">
-        <MapaCasaPiloto />
-      </div>
-    </div>
-  </section>
-
-  {/* E — Testimonios */}
+  {/* D — Testimonios.
+       Sube al lugar que ocupaba la casa piloto: la prueba social va pegada al
+       catálogo, mientras el modelo que la persona acaba de mirar sigue fresco. */}
   <section class="seccion" aria-labelledby="titulo-testimonios">
     <div class="envoltorio">
       <div class="encabezado-seccion">
@@ -102,70 +55,3 @@ const jsonLd = [sitioWeb(), organizacion()];
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  /* D — casa piloto */
-  .piloto {
-    display: grid;
-    gap: var(--e-6);
-  }
-
-  .piloto__parrafo {
-    margin-block-start: var(--e-4);
-    max-width: 52ch;
-    color: var(--texto-invertido-suave);
-    font-size: var(--t-cuerpo-grande);
-  }
-
-  .piloto__datos {
-    margin-block-start: var(--e-6);
-    display: grid;
-    gap: var(--e-3);
-    font-size: var(--t-chico);
-  }
-
-  .piloto__dato {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-2) var(--e-4);
-    padding-block-start: var(--e-3);
-    border-top: var(--grosor-cota) solid color-mix(in srgb, var(--lino) 20%, transparent);
-  }
-
-  .piloto__dato dt {
-    min-width: 12ch;
-    color: var(--texto-invertido-suave);
-  }
-
-  .piloto__dato dd {
-    margin: 0;
-  }
-
-  .piloto__dato a {
-    color: var(--texto-invertido);
-  }
-
-  .piloto__nota {
-    color: var(--arcilla-clara);
-  }
-
-  .piloto__acciones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-3);
-    margin-block-start: var(--e-6);
-  }
-
-  /* El mapa vive sobre fondo tinta: su superficie sube un poco de tono. */
-  .piloto__mapa :global(.mapa) {
-    background: color-mix(in srgb, var(--lino) 16%, transparent);
-  }
-
-  @media (min-width: 940px) {
-    .piloto {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-      gap: var(--e-8);
-      align-items: center;
-    }
-  }
-</style>

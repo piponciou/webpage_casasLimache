@@ -1,113 +1,86 @@
 ---
 /**
- * Footer. Cumple tres funciones a la vez:
- *  1. NAP completo, escrito exactamente igual que en el header y en el JSON-LD.
- *  2. Enlaces a todos los modelos y a todas las comunas: es el mapa interno que
- *     usa Google para llegar a cada ficha desde cualquier página.
- *  3. Aviso legal.
+ * Footer compacto.
+ *
+ * SE ACHICÓ, PERO NO SE VACIÓ — Y LA DIFERENCIA IMPORTA
+ * La versión anterior era una grilla de cuatro columnas con listas verticales:
+ * ocupaba casi una pantalla completa. Esta ocupa un tercio.
+ *
+ * Lo que NO se tocó son los enlaces. El footer es el único lugar del sitio que
+ * enlaza las doce landings de comuna desde todas las páginas (solo /nosotros/ y
+ * el 404 las mencionan además), y es la única ruta a los ocho modelos que no
+ * depende del catálogo. Vaciarlo dejaría veinte páginas colgando de un solo
+ * enlace interno.
+ *
+ * La solución no fue borrar enlaces sino cambiar su forma: de listas verticales
+ * de 25 filas a hileras en línea separadas por puntos. Mismos enlaces, mismo
+ * valor de rastreo, una fracción de la altura.
  *
  * Ni los modelos ni las comunas están escritos a mano: se iteran.
  */
-import Logo from './Logo.astro';
-import { SITE, DIRECCION, TELEFONO, HORARIOS, REDES, EMAIL, LEGAL, NAV } from '../config/site';
+import { SITE, DIRECCION, TELEFONO, HORARIOS, REDES, EMAIL, LEGAL } from '../config/site';
 import { obtenerModelos, rutaModelo } from '../lib/catalogo';
 import { COMUNAS } from '../data/comunas';
-import { formatearM2 } from '../lib/formato';
-import { rangoM2 } from '../lib/catalogo';
 
 const modelos = await obtenerModelos();
+
+/** "11:00–18:00" por bloque, en una sola línea. */
+const horario = HORARIOS.map((h) => `${h.dias} ${h.desde}–${h.hasta}`).join(' · ');
 ---
 
 <footer class="pie invertido">
   <div class="envoltorio">
-    <div class="pie__grilla">
-      <section class="pie__bloque pie__bloque--nap" aria-labelledby="pie-negocio">
-        {/* El logo va sobre una placa clara: el azul de la marca sobre el fondo
-            tinta del footer queda con un contraste ínfimo y el nombre en arco
-            se pierde. La placa conserva los colores originales de la marca en
-            vez de recolorearla.
-
-            ⚠️ Acá debería ir la versión completa (arco + eslogan). Va el ícono
-            porque el archivo original del logo quedó dañado; ver PENDIENTES.md.
-            Cuando se restaure, basta cambiar variante="completo". */}
-        <div class="pie__logo">
-          <Logo variante="icono" alto={52} decorativa />
-        </div>
-
-        <h2 class="pie__titulo" id="pie-negocio">{SITE.nombre}</h2>
+    {/* El NAP va primero y en <address>: es el dato que Google cruza con la
+        ficha de Google Business, y tiene que ser idéntico al del JSON-LD. */}
+    <div class="pie__cabeza">
+      <div class="pie__negocio">
+        <h2 class="pie__marca">{SITE.nombre}</h2>
 
         <address class="pie__nap">
           <p>
-            {DIRECCION.calle}, {DIRECCION.sector}<br />
-            {DIRECCION.comuna}, {DIRECCION.region}
+            {DIRECCION.calle}, {DIRECCION.sector}, {DIRECCION.comuna}, {DIRECCION.region}
           </p>
-          <p class="pie__referencia">{DIRECCION.referencia}</p>
           <p>
             <a class="pie__telefono mono" href={`tel:${TELEFONO.tel}`}>{TELEFONO.visible}</a>
+            {EMAIL && <> · <a href={`mailto:${EMAIL}`}>{EMAIL}</a></>}
           </p>
-          {EMAIL && (
-            <p>
-              <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-            </p>
-          )}
+          <p class="pie__horario">{horario}</p>
         </address>
+      </div>
 
-        <ul class="sin-lista pie__horarios">
+      <ul class="sin-lista pie__redes">
+        {
+          REDES.map((red) => (
+            <li>
+              <a href={red.url} target="_blank" rel="noopener">
+                {red.nombre}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {/* Mapa interno. En línea, no en columnas: el valor de enlace es el mismo y
+        la altura baja de 25 filas a dos párrafos. */}
+    <nav class="pie__mapa" aria-label="Modelos y zonas de despacho">
+      <div class="pie__fila">
+        <h3 class="pie__rotulo" id="pie-modelos">Modelos</h3>
+        <ul class="sin-lista pie__enlaces" aria-labelledby="pie-modelos">
           {
-            HORARIOS.map((h) => (
+            modelos.map((modelo) => (
               <li>
-                <span class="pie__dias">{h.dias}</span>
-                <span class="mono">
-                  {h.desde}–{h.hasta}
-                </span>
-                {h.nota && <span class="pie__nota">({h.nota})</span>}
+                <a href={rutaModelo(modelo.data.slug)}>{modelo.data.nombre}</a>
               </li>
             ))
           }
+          <li><a class="pie__destacado" href="/catalogo/">Ver catálogo</a></li>
         </ul>
+      </div>
 
-        <ul class="sin-lista pie__redes">
-          {
-            REDES.map((red) => (
-              <li>
-                <a href={red.url} target="_blank" rel="noopener">
-                  {red.nombre} <span class="pie__usuario">{red.usuario}</span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <nav class="pie__bloque" aria-labelledby="pie-modelos">
-        <h2 class="pie__titulo" id="pie-modelos">Modelos</h2>
-        <ul class="sin-lista pie__lista">
-          {
-            modelos.map((modelo) => {
-              const rango = rangoM2(modelo.data);
-              return (
-                <li>
-                  <a href={rutaModelo(modelo.data.slug)}>
-                    {modelo.data.nombre}
-                    <span class="pie__m2 mono">
-                      {rango.min === rango.max
-                        ? formatearM2(rango.min)
-                        : `${rango.min}–${formatearM2(rango.max)}`}
-                    </span>
-                  </a>
-                </li>
-              );
-            })
-          }
-        </ul>
-        <p class="pie__ver-todo">
-          <a href="/catalogo/">Ver catálogo completo</a>
-        </p>
-      </nav>
-
-      <nav class="pie__bloque" aria-labelledby="pie-comunas">
-        <h2 class="pie__titulo" id="pie-comunas">Dónde despachamos</h2>
-        <ul class="sin-lista pie__lista pie__lista--comunas">
+      <div class="pie__fila">
+        <h3 class="pie__rotulo" id="pie-comunas">Despachamos a</h3>
+        <ul class="sin-lista pie__enlaces" aria-labelledby="pie-comunas">
           {
             COMUNAS.map((comuna) => (
               <li>
@@ -116,22 +89,8 @@ const modelos = await obtenerModelos();
             ))
           }
         </ul>
-      </nav>
-
-      <nav class="pie__bloque" aria-labelledby="pie-sitio">
-        <h2 class="pie__titulo" id="pie-sitio">El sitio</h2>
-        <ul class="sin-lista pie__lista">
-          <li><a href="/">Inicio</a></li>
-          {
-            NAV.map((item) => (
-              <li>
-                <a href={item.href}>{item.texto}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </div>
+      </div>
+    </nav>
 
     <div class="pie__legal">
       <p>{LEGAL.aviso}</p>
@@ -144,44 +103,36 @@ const modelos = await obtenerModelos();
   .pie {
     background: var(--superficie-oscura);
     color: var(--texto-invertido);
-    padding-block: var(--e-8) var(--e-6);
+    padding-block: var(--e-7) var(--e-5);
     margin-block-start: var(--e-8);
   }
 
-  .pie__grilla {
-    display: grid;
-    gap: var(--e-7) var(--canal);
-    grid-template-columns: 1fr;
+  .pie__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: start;
+    gap: var(--e-4) var(--e-6);
   }
 
-  .pie__titulo {
-    font-size: var(--t-cuerpo);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    margin-block-end: var(--e-4);
+  .pie__marca {
+    font-family: var(--fuente-display);
+    font-size: var(--t-sub);
+    font-weight: 700;
+    letter-spacing: var(--tracking-titular);
+    text-transform: uppercase;
     color: var(--texto-invertido);
   }
 
-  .pie__logo {
-    display: inline-block;
-    padding: var(--e-4) var(--e-5);
-    margin-block-end: var(--e-5);
-    background: var(--nieve);
-    border-radius: var(--radio);
-  }
-
   .pie__nap {
+    margin-block-start: var(--e-3);
     font-style: normal;
+    font-size: var(--t-chico);
     color: var(--texto-invertido-suave);
   }
 
   .pie__nap p + p {
-    margin-block-start: var(--e-3);
-  }
-
-  .pie__referencia {
-    font-size: var(--t-chico);
-    max-width: 34ch;
+    margin-block-start: var(--e-2);
   }
 
   .pie a {
@@ -202,105 +153,91 @@ const modelos = await obtenerModelos();
     color: var(--texto-invertido);
   }
 
-  .pie__horarios {
-    margin-block-start: var(--e-5);
-    display: grid;
-    gap: var(--e-2);
-    font-size: var(--t-chico);
-    color: var(--texto-invertido-suave);
-  }
-
-  .pie__horarios li {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-2);
-  }
-
-  .pie__dias {
-    min-width: 11ch;
-  }
-
-  .pie__nota {
-    color: var(--arcilla-clara);
+  .pie__horario {
+    color: color-mix(in srgb, var(--lino) 62%, var(--carbon));
   }
 
   .pie__redes {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--e-2) var(--e-5);
-    margin-block-start: var(--e-5);
+    gap: var(--e-2) var(--e-4);
     font-size: var(--t-chico);
   }
 
-  .pie__usuario {
-    color: var(--arcilla-clara);
-  }
-
-  .pie__lista {
+  /* ---- Mapa interno -------------------------------------------------------
+     Las hileras van con `display: contents` en el <ul> para que el rótulo y los
+     enlaces compartan una sola línea base cuando hay ancho. */
+  .pie__mapa {
+    margin-block-start: var(--e-6);
+    padding-block-start: var(--e-5);
+    border-top: var(--grosor-cota) solid color-mix(in srgb, var(--lino) 18%, transparent);
     display: grid;
-    gap: var(--e-3);
-    font-size: var(--t-chico);
+    gap: var(--e-4);
   }
 
-  .pie__lista a {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--e-3);
-    min-height: 24px;
+  .pie__fila {
+    display: grid;
+    gap: var(--e-2);
   }
 
-  /* En pantallas táctiles los enlaces del footer pasan a 44px de alto. En
-     escritorio se quedan compactos: el puntero no necesita ese espacio y una
-     lista de 25 enlaces a 44px cada uno sería un footer interminable. */
-  @media (pointer: coarse) {
-    .pie__lista a {
-      min-height: 44px;
-      align-items: center;
-    }
-
-    .pie__redes a,
-    .pie__ver-todo a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-    }
-
-    .pie__lista {
-      gap: 0;
-    }
-  }
-
-  .pie__lista--comunas {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pie__m2 {
+  .pie__rotulo {
+    font-family: var(--fuente-mono);
     font-size: var(--t-micro);
-    color: var(--arcilla-clara);
-    white-space: nowrap;
+    font-weight: 500;
+    letter-spacing: var(--tracking-etiqueta);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--lino) 62%, var(--carbon));
   }
 
-  .pie__ver-todo {
-    margin-block-start: var(--e-4);
+  /* Los enlaces en línea, separados por un punto que dibuja el ::before del
+     hermano. El punto es decorativo: no entra en el nombre accesible. */
+  .pie__enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e-1) var(--e-3);
     font-size: var(--t-chico);
   }
 
-  .pie__ver-todo a {
+  .pie__enlaces li {
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+  }
+
+  .pie__enlaces li + li::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--lino) 40%, transparent);
+  }
+
+  .pie__destacado {
     color: var(--madera);
     text-decoration: underline;
     text-underline-offset: 0.22em;
   }
 
+  /* En pantalla táctil los enlaces crecen a 44px de alto. Con puntero se quedan
+     compactos: es un footer, no un menú. */
+  @media (pointer: coarse) {
+    .pie__enlaces a,
+    .pie__redes a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
+
   .pie__legal {
-    margin-block-start: var(--e-8);
-    padding-block-start: var(--e-5);
-    border-top: var(--grosor-cota) solid color-mix(in srgb, var(--lino) 22%, transparent);
+    margin-block-start: var(--e-6);
+    padding-block-start: var(--e-4);
+    border-top: var(--grosor-cota) solid color-mix(in srgb, var(--lino) 18%, transparent);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: end;
-    gap: var(--e-4);
+    gap: var(--e-3);
     font-size: var(--t-micro);
     color: color-mix(in srgb, var(--lino) 62%, var(--carbon));
   }
@@ -309,15 +246,11 @@ const modelos = await obtenerModelos();
     max-width: 74ch;
   }
 
-  @media (min-width: 700px) {
-    .pie__grilla {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 1000px) {
-    .pie__grilla {
-      grid-template-columns: 1.4fr 1fr 1fr 0.8fr;
+  @media (min-width: 760px) {
+    .pie__fila {
+      grid-template-columns: 14ch 1fr;
+      gap: var(--e-4);
+      align-items: baseline;
     }
   }
 </style>
