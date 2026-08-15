@@ -430,6 +430,22 @@ a:hover {
   border-color: var(--lino);
 }
 
+/* Madera: para navegación que tiene que verse sin robarle el papel al primario.
+   El secundario transparente desaparecía sobre el lino; este tiene relleno, así
+   que se lee como botón de lejos, y al ser roble y no bosque queda claro que no
+   es la acción de cotizar. Carbón sobre roble da 6,1:1. */
+.boton--madera {
+  background: var(--madera);
+  color: var(--carbon);
+  border: var(--grosor-cota) solid var(--madera);
+}
+
+.boton--madera:hover {
+  background: var(--carbon);
+  color: var(--nieve);
+  border-color: var(--carbon);
+}
+
 .boton--grande {
   min-height: 60px;
   padding: var(--e-4) var(--e-7);

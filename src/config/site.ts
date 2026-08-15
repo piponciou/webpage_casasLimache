@@ -112,21 +112,47 @@ export const HORARIOS = [
     dias: 'Sábados',
     desde: '11:00',
     hasta: '14:00',
-    nota: 'previa coordinación',
+    nota: '',
     schema: ['Saturday'],
   },
 ] as const;
 
+/**
+ * Toda visita se coordina antes, no solo la del sábado. Antes la nota de
+ * "previa coordinación" colgaba únicamente del sábado, y eso daba a entender
+ * que de lunes a viernes se podía llegar sin avisar.
+ *
+ * Está acá y no escrito en cada página para que diga lo mismo en la casa
+ * piloto, en Nosotros y en las preguntas frecuentes.
+ */
+export const VISITA_CON_HORA =
+  'Las visitas se coordinan antes por WhatsApp, así nos aseguramos de que haya alguien para recibirte y mostrarte la casa.';
+
 export const EMAIL = ''; // ⚠️ PENDIENTE — mientras esté vacío, el sitio no muestra email en ninguna parte.
 
+/**
+ * Redes sociales. `icono` es el nombre que entiende el componente Icono, y es
+ * lo que permite que el header las dibuje iterando en vez de repetir marcado.
+ */
 export const REDES = [
-  { nombre: 'Instagram', usuario: '@casaslimache', url: 'https://www.instagram.com/casaslimache/' },
+  {
+    nombre: 'Instagram',
+    usuario: '@casaslimache',
+    url: 'https://www.instagram.com/casaslimache/',
+    icono: 'instagram',
+  },
   {
     nombre: 'Facebook',
     usuario: '/casasprefabricadaslimache',
     url: 'https://www.facebook.com/casasprefabricadaslimache',
+    icono: 'facebook',
   },
-  { nombre: 'TikTok', usuario: '@casaslimaches', url: 'https://www.tiktok.com/@casaslimaches' },
+  {
+    nombre: 'TikTok',
+    usuario: '@casaslimaches',
+    url: 'https://www.tiktok.com/@casaslimaches',
+    icono: 'tiktok',
+  },
 ] as const;
 
 /**
@@ -163,21 +189,6 @@ export const KITS = [
 
 export type KitId = (typeof KITS)[number]['id'];
 
-/** Comunas donde se despacha. Alimenta el JSON-LD `areaServed` y el footer. */
-export const ZONA_DESPACHO = [
-  'Limache',
-  'Olmué',
-  'Villa Alemana',
-  'Quilpué',
-  'Quillota',
-  'Viña del Mar',
-  'Valparaíso',
-  'La Calera',
-  'Casablanca',
-  'San Felipe',
-  'Los Andes',
-  'Concón',
-] as const; // ⚠️ VERIFICAR si además se despacha fuera de la Región de Valparaíso.
 
 /**
  * Los testimonios de ejemplo se eliminaron junto con su componente. Eran tres

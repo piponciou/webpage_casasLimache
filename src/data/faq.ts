@@ -92,7 +92,7 @@ export const PREGUNTAS: Pregunta[] = [
   {
     pregunta: '¿Puedo ir a ver una casa antes de comprar?',
     respuesta:
-      'Sí, y es lo que recomendamos. Tenemos casa piloto en Camino Troncal 06680, sector Lo Hidalgo, Villa Alemana, abierta de lunes a viernes de 11:00 a 18:00 y los sábados de 11:00 a 14:00 coordinando antes. Puedes entrar, recorrerla y ver los materiales por dentro.',
+      'Sí, y es lo que recomendamos. Tenemos casa piloto en Camino Troncal 06680, sector Lo Hidalgo, Villa Alemana, de lunes a viernes de 11:00 a 18:00 y los sábados de 11:00 a 14:00. La visita se coordina antes por WhatsApp, así te recibe alguien y te muestra la casa por dentro.',
     enHome: false,
   },
 ];

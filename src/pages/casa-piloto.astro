@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import MapaCasaPiloto from '../components/MapaCasaPiloto.astro';
 import BotonWhatsApp from '../components/BotonWhatsApp.astro';
 
-import { DIRECCION, HORARIOS, TELEFONO } from '../config/site';
+import { DIRECCION, HORARIOS, TELEFONO, VISITA_CON_HORA } from '../config/site';
 import { mensajeCasaPiloto } from '../lib/whatsapp';
 import { migaDePan } from '../lib/schema';
 
@@ -28,8 +28,8 @@ const jsonLd = [migaDePan([{ nombre: 'Casa piloto', ruta: '/casa-piloto/' }])];
     <header class="cabecera-piloto">
       <h1>Una casa que puedes tocar antes de comprar</h1>
       <p class="cabecera-piloto__bajada">
-        Comprar una casa por fotos es apostar. Por eso tenemos una casa piloto armada y abierta: no
-        hay que pedir hora, no hay que comprar nada, y puedes recorrerla entera.
+        Comprar una casa por fotos es apostar. Por eso tenemos una casa piloto armada: coordinas la
+        visita por WhatsApp, te recibimos y la recorres entera sin comprar nada.
       </p>
     </header>
 
@@ -67,10 +67,7 @@ const jsonLd = [migaDePan([{ nombre: 'Casa piloto', ruta: '/casa-piloto/' }])];
             ))
           }
         </ul>
-        <p class="piloto-datos__referencia">
-          Si vienes de más lejos, escríbenos antes: coordinamos para que alguien te reciba y te
-          muestre.
-        </p>
+        <p class="piloto-datos__referencia">{VISITA_CON_HORA}</p>
       </section>
 
       <section class="piloto-datos__bloque" aria-labelledby="titulo-contacto">
