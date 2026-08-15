@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import ModelosBento from '../components/ModelosBento.astro';
 import Testimonios from '../components/Testimonios.astro';
+import Icono from '../components/Icono.astro';
 
 import { obtenerDestacados } from '../lib/catalogo';
 import { sitioWeb, organizacion } from '../lib/schema';
@@ -27,15 +28,23 @@ const jsonLd = [sitioWeb(), organizacion()];
 >
   <Hero />
 
-  {/* C — Catálogo destacado */}
+  {/* C — Catálogo destacado.
+       El h2 dice "casas prefabricadas" y no "Modelos destacados": es el único
+       encabezado de sección del home y la consulta por la que se busca este
+       negocio. El rango de metrajes no se perdió al quitar la bajada — sigue en
+       la entradilla del hero ("Modelos de 36 a 120 m²"). */}
   <section class="seccion" aria-labelledby="titulo-destacados">
     <div class="envoltorio">
       <div class="encabezado-seccion">
-        <h2 id="titulo-destacados">Modelos destacados</h2>
-        <p>
-          Ocho plantas distintas, de 36 a 120 m². Todas se pueden ver en materiales en la casa
-          piloto.
-        </p>
+        <h2 id="titulo-destacados">Modelos de casas prefabricadas</h2>
+
+        {/* Botón de navegación al catálogo. Va en secundario a propósito: el
+            primario de esta sección es cotizar por WhatsApp, que es la
+            conversión. Dos rellenos compitiendo anulan la jerarquía. */}
+        <a class="boton boton--secundario" href="/catalogo/">
+          Ver catálogo
+          <Icono nombre="flecha" tamano={20} />
+        </a>
       </div>
 
       <ModelosBento modelos={destacados} />

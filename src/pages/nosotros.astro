@@ -33,11 +33,20 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
       </ol>
     </nav>
 
+    {/* El h1 anterior era "Vendemos casas que se pueden visitar", y afirmaba
+        algo falso: visitable hay UNA, la casa piloto, no todo el catálogo.
+
+        El reemplazo lleva la marca en vez de una consulta genérica, y es
+        deliberado: una página "Nosotros" no compite por "casas prefabricadas"
+        —esa la pelea el home, y duplicar el objetivo canibaliza a las dos—,
+        compite por búsquedas de marca, que son las que más convierten. Los
+        términos descriptivos viven en la bajada, que sí puede extenderse sin
+        sonar a relleno. */}
     <header class="cabecera">
-      <h1>Vendemos casas que se pueden visitar</h1>
+      <h1>Sobre Casas Limache</h1>
       <p class="cabecera__bajada">
-        Es la única diferencia que importa frente a comprar una casa prefabricada por internet, y es
-        sobre la que está armado todo lo demás.
+        Vendemos y construimos casas prefabricadas en la Región de Valparaíso, con despacho a doce
+        comunas y una casa piloto que puedes recorrer en Villa Alemana antes de decidir.
       </p>
     </header>
 

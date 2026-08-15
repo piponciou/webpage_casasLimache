@@ -227,10 +227,17 @@ export const LEGAL = {
   anio: new Date().getFullYear(),
 } as const;
 
-/** Navegación principal. El catálogo va primero a propósito. */
+/**
+ * Navegación principal. El catálogo va primero a propósito.
+ *
+ * ⚠️ SEO: "Visítanos" es texto de enlace genérico. El anterior —"Casa piloto"—
+ * le decía a Google de qué trata la página de destino; este no. La ruta sigue
+ * siendo /casa-piloto/ y el título, el h1 y la miga de pan de esa página
+ * mantienen el término, que es lo que sostiene el posicionamiento.
+ */
 export const NAV = [
   { texto: 'Catálogo', href: '/catalogo/' },
-  { texto: 'Casa piloto', href: '/casa-piloto/' },
+  { texto: 'Visítanos', href: '/casa-piloto/' },
   { texto: 'Nosotros', href: '/nosotros/' },
   { texto: 'Preguntas', href: '/preguntas-frecuentes/' },
 ] as const;
