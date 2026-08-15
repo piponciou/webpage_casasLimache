@@ -2,34 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MapaCasaPiloto from '../components/MapaCasaPiloto.astro';
 import BotonWhatsApp from '../components/BotonWhatsApp.astro';
-import ModeloCard from '../components/ModeloCard.astro';
-import Cota from '../components/Cota.astro';
 
 import { DIRECCION, HORARIOS, TELEFONO } from '../config/site';
 import { mensajeCasaPiloto } from '../lib/whatsapp';
 import { migaDePan } from '../lib/schema';
-import { obtenerModelos } from '../lib/catalogo';
-
-const modelos = await obtenerModelos();
-const modeloPiloto = modelos.find((m) => m.data.slug === 'lo-hidalgo') ?? modelos[0]!;
-const altura = modeloPiloto.data.especificaciones.altura;
 
 const jsonLd = [migaDePan([{ nombre: 'Casa piloto', ruta: '/casa-piloto/' }])];
-
-const FOTOS = [
-  {
-    src: '/images/casa-piloto/01-fachada.jpg',
-    alt: 'Fachada de la casa piloto de Casas Limache en Camino Troncal, Villa Alemana',
-  },
-  {
-    src: '/images/casa-piloto/02-interior.jpg',
-    alt: 'Interior de la casa piloto de Casas Limache con los materiales a la vista',
-  },
-  {
-    src: '/images/casa-piloto/03-terreno.jpg',
-    alt: 'Terreno de la casa piloto de Casas Limache en el sector Lo Hidalgo',
-  },
-];
 ---
 
 <BaseLayout
@@ -54,6 +32,14 @@ const FOTOS = [
         hay que pedir hora, no hay que comprar nada, y puedes recorrerla entera.
       </p>
     </header>
+
+    {/* El mapa con la dirección sube junto al titular: es el dato que vino a
+        buscar quien entra acá, y antes quedaba después de tres bloques de
+        texto. Los detalles —horario, con quién, coordinar— van debajo. */}
+    <section class="piloto-mapa" aria-labelledby="titulo-mapa">
+      <h2 class="visualmente-oculto" id="titulo-mapa">Dónde está la casa piloto</h2>
+      <MapaCasaPiloto />
+    </section>
 
     <div class="piloto-datos">
       <section class="piloto-datos__bloque" aria-labelledby="titulo-donde">
@@ -107,58 +93,6 @@ const FOTOS = [
       />
     </div>
 
-    <section class="piloto-mapa" aria-labelledby="titulo-mapa">
-      <h2 class="visualmente-oculto" id="titulo-mapa">Ubicación</h2>
-      <MapaCasaPiloto />
-    </section>
-
-    <section class="piloto-fotos" aria-labelledby="titulo-fotos">
-      <h2 id="titulo-fotos">Así se ve</h2>
-      <div class="piloto-fotos__grilla">
-        {
-          FOTOS.map((foto) => (
-            <img
-              src={foto.src}
-              alt={foto.alt}
-              width="1600"
-              height="1067"
-              loading="lazy"
-              decoding="async"
-            />
-          ))
-        }
-      </div>
-      <Cota valor={altura} etiqueta="Altura libre interior" class="piloto-fotos__cota" />
-    </section>
-
-    <section class="piloto-que-ver" aria-labelledby="titulo-que-ver">
-      <h2 id="titulo-que-ver">Qué mirar cuando vengas</h2>
-      <div class="prosa">
-        <p>
-          Toca el panel exterior media luna de 5 pulgadas y fíjate en el grosor. Es la diferencia
-          más grande entre una casa prefabricada bien hecha y una que se siente hueca.
-        </p>
-        <p>
-          Párate en medio de un dormitorio y mide con el cuerpo. Un dormitorio de 3×3 en plano y un
-          dormitorio de 3×3 con una cama adentro no se parecen en nada, y esa es información que
-          ninguna ficha técnica te va a dar.
-        </p>
-        <p>
-          Pregunta por lo que no incluye. El radier, las instalaciones y los permisos son la parte
-          del presupuesto que la gente subestima, y preferimos que te enteres acá y no después.
-        </p>
-      </div>
-    </section>
-
-    <section class="piloto-modelo" aria-labelledby="titulo-modelo-piloto">
-      <div class="encabezado-seccion">
-        <h2 id="titulo-modelo-piloto">El modelo que está armado</h2>
-        <p>Es el que vas a recorrer. Los demás los puedes ver en materiales y en plano.</p>
-      </div>
-      <div class="piloto-modelo__tarjeta">
-        <ModeloCard modelo={modeloPiloto} />
-      </div>
-    </section>
   </div>
 </BaseLayout>
 
@@ -254,55 +188,21 @@ const FOTOS = [
     font-size: var(--t-cuerpo-grande);
   }
 
-  .piloto-acciones {
-    margin-block: var(--e-7);
-  }
-
+  /* El mapa abre la página, así que separa hacia abajo, no hacia arriba. */
   .piloto-mapa {
-    margin-block-end: var(--e-9);
+    margin-block-end: var(--e-7);
   }
 
-  .piloto-fotos h2,
-  .piloto-que-ver h2,
-  .piloto-modelo h2 {
-    margin-block-end: var(--e-5);
-  }
-
-  .piloto-fotos__grilla {
-    display: grid;
-    gap: var(--e-3);
-    grid-template-columns: 1fr;
-  }
-
-  .piloto-fotos__grilla img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    border-radius: var(--radio);
-  }
-
-  .piloto-fotos__cota {
-    margin-block-start: var(--e-4);
-    max-width: 320px;
-  }
-
-  .piloto-que-ver,
-  .piloto-modelo {
-    margin-block-start: var(--e-9);
-  }
-
-  .piloto-modelo__tarjeta {
-    max-width: 420px;
+  /* Cierra la página: más aire abajo que arriba para que no quede pegado
+     al footer. */
+  .piloto-acciones {
+    margin-block: var(--e-7) var(--e-9);
   }
 
   @media (min-width: 700px) {
     .piloto-datos {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--e-5);
-    }
-
-    .piloto-fotos__grilla {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

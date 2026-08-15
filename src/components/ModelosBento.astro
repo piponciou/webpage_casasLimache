@@ -24,7 +24,6 @@
  */
 import ModeloCard from './ModeloCard.astro';
 import BotonWhatsApp from './BotonWhatsApp.astro';
-import Icono from './Icono.astro';
 import { mensajeGenerico } from '../lib/whatsapp';
 import type { Modelo } from '../lib/catalogo';
 
@@ -89,6 +88,9 @@ const spanTablet = (span: number) => (span >= 3 ? 2 : 1);
               Cuéntanos el metraje y la comuna, y te mandamos el valor con despacho incluido.
             </p>
 
+            {/* Una sola acción. El enlace al catálogo que vivía acá se movió al
+                encabezado de la sección, como botón: acá competía con el
+                llamado a cotizar, que es la conversión de la página. */}
             <div class="cta__acciones">
               <BotonWhatsApp
                 mensaje={mensajeGenerico()}
@@ -96,11 +98,6 @@ const spanTablet = (span: number) => (span >= 3 ? 2 : 1);
                 texto="Cotizar por WhatsApp"
                 ancho
               />
-
-              <a class="cta__enlace" href="/catalogo/">
-                Ver los ocho modelos
-                <Icono nombre="flecha" tamano={18} />
-              </a>
             </div>
           </div>
         )}
@@ -167,22 +164,6 @@ const spanTablet = (span: number) => (span >= 3 ? 2 : 1);
     width: 100%;
     margin-block-start: auto;
     padding-block-start: var(--e-5);
-  }
-
-  .cta__enlace {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--e-2);
-    min-height: 44px;
-    font-size: var(--t-chico);
-    color: var(--texto-suave);
-    text-decoration: none;
-  }
-
-  .cta__enlace:hover {
-    color: var(--texto);
-    text-decoration: underline;
-    text-underline-offset: 0.22em;
   }
 
   /* Tablet: dos columnas. Las celdas anchas se llevan la fila entera. */

@@ -397,13 +397,19 @@ a:hover {
   border-color: var(--carbon);
 }
 
-/* Secundario: el borde bajó de carbón pleno a una línea de 40%. Dos botones
-   con el mismo peso de trazo competían, y en esta dirección la jerarquía la
-   marca el relleno, no el grosor. */
+/* Secundario: el borde bajó de carbón pleno a una línea suave, porque dos
+   botones con el mismo peso de trazo competían y acá la jerarquía la marca el
+   relleno, no el grosor.
+
+   Pero no puede bajar tanto como estaba. Con el relleno transparente, ese
+   borde ES el botón: es lo único que delimita el objetivo. Al 40% daba 2,4:1
+   contra el lino y quedaba por debajo del mínimo de 3:1 que la WCAG exige a
+   los componentes de interfaz (1.4.11). Al 55% da 3,7:1 y sigue leyéndose
+   como secundario. */
 .boton--secundario {
   background: transparent;
   color: var(--texto);
-  border: var(--grosor-cota) solid color-mix(in srgb, var(--carbon) 40%, transparent);
+  border: var(--grosor-cota) solid color-mix(in srgb, var(--carbon) 55%, transparent);
 }
 
 .boton--secundario:hover {
