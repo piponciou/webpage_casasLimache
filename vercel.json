@@ -6,6 +6,11 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/casas-prefabricadas-:comuna/",
+      "destination": "/catalogo/",
+      "permanent": true
+    },
+    {
       "source": "/casas-prefabricadas-:comuna",
       "destination": "/catalogo/",
       "permanent": true
