@@ -73,6 +73,31 @@ export const DIRECCION = {
   },
 } as const;
 
+/**
+ * Street View de la casa piloto: la vista desde la carretera en la que se
+ * reconoce la fachada.
+ *
+ * `enlace` es el que entregó el cliente y el que se abre al tocar el botón.
+ * `panorama`, `rumbo` y `inclinacion` salen de ese mismo enlace y son los que
+ * arma el iframe, porque un embed no acepta la URL corta.
+ *
+ * CÓMO SACARLOS SI HAY QUE CAMBIAR LA VISTA
+ * Abre el enlace corto en un navegador y mira la URL larga a la que salta:
+ *   .../@LAT,LNG,3a,75y,200.15h,81.52t/data=!3m7!1e1!3m5!1sPANORAMA!2e0...
+ *                        └ rumbo ┘ └ inclinación ┘        └ panorama ┘
+ * La inclinación del iframe se cuenta desde el horizonte: es la de la URL
+ * menos 90. Acá 81.52t se convierte en -8.48.
+ *
+ * OJO: las coordenadas de esa URL son las de la CÁMARA en la carretera, no las
+ * del negocio. Las de DIRECCION.geo no se tocan: esas son el pin.
+ */
+export const STREET_VIEW = {
+  enlace: 'https://maps.app.goo.gl/p8JHDB4v6A883y2a8',
+  panorama: 'yx9QOjLwmJds1i_3MuXmbw',
+  rumbo: 200.15,
+  inclinacion: -8.48,
+} as const;
+
 /** Horario de atención de la casa piloto. */
 export const HORARIOS = [
   {

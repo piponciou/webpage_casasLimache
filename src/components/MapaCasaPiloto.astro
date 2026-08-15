@@ -20,20 +20,31 @@
  * Google Business del negocio.
  */
 import Icono from './Icono.astro';
-import { DIRECCION, SITE } from '../config/site';
+import { DIRECCION, SITE, STREET_VIEW } from '../config/site';
 
 const punto = `${DIRECCION.geo.lat},${DIRECCION.geo.lng}`;
-const urlEmbed = `https://www.google.com/maps?q=${punto}&hl=es&z=17&output=embed`;
+
+/**
+ * Lo que se ve embebido es el Street View de la fachada, no el plano.
+ *
+ * El plano con un pin dice dónde queda; esta vista dice cómo se reconoce la
+ * casa al llegar, que es la pregunta real de alguien que viene por primera vez
+ * a un camino rural. Para "dónde queda" ya están la dirección en texto y el
+ * botón de indicaciones, que además funcionan sin cargar nada de Google.
+ *
+ * El formato `pb` es el que usa el propio Google al compartir un panorama:
+ *   !1s → panorama   !3f → rumbo   !4f → inclinación
+ */
+const urlEmbed = `https://www.google.com/maps/embed?pb=!3m1!1ses!5m1!1ses!6m5!1m4!1s${STREET_VIEW.panorama}!3f${STREET_VIEW.rumbo}!4f${STREET_VIEW.inclinacion}!5f1`;
+
 const urlComoLlegar = `https://www.google.com/maps/dir/?api=1&destination=${punto}`;
-/** Street View en la puerta: es la vista donde se reconoce la casa. */
-const urlStreetView = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${punto}`;
 ---
 
 <div class="mapa">
   <div class="mapa__marco">
     <iframe
       src={urlEmbed}
-      title={`Ubicación de la casa piloto de ${SITE.nombre} en ${DIRECCION.comuna}`}
+      title={`Vista de la fachada de la casa piloto de ${SITE.nombre} desde el camino, en ${DIRECCION.comuna}`}
       loading="lazy"
       referrerpolicy="no-referrer-when-downgrade"
       allowfullscreen
@@ -53,9 +64,11 @@ const urlStreetView = `https://www.google.com/maps/@?api=1&map_action=pano&viewp
         Cómo llegar
       </a>
 
-      <a class="boton boton--secundario" href={urlStreetView} target="_blank" rel="noopener">
+      {/* El enlace corto del cliente: abre este mismo panorama en Google Maps,
+          donde se puede girar y recorrer el camino. */}
+      <a class="boton boton--secundario" href={STREET_VIEW.enlace} target="_blank" rel="noopener">
         <Icono nombre="pin" tamano={20} />
-        Ver la fachada en Street View
+        Abrir en Google Maps
       </a>
     </div>
   </div>
