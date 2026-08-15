@@ -1,10 +1,10 @@
 /* =============================================================================
    TOKENS — Casas Limache
-   Dirección de diseño: "Minimalismo cálido".
+   Dirección de diseño: "Rústico moderno / eco-natural".
    Minimalismo arquitectónico en la estructura —aire, retícula, una sola familia
-   de formas— y paleta escandinava en el color: blancos, grises claros y toques
-   de madera y tierra. La página es el fondo blanco; las fotos de las casas son
-   lo único que grita.
+   de formas— y materia en el color y la letra: hueso, carbón, verde bosque,
+   roble y greda; una serif de trazo grueso en los titulares. La página es el
+   fondo de hueso; las fotos de las casas son lo único que grita.
    Ningún token decorativo: si un valor no se usa, no está.
 
    La excepción son las escalas —espaciado, sombras, capas—, que se mantienen
@@ -18,33 +18,21 @@
 /* Los .woff2 los copia scripts/copiar-fuentes.mjs desde node_modules.         */
 
 @font-face {
-  font-family: 'Archivo Variable';
-  src: url('/fonts/archivo-variable.woff2') format('woff2-variations');
-  font-weight: 100 900;
+  font-family: 'Merriweather Variable';
+  src: url('/fonts/merriweather-variable.woff2') format('woff2-variations');
+  font-weight: 300 900;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
     U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Un solo archivo variable cubre 100–1000: reemplaza los tres pesos estáticos
+   que había antes y pesa la mitad que los tres juntos. */
 @font-face {
-  font-family: 'Plex Sans';
-  src: url('/fonts/plex-sans-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Sans';
-  src: url('/fonts/plex-sans-500.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Sans';
-  src: url('/fonts/plex-sans-600.woff2') format('woff2');
-  font-weight: 600;
+  font-family: 'DM Sans Variable';
+  src: url('/fonts/dm-sans-variable.woff2') format('woff2-variations');
+  font-weight: 100 1000;
   font-style: normal;
   font-display: swap;
 }
@@ -65,40 +53,52 @@
 
 :root {
   /* ---------- Color -------------------------------------------------------
-     Cinco tonos. Ninguno es frío: hasta el "gris" tiene tierra adentro. Es lo
-     que separa un interior escandinavo de un laboratorio.
+     Seis tonos. Ninguno es frío: hasta el "gris" tiene tierra adentro. Es lo
+     que separa una casa en la parcela de un laboratorio.
 
-     Contraste verificado (fórmula WCAG 2.1, sRGB):
-       carbón sobre lino   → 13.6:1   (texto normal, AA y AAA)
-       carbón sobre nieve  → 15.1:1
-       arcilla sobre lino  →  4.9:1   (enlaces y foco, AA)
-       nieve sobre arcilla →  5.5:1   (relleno del botón de cotizar)
-       carbón sobre roble  →  6.8:1   (relleno de madera con texto carbón)
-       roble sobre carbón  →  6.9:1   (madera como texto en bloques oscuros)
+     El reparto de papeles es lo que sostiene la dirección rústica:
+       · el hueso es el aire,
+       · el carbón es la voz,
+       · el bosque es la acción —lo único saturado de la página,
+       · el roble y la greda son el calor, siempre en detalle y nunca en bloque.
 
-     REGLA: el roble NUNCA se usa como color de texto sobre fondo claro
-     (daría 2.1:1). Solo como relleno, superficie o texto sobre carbón.     */
+     Contraste verificado (fórmula WCAG 2.1, sRGB — scripts de verificación
+     rehechos al cambiar la paleta, no son números heredados):
+       carbón sobre lino     → 12.7:1   (texto normal, AA y AAA)
+       carbón sobre nieve    → 14.1:1
+       bosque sobre lino     →  6.9:1   (enlaces, cotas y foco, AA)
+       nieve sobre bosque    →  7.6:1   (relleno del botón de cotizar)
+       carbón sobre roble    →  6.1:1   (relleno de madera con texto carbón)
+       roble sobre carbón    →  6.1:1   (madera como texto en bloques oscuros)
 
-  --carbon: #23201c; /* casi negro, pero con marrón: la sombra de una viga */
-  --lino: #f6f3ee; /* tela de lino sin teñir — el fondo de toda la página */
-  --nieve: #ffffff; /* blanco puro, reservado a las superficies que flotan */
-  --roble: #c8a27c; /* roble claro barnizado: la madera, siempre en toques */
-  --arcilla: #a8503a; /* greda cocida: el color con el que se pide una casa */
+     REGLA 1: el roble NUNCA se usa como color de texto sobre fondo claro
+     (daría 2.0:1). Solo como relleno, superficie o texto sobre carbón.
+     REGLA 2: el bosque es al revés — nunca sobre carbón (1.8:1). En bloque
+     oscuro el papel del acento lo toma el roble o el bosque aclarado.        */
 
-  /* Derivados. Solo mezclas de los cinco de arriba, ningún color nuevo. */
+  --carbon: #2c2a26; /* gris carbón con marrón adentro: la sombra de una viga */
+  --lino: #f4f1e8; /* hueso cálido, casi arena — el fondo de toda la página */
+  --nieve: #fffdf8; /* blanco cálido, reservado a las superficies que flotan */
+  --roble: #c9a274; /* roble claro barnizado: la madera, siempre en toques */
+  --arcilla: #a8503a; /* greda cocida: el detalle de terracota */
+  --bosque: #3a5a40; /* verde bosque profundo: el color con el que se pide una casa */
+
+  /* Derivados. Solo mezclas de los seis de arriba, ningún color nuevo. */
   /* Los dos niveles de texto secundario están calculados para pasar AA sobre
-     lino y sobre nieve: 88% → 10.4:1 y 70% → 5.7:1. Un gris más claro se veía
+     lino y sobre nieve: 88% → 8.9:1 y 70% → 5.1:1. Un gris más claro se veía
      mejor en la maqueta y era ilegible en un celular al sol. */
   --carbon-88: color-mix(in srgb, var(--carbon) 88%, var(--lino));
   --carbon-70: color-mix(in srgb, var(--carbon) 70%, var(--lino));
   --carbon-18: color-mix(in srgb, var(--carbon) 18%, var(--lino));
   --carbon-10: color-mix(in srgb, var(--carbon) 10%, var(--lino));
-  /* La arcilla plena sobre carbón da 2.9:1: en bloque oscuro se aclara. */
+  /* Sobre carbón, el bosque pleno se apaga a 1.8:1 y la arcilla a 2.9:1: en
+     bloque oscuro los dos se aclaran. 6.6:1 y 6.1:1 respectivamente. */
+  --bosque-claro: color-mix(in srgb, var(--bosque) 45%, var(--nieve));
   --arcilla-clara: color-mix(in srgb, var(--arcilla) 55%, var(--nieve));
 
   /* La superficie cálida. Es madera diluida, no un color nuevo: sirve para que
      una celda del bento pese distinto sin romper la paleta. Al 18% el carbón
-     encima queda en 12,4:1; más saturada, la tipografía empieza a sufrir. */
+     encima queda en 12,3:1; más saturada, la tipografía empieza a sufrir. */
   --arena: color-mix(in srgb, var(--roble) 18%, var(--nieve));
 
   /* Roles */
@@ -113,17 +113,21 @@
   --texto-invertido-suave: color-mix(in srgb, var(--lino) 72%, var(--carbon));
   --linea: var(--carbon-18);
   --linea-tenue: var(--carbon-10);
-  --acento: var(--arcilla); /* el color de la acción: cotizar */
+  --acento: var(--bosque); /* el color de la acción: cotizar */
   --madera: var(--roble); /* el color del calor: superficies y detalles */
-  --cota: var(--arcilla);
-  --foco: var(--arcilla);
+  --cota: var(--bosque);
+  --foco: var(--bosque);
 
   /* ---------- Tipografía --------------------------------------------------
-     Archivo (variable) solo en titulares y numerales grandes.
-     Plex Sans para leer. Plex Mono exclusivamente para medidas y datos.     */
+     Merriweather (variable) solo en titulares y numerales grandes: una serif
+     de trazo grueso y remates cuadrados: es lo que pone la madera y la solidez
+     en el texto, no en un adorno.
+     DM Sans para leer: geométrica, redonda, sin ruido — que la serif de arriba
+     sea la única que llame la atención.
+     Plex Mono exclusivamente para medidas y datos: la voz del plano.         */
 
-  --fuente-display: 'Archivo Variable', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --fuente-texto: 'Plex Sans', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-display: 'Merriweather Variable', 'Merriweather', Georgia, 'Times New Roman', serif;
+  --fuente-texto: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --fuente-mono: 'Plex Mono', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Escala fluida. El techo del display es 5.4rem: por debajo del máximo de
@@ -137,13 +141,20 @@
   --t-chico: 0.9375rem;
   --t-micro: 0.8125rem;
 
-  --interlinea-display: 0.94;
-  --interlinea-titular: 1.06;
+  /* Los dos primeros subieron al cambiar de palo seco a serif. No es una
+     preferencia, es colisión de trazos: medido en el navegador, Merriweather
+     sube 0.84em en las ascendentes y baja 0.27em en las descendentes, así que
+     por debajo de 1.11 la "p" de una línea entra en la "f" de la siguiente.
+     Con 0.94 el titular del hero, que cae en cuatro líneas, se pisaba solo. */
+  --interlinea-display: 1.12;
+  --interlinea-titular: 1.18;
   --interlinea-cuerpo: 1.6;
 
-  /* El display se aprieta; el texto nunca. Tope duro en -0.03em. */
-  --tracking-display: -0.03em;
-  --tracking-titular: -0.02em;
+  /* El display se aprieta; el texto nunca. El tope bajó de -0.03em a -0.015em:
+     una serif con remates necesita el aire entre letras que un palo seco no
+     necesita, o los remates se tocan. */
+  --tracking-display: -0.015em;
+  --tracking-titular: -0.01em;
   --tracking-mono: 0.02em;
   --tracking-etiqueta: 0.08em;
 

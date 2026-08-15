@@ -46,52 +46,64 @@ decorativas. El componente es `src/components/Cota.astro`.
 
 ## Color
 
-Cinco tonos, todos sacados de materiales que existen en la obra. Están en
-`src/styles/tokens.css`.
+Seis tonos, todos sacados de materiales que existen en la obra o en la parcela.
+Están en `src/styles/tokens.css`.
 
 | Token | Hex | De dónde sale |
 |---|---|---|
-| `--tinta-fieltro` | `#1c1f1d` | El papel fieltro entre la tabiquería y el panel |
-| `--zinc-marga` | `#d7dcda` | Zinc galvanizado con la humedad de la mañana. **Fondo del sitio** |
-| `--neblina` | `#f1f3f1` | La bruma sobre el cerro. Superficies elevadas |
-| `--pino-radiata` | `#c08a3e` | Pino sin pintar bajo sol. **Único acento** |
-| `--lapiz-carpintero` | `#2e4e5c` | El lápiz plano azul. Cotas, enlaces y foco |
+| `--carbon` | `#2c2a26` | Gris carbón con marrón adentro: la sombra de una viga. **Todo el texto** |
+| `--lino` | `#f4f1e8` | Tela de lino sin teñir, casi arena. **Fondo del sitio** |
+| `--nieve` | `#fffdf8` | Blanco cálido. Superficies elevadas |
+| `--bosque` | `#3a5a40` | Verde de quebrada a la sombra. **Único acento**: botones, enlaces, cotas y foco |
+| `--roble` | `#c9a274` | Roble claro barnizado. La madera, siempre en toques |
+| `--arcilla` | `#a8503a` | Greda cocida. El detalle de terracota en bloques oscuros |
 
 **Reglas de color:**
 
-- **El pino nunca se usa como color de texto sobre fondo claro** (daría 2.4:1).
-  Solo como relleno, o como texto sobre tinta.
-- El botón principal, al pasar el mouse, **invierte el material** (fondo tinta,
-  texto pino) en vez de oscurecerse: un pino más oscuro bajaría de AA.
-- El verde de WhatsApp aparece solo dentro del glifo del ícono, jamás como color
-  de superficie.
-- Un solo acento en todo el sitio. Sin color secundario, sin estados de relleno
-  de color.
+- **El roble nunca se usa como color de texto sobre fondo claro** (daría 2.0:1).
+  Solo como relleno, superficie, o texto sobre carbón.
+- **El bosque es al revés: nunca sobre carbón** (1.8:1). En bloque oscuro el
+  papel del acento lo toma el roble, o el bosque aclarado (`--bosque-claro`).
+- El botón principal, al pasar el mouse, **invierte el material** (fondo carbón,
+  texto nieve) en vez de oscurecerse: un verde más oscuro bajaría de AA.
+- El verde de WhatsApp aparece solo dentro del glifo del ícono. El botón que lo
+  contiene usa el bosque de la paleta, no el verde de la marca ajena.
+- Un solo acento en todo el sitio. La madera y la terracota son calor, no
+  acción: no rellenan botones ni marcan estados.
 
-**Contraste verificado** (medido en el navegador, no estimado): tinta sobre zinc
-11.9:1 · lápiz sobre zinc 6.4:1 · texto suave 8.0:1 · texto tenue 5.1:1 · pino
-sobre tinta 5.3:1. Los dos niveles de texto secundario están calculados para
-pasar AA: un gris más claro se veía mejor en la maqueta y era ilegible en un
-celular al sol.
+**Contraste verificado** (calculado con la fórmula WCAG 2.1 y confirmado en el
+navegador, no estimado): carbón sobre lino 12.7:1 · bosque sobre lino 6.9:1 ·
+nieve sobre bosque 7.6:1 · texto suave 8.9:1 · texto tenue 5.1:1 · roble sobre
+carbón 6.1:1. Los dos niveles de texto secundario están calculados para pasar
+AA: un gris más claro se veía mejor en la maqueta y era ilegible en un celular
+al sol.
 
 ---
 
 ## Tipografía
 
-- **Archivo Variable** — solo en el titular del hero, los H2 de sección y los
-  numerales grandes de m². Es una grotesca de señalética industrial: se parece a
-  un letrero de obra, no a una revista.
-- **IBM Plex Sans** — todo el texto de lectura.
+- **Merriweather Variable** — solo en el titular del hero, los H2 de sección y
+  los numerales grandes de m². Es una serif de trazo grueso y remates cuadrados,
+  dibujada para leerse en pantalla: pone la madera y el peso de lo construido en
+  la letra, sin necesidad de un adorno que lo diga.
+- **DM Sans Variable** — todo el texto de lectura. Geométrica y redonda, sin
+  ruido: que la serif de arriba sea la única que llama la atención.
 - **IBM Plex Mono** — **exclusivamente la capa de medición**: cotas,
-  especificaciones, precios, metrajes, migas de pan. Es la hermana del texto
-  (misma superfamilia), así que no hay ruido tipográfico: la mono es el tono de
-  voz de los datos.
+  especificaciones, precios, metrajes, migas de pan. La mono es el tono de voz
+  de los datos.
 
-**No hay ninguna serifa en el sitio.** Una serif lo empujaría hacia
-"inmobiliaria premium", que es el lugar equivocado.
+**La serif vive solo en los titulares.** En el cuerpo empujaría el sitio hacia
+"inmobiliaria premium", que es el lugar equivocado; en el titular hace lo
+contrario, porque ahí compite con una foto y no con un párrafo.
+
+**Interlínea de titular: nunca por debajo de 1.11.** Medido en el navegador,
+Merriweather sube 0.84em en las ascendentes y baja 0.27em en las descendentes:
+más apretado que eso y las líneas se pisan. El hero, que cae en cuatro líneas,
+es donde se nota primero.
 
 Las tres están autoalojadas en `public/fonts/`, copiadas desde `node_modules` por
 `scripts/copiar-fuentes.mjs` para que la ruta sea estable y se pueda precargar.
+Merriweather y DM Sans son archivos variables: un `.woff2` cubre todos los pesos.
 
 ---
 

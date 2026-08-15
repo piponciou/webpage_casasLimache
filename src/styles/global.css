@@ -167,8 +167,8 @@ a:hover {
   border-radius: 2px;
 }
 
-/* Sobre carbón la arcilla queda en 2.9:1 y desaparece: el foco pasa a madera,
-   que sobre el mismo fondo da 6.9:1. */
+/* Sobre carbón el bosque queda en 1.8:1 y desaparece: el foco pasa a madera,
+   que sobre el mismo fondo da 6.1:1. */
 .invertido :focus-visible,
 .seccion--invertida :focus-visible {
   outline-color: var(--madera);
@@ -321,7 +321,7 @@ a:hover {
 
 .invertido .cota,
 .seccion--invertida .cota {
-  --cota-color: var(--arcilla-clara);
+  --cota-color: var(--bosque-claro);
 }
 
 /* Entrada: la cota se dibuja una vez, desde los extremos hacia el centro. */
@@ -380,11 +380,11 @@ a:hover {
   flex: 0 0 auto;
 }
 
-/* Principal: relleno de arcilla con texto nieve (5.5:1).
-   Es el único elemento saturado de toda la página. En un fondo de lino y
-   blanco, un solo bloque de tierra basta para que el ojo lo encuentre sin
-   agrandarlo ni ponerle sombra. Al pasar el mouse se va a carbón, no a una
-   arcilla más oscura: mantiene el texto blanco por sobre AA. */
+/* Principal: relleno de bosque con texto nieve (7.6:1).
+   Es el único elemento saturado de toda la página. En un fondo de hueso y
+   blanco cálido, un solo bloque de verde basta para que el ojo lo encuentre sin
+   agrandarlo ni ponerle sombra. Al pasar el mouse se va a carbón, no a un
+   verde más oscuro: mantiene el texto blanco por sobre AA. */
 .boton--principal {
   background: var(--acento);
   color: var(--nieve);
@@ -404,7 +404,7 @@ a:hover {
    Pero no puede bajar tanto como estaba. Con el relleno transparente, ese
    borde ES el botón: es lo único que delimita el objetivo. Al 40% daba 2,4:1
    contra el lino y quedaba por debajo del mínimo de 3:1 que la WCAG exige a
-   los componentes de interfaz (1.4.11). Al 55% da 3,7:1 y sigue leyéndose
+   los componentes de interfaz (1.4.11). Al 55% da 3,3:1 y sigue leyéndose
    como secundario. */
 .boton--secundario {
   background: transparent;

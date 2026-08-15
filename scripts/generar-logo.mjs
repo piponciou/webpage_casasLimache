@@ -226,7 +226,7 @@ async function main() {
   const metaOg = await sharp(logoOg).metadata();
 
   await sharp({
-    create: { width: 1200, height: 630, channels: 4, background: '#d7dcda' },
+    create: { width: 1200, height: 630, channels: 4, background: '#f4f1e8' },
   })
     .composite([
       {
