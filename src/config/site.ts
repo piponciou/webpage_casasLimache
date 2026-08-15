@@ -56,9 +56,20 @@ export const DIRECCION = {
   completa: 'Camino Troncal 06680, Sector Lo Hidalgo, Villa Alemana, Región de Valparaíso',
   /** Aclaración humana, no forma parte del NAP. */
   referencia: 'En el camino de Villa Alemana hacia Limache, a la salida de Villa Alemana.',
+  /**
+   * Verificadas contra la ficha de Google Business del negocio
+   * ("Casas Limache", empresa constructora). Las anteriores —-33.0358,
+   * -71.2979— caían unos 50 m al noroeste, en el terreno del vecino.
+   *
+   * ⚠️ OJO CON LA CALLE: Google tiene el domicilio como "Enlace
+   * Peñablanca-Limache-Quillota 06680" y acá figura "Camino Troncal 06680".
+   * Puede ser el mismo camino con dos nombres, pero mientras no coincidan
+   * carácter por carácter, el NAP del sitio y el de Google no se refuerzan
+   * entre sí. Hay que decidir cuál es el bueno y dejar el mismo en los dos.
+   */
   geo: {
-    lat: -33.0358, // ⚠️ VERIFICAR
-    lng: -71.2979, // ⚠️ VERIFICAR
+    lat: -33.0361682,
+    lng: -71.2976072,
   },
 } as const;
 

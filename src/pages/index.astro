@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import ModelosBento from '../components/ModelosBento.astro';
-import Testimonios from '../components/Testimonios.astro';
+import ClientesSlider from '../components/ClientesSlider.astro';
 import Icono from '../components/Icono.astro';
 
 import { obtenerDestacados } from '../lib/catalogo';
@@ -51,16 +51,11 @@ const jsonLd = [sitioWeb(), organizacion()];
     </div>
   </section>
 
-  {/* D — Testimonios.
-       Sube al lugar que ocupaba la casa piloto: la prueba social va pegada al
-       catálogo, mientras el modelo que la persona acaba de mirar sigue fresco. */}
-  <section class="seccion" aria-labelledby="titulo-testimonios">
-    <div class="envoltorio">
-      <div class="encabezado-seccion">
-        <h2 id="titulo-testimonios">Lo que dicen quienes ya compraron</h2>
-      </div>
-
-      <Testimonios />
-    </div>
-  </section>
+  {/* D — Clientes.
+       Ocupa el lugar que tenía la casa piloto: la prueba social va pegada al
+       catálogo, mientras el modelo que la persona acaba de mirar sigue fresco.
+       Reemplaza al bloque de testimonios, que mostraba en producción el texto
+       de ejemplo "⚠️ REEMPLAZAR". Cinco fotos reales dicen más que tres
+       testimonios inventados, y estos existen. */}
+  <ClientesSlider />
 </BaseLayout>
