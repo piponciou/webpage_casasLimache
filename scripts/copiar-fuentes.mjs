@@ -17,10 +17,8 @@ const destino = join(raiz, 'public', 'fonts');
 
 /** Cada entrada: [paquete, nombre del archivo en el paquete, nombre final]. */
 const FUENTES = [
-  ['@fontsource-variable/archivo', 'archivo-latin-wght-normal.woff2', 'archivo-variable.woff2'],
-  ['@fontsource/ibm-plex-sans', 'ibm-plex-sans-latin-400-normal.woff2', 'plex-sans-400.woff2'],
-  ['@fontsource/ibm-plex-sans', 'ibm-plex-sans-latin-500-normal.woff2', 'plex-sans-500.woff2'],
-  ['@fontsource/ibm-plex-sans', 'ibm-plex-sans-latin-600-normal.woff2', 'plex-sans-600.woff2'],
+  ['@fontsource-variable/merriweather', 'merriweather-latin-wght-normal.woff2', 'merriweather-variable.woff2'],
+  ['@fontsource-variable/dm-sans', 'dm-sans-latin-wght-normal.woff2', 'dm-sans-variable.woff2'],
   ['@fontsource/ibm-plex-mono', 'ibm-plex-mono-latin-400-normal.woff2', 'plex-mono-400.woff2'],
   ['@fontsource/ibm-plex-mono', 'ibm-plex-mono-latin-500-normal.woff2', 'plex-mono-500.woff2'],
 ];
