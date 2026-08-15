@@ -78,7 +78,3 @@ export function mensajeCatalogoSinResultados(): string {
   return 'Hola 👋 Vengo desde la web de Casas Limache. Busqué en el catálogo y ningún modelo calza con lo que necesito. ¿Pueden adaptar alguno?';
 }
 
-/** Mensaje desde una landing genérica sobre un modelo, sin selección de kit. */
-export function mensajeModeloSimple(nombreModelo: string): string {
-  return `Hola 👋 Vengo desde la web de Casas Limache. Quiero información sobre el modelo *${nombreModelo}*.`;
-}

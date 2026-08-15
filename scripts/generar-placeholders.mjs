@@ -46,13 +46,15 @@ const ARCHIVOS_MODELO = [
   ['plano.jpg', 'plano'],
 ];
 
-/** Imágenes sueltas del sitio que no pertenecen a un modelo. */
+/**
+ * Imágenes sueltas del sitio que no pertenecen a un modelo.
+ *
+ * Salieron de acá las de casa-piloto/ y proceso/: ninguna página las muestra
+ * ya —la galería "Así se ve" y la sección de proceso se eliminaron— y este
+ * script corre en cada `npm install`, así que las habría vuelto a crear en
+ * cada despliegue. Si alguna sección vuelve, se reponen estas líneas.
+ */
 const ARCHIVOS_SUELTOS = [
-  ['casa-piloto/01-fachada.jpg', 'galeria'],
-  ['casa-piloto/02-interior.jpg', 'galeria'],
-  ['casa-piloto/03-terreno.jpg', 'galeria'],
-  ['proceso/taller.jpg', 'galeria'],
-  ['proceso/montaje.jpg', 'galeria'],
   // La portada del hero, 16:9 en tres anchos. Las dos derivadas las regenera
   // scripts/optimizar-imagenes.mjs a partir de portada.jpg.
   ['hero/portada.jpg', 'hero'],
