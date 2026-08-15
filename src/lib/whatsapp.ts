@@ -68,13 +68,3 @@ export function mensajeCasaPiloto(): string {
   return 'Hola 👋 Quiero coordinar una visita a la casa piloto de Casas Limache en Villa Alemana. ¿Qué horarios tienen disponibles?';
 }
 
-/** Mensaje desde una landing de comuna. */
-export function mensajeComuna(comuna: string): string {
-  return `Hola 👋 Vengo desde la web de Casas Limache. Quiero cotizar una casa prefabricada con despacho a *${comuna}*.`;
-}
-
-/** Mensaje del estado vacío del catálogo, cuando ningún filtro calza. */
-export function mensajeCatalogoSinResultados(): string {
-  return 'Hola 👋 Vengo desde la web de Casas Limache. Busqué en el catálogo y ningún modelo calza con lo que necesito. ¿Pueden adaptar alguno?';
-}
-

@@ -11,7 +11,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BotonWhatsApp from '../components/BotonWhatsApp.astro';
 import Icono from '../components/Icono.astro';
-import { DIRECCION, ZONA_DESPACHO, HORARIOS } from '../config/site';
+import { DIRECCION, HORARIOS, VISITA_CON_HORA } from '../config/site';
 import { mensajeGenerico } from '../lib/whatsapp';
 import { migaDePan } from '../lib/schema';
 
@@ -45,8 +45,8 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
     <header class="cabecera">
       <h1>Sobre Casas Limache</h1>
       <p class="cabecera__bajada">
-        Vendemos y construimos casas prefabricadas en la Región de Valparaíso, con despacho a doce
-        comunas y una casa piloto que puedes recorrer en Villa Alemana antes de decidir.
+        Vendemos y construimos casas prefabricadas con despacho a todo Chile, y una casa piloto que
+        puedes recorrer en Villa Alemana antes de decidir.
       </p>
     </header>
 
@@ -77,6 +77,7 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
           </p>
           <p>
             Atendemos {HORARIOS.map((h) => `${h.dias.toLowerCase()} de ${h.desde} a ${h.hasta}`).join(', ')}.
+            {' '}{VISITA_CON_HORA}
           </p>
         </div>
         <a class="bloque__enlace" href="/casa-piloto/">
@@ -89,9 +90,8 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
         <h2 id="t-como">Cómo trabajamos</h2>
         <div class="prosa">
           <p>
-            No hay formulario de contacto. Escribes por WhatsApp, te contesta una ejecutiva y
-            cotizas ahí mismo, con el modelo y el metraje que te interesan. Nos parece más honesto
-            que un formulario que nadie responde en tres días.
+            Escribes por WhatsApp, te contesta una ejecutiva y cotizas ahí mismo, con el modelo y el
+            metraje que te interesan.
           </p>
           <p>
             Vendemos en tres formatos —Kit Básico, Semifull y Llave en Mano— para que puedas
@@ -101,34 +101,6 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
             problemas después.
           </p>
         </div>
-      </section>
-
-      <section class="bloque" aria-labelledby="t-donde">
-        <h2 id="t-donde">Dónde llegamos</h2>
-        <div class="prosa">
-          <p>
-            Despachamos en la Región de Valparaíso: {ZONA_DESPACHO.join(', ')}. El flete se cotiza
-            aparte porque depende de la distancia, del tamaño del modelo y del acceso al terreno; un
-            camino de tierra con pendiente o un pasaje angosto cambian el costo, y preferimos
-            decirlo antes de que llegue el camión.
-          </p>
-        </div>
-        <ul class="sin-lista comunas enlaces-densos">
-          {
-            ZONA_DESPACHO.map((comuna) => {
-              const slug = comuna
-                .normalize('NFD')
-                .replace(/\p{Diacritic}/gu, '')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-');
-              return (
-                <li>
-                  <a href={`/casas-prefabricadas-${slug}/`}>{comuna}</a>
-                </li>
-              );
-            })
-          }
-        </ul>
       </section>
 
       <section class="bloque" aria-labelledby="t-porque">
@@ -235,13 +207,6 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
     color: var(--texto-suave);
   }
 
-  .comunas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-2) var(--e-4);
-    font-size: var(--t-chico);
-  }
-
   .cierre {
     display: flex;
     flex-wrap: wrap;
@@ -262,10 +227,6 @@ const jsonLd = [migaDePan([{ nombre: 'Nosotros', ruta: '/nosotros/' }])];
     }
 
     .bloque__enlace {
-      grid-column: 2;
-    }
-
-    .comunas {
       grid-column: 2;
     }
   }

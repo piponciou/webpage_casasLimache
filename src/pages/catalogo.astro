@@ -1,21 +1,32 @@
 ---
+/**
+ * Catálogo completo.
+ *
+ * SIN FILTROS, A PROPÓSITO
+ * Antes había una barra con cuatro filtros —dormitorios, metraje, formato y
+ * precio— más un selector de orden. Se quitó porque prometía una criba que no
+ * existe: los ocho modelos están disponibles en los tres formatos, así que
+ * filtrar por formato devolvía siempre los ocho, y sin precios cargados el
+ * filtro de precio no podía descartar ninguno. Un control que nunca cambia el
+ * resultado enseña a desconfiar del resto de la página.
+ *
+ * Con ocho modelos, la grilla completa se recorre de una mirada. Si el catálogo
+ * crece lo bastante como para necesitar una criba de verdad, este es el lugar
+ * donde volvería, y con los filtros que sí discriminan: metraje y dormitorios.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ModeloCard from '../components/ModeloCard.astro';
-import FiltrosCatalogo from '../components/FiltrosCatalogo.astro';
-import BotonWhatsApp from '../components/BotonWhatsApp.astro';
-import { obtenerModelos, hayPreciosPublicados } from '../lib/catalogo';
-import { mensajeCatalogoSinResultados } from '../lib/whatsapp';
+import { obtenerModelos } from '../lib/catalogo';
 import { migaDePan } from '../lib/schema';
 
 const modelos = await obtenerModelos();
-const conPrecio = hayPreciosPublicados(modelos);
 
 const jsonLd = [migaDePan([{ nombre: 'Catálogo', ruta: '/catalogo/' }])];
 ---
 
 <BaseLayout
   titulo="Modelos de Casas Prefabricadas | Casas Limache"
-  descripcion="Catálogo completo de casas prefabricadas de 36 a 120 m², de 2 a 5 dormitorios. Filtra por metraje y formato, y cotiza el modelo que te sirve por WhatsApp."
+  descripcion="Catálogo completo de casas prefabricadas de 36 a 120 m², de 2 a 5 dormitorios, con despacho a todo Chile. Cotiza el modelo que te sirve por WhatsApp."
   ruta="/catalogo/"
   jsonLd={jsonLd}
 >
@@ -23,182 +34,22 @@ const jsonLd = [migaDePan([{ nombre: 'Catálogo', ruta: '/catalogo/' }])];
     <header class="cabecera-pagina">
       <h1>Catálogo de modelos</h1>
       <p class="prosa">
-        Todos los modelos que fabricamos, de 36 a 120 m². Los precios se cotizan por WhatsApp
-        porque dependen del formato, del metraje y de la comuna de despacho.
+        Los ocho modelos que fabricamos, de 36 a 120 m². Todos se venden en los tres formatos de
+        compra y se despachan a todo Chile.
       </p>
     </header>
-
-    <FiltrosCatalogo conPrecio={conPrecio} total={modelos.length} />
 
     {/* El h2 es invisible pero necesario: los nombres de los modelos son h3 y
         sin él la jerarquía saltaría de h1 a h3. */}
     <section aria-labelledby="titulo-grilla">
       <h2 class="visualmente-oculto" id="titulo-grilla">Todos los modelos</h2>
 
-      <div class="grilla-catalogo" data-grilla>
+      <div class="grilla-catalogo">
         {modelos.map((modelo, i) => <ModeloCard modelo={modelo} prioridad={i < 2} />)}
       </div>
     </section>
-
-    <div class="vacio" data-vacio hidden>
-      <h2 class="vacio__titulo">Ningún modelo calza con ese filtro.</h2>
-      <p class="vacio__texto">
-        Escríbenos y lo adaptamos: cambiar una distribución o ajustar un metraje es más común de lo
-        que parece.
-      </p>
-      <BotonWhatsApp
-        mensaje={mensajeCatalogoSinResultados()}
-        origen="catalogo-vacio"
-        texto="Contarnos qué necesitas"
-      />
-    </div>
   </div>
 </BaseLayout>
-
-<script>
-  /**
-   * Filtrado y orden en el cliente.
-   * No se agrega ni se quita ninguna tarjeta del DOM: solo se ocultan y se
-   * reordenan con la propiedad `order` de CSS Grid. El HTML que ve Google es
-   * siempre el catálogo completo.
-   */
-  const form = document.querySelector<HTMLFormElement>('[data-filtros]');
-  const grilla = document.querySelector<HTMLElement>('[data-grilla]');
-  const vacio = document.querySelector<HTMLElement>('[data-vacio]');
-  const contador = document.querySelector<HTMLElement>('[data-contador]');
-  const contadorTexto = document.querySelector<HTMLElement>('[data-contador-texto]');
-
-  if (form && grilla) {
-    const tarjetas = Array.from(grilla.querySelectorAll<HTMLElement>('[data-modelo]'));
-
-    // La barra existe solo si este script corrió.
-    form.hidden = false;
-
-    const dentro = (valor: number, min: number, max: number) => valor >= min && valor <= max;
-
-    function cumpleDormitorios(el: HTMLElement, filtro: string): boolean {
-      if (filtro === 'todos') return true;
-      const [min, max] = filtro.split('-').map(Number) as [number, number];
-      const lista = (el.dataset.dormitorios ?? '').split(',').map(Number);
-      return lista.some((d) => dentro(d, min, max));
-    }
-
-    function cumpleMetraje(el: HTMLElement, filtro: string): boolean {
-      if (filtro === 'todos') return true;
-      const min = Number(el.dataset.m2Min);
-      const max = Number(el.dataset.m2Max);
-      // Basta con que alguno de los metrajes del modelo caiga en el rango.
-      if (filtro === 'hasta-50') return min <= 50;
-      if (filtro === '50-80') return max >= 50 && min <= 80;
-      return max > 80;
-    }
-
-    function cumpleKit(el: HTMLElement, filtro: string): boolean {
-      if (filtro === 'todos') return true;
-      return (el.dataset.kits ?? '').split(',').includes(filtro);
-    }
-
-    function cumplePrecio(el: HTMLElement, filtro: string): boolean {
-      if (filtro === 'todos') return true;
-      const bruto = el.dataset.precio;
-      if (!bruto) return false; // sin precio publicado no puede calzar un rango
-      const millones = Number(bruto) / 1_000_000;
-      if (filtro === 'hasta-15') return millones <= 15;
-      if (filtro === '15-25') return millones > 15 && millones <= 25;
-      return millones > 25;
-    }
-
-    function ordenDe(el: HTMLElement, criterio: string): number {
-      const orden = Number(el.dataset.orden ?? 0);
-      const destacado = el.dataset.destacado === '1';
-      const min = Number(el.dataset.m2Min);
-      const max = Number(el.dataset.m2Max);
-      const precio = el.dataset.precio ? Number(el.dataset.precio) : null;
-
-      if (criterio === 'm2-asc') return min;
-      if (criterio === 'm2-desc') return 1000 - max;
-      // Los modelos sin precio publicado se van al final, nunca al principio.
-      if (criterio === 'precio-asc') return precio === null ? 99_999 : Math.round(precio / 10_000);
-      return destacado ? orden : orden + 100;
-    }
-
-    function valorDe(nombre: string): string {
-      const campo = form!.elements.namedItem(nombre);
-      if (!campo) return 'todos';
-      if (campo instanceof RadioNodeList) return String(campo.value || 'todos');
-      if (campo instanceof HTMLSelectElement) return campo.value;
-      return 'todos';
-    }
-
-    function aplicar(actualizarUrl = true) {
-      const filtros = {
-        rango: valorDe('rango'),
-        m2: valorDe('m2'),
-        kit: valorDe('kit'),
-        precio: valorDe('precio'),
-      };
-      const criterio = valorDe('orden') || 'destacados';
-
-      let visibles = 0;
-
-      for (const tarjeta of tarjetas) {
-        const calza =
-          cumpleDormitorios(tarjeta, filtros.rango) &&
-          cumpleMetraje(tarjeta, filtros.m2) &&
-          cumpleKit(tarjeta, filtros.kit) &&
-          cumplePrecio(tarjeta, filtros.precio);
-
-        tarjeta.hidden = !calza;
-        tarjeta.style.order = String(ordenDe(tarjeta, criterio));
-        if (calza) visibles++;
-      }
-
-      if (vacio) vacio.hidden = visibles > 0;
-      grilla!.hidden = visibles === 0;
-
-      if (contador) contador.textContent = String(visibles);
-      if (contadorTexto) contadorTexto.textContent = visibles === 1 ? 'modelo' : 'modelos';
-
-      if (!actualizarUrl) return;
-
-      // El estado viaja en la URL para que el filtro se pueda compartir.
-      const params = new URLSearchParams();
-      for (const [clave, valor] of Object.entries(filtros)) {
-        if (valor && valor !== 'todos') params.set(clave, valor);
-      }
-      if (criterio !== 'destacados') params.set('orden', criterio);
-
-      const query = params.toString();
-      history.replaceState(null, '', query ? `?${query}` : location.pathname);
-    }
-
-    function leerUrl() {
-      const params = new URLSearchParams(location.search);
-      for (const nombre of ['rango', 'm2', 'kit', 'precio']) {
-        const valor = params.get(nombre);
-        if (!valor) continue;
-        const campo = form!.querySelector<HTMLInputElement>(
-          `input[name="${nombre}"][value="${CSS.escape(valor)}"]`
-        );
-        if (campo) campo.checked = true;
-      }
-
-      const orden = params.get('orden');
-      const select = form!.elements.namedItem('orden');
-      if (orden && select instanceof HTMLSelectElement) select.value = orden;
-    }
-
-    form.addEventListener('change', () => aplicar());
-    form.addEventListener('submit', (e) => e.preventDefault());
-    form.addEventListener('reset', () => {
-      // El reset del navegador ocurre después del evento.
-      requestAnimationFrame(() => aplicar());
-    });
-
-    leerUrl();
-    aplicar(false);
-  }
-</script>
 
 <style>
   .cabecera-pagina {
@@ -218,25 +69,6 @@ const jsonLd = [migaDePan([{ nombre: 'Catálogo', ruta: '/catalogo/' }])];
     gap: var(--e-5);
     grid-template-columns: 1fr;
     margin-block-start: var(--e-6);
-  }
-
-  .vacio {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: var(--e-4);
-    margin-block-start: var(--e-7);
-    padding-block: var(--e-7);
-    border-top: var(--grosor-cota) solid var(--linea);
-  }
-
-  .vacio__titulo {
-    font-size: var(--t-sub);
-  }
-
-  .vacio__texto {
-    max-width: 46ch;
-    color: var(--texto-suave);
   }
 
   @media (min-width: 481px) {

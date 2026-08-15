@@ -110,8 +110,3 @@ export function combinaciones(datos: DatosModelo) {
   );
 }
 
-/** ¿Hay algún precio publicado en todo el catálogo? Si no, el filtro de precio
- *  del catálogo no se muestra: un filtro que no filtra nada es basura. */
-export function hayPreciosPublicados(modelos: Modelo[]): boolean {
-  return modelos.some((m) => precioDesde(m.data) !== null);
-}

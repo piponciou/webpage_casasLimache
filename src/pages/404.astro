@@ -9,14 +9,13 @@ import Icono from '../components/Icono.astro';
 import { obtenerModelos, rutaModelo, rangoM2 } from '../lib/catalogo';
 import { formatearM2 } from '../lib/formato';
 import { mensajeGenerico } from '../lib/whatsapp';
-import { COMUNAS } from '../data/comunas';
 
 const modelos = await obtenerModelos();
 ---
 
 <BaseLayout
   titulo="Página no encontrada | Casas Limache"
-  descripcion="La página que buscas no existe. Acá están todos los modelos de casas prefabricadas y las comunas donde despachamos."
+  descripcion="La página que buscas no existe. Acá están todos los modelos de casas prefabricadas de Casas Limache."
   ruta="/404/"
   noIndexar
 >
@@ -71,18 +70,6 @@ const modelos = await obtenerModelos();
       />
     </div>
 
-    <nav class="error__comunas" aria-label="Comunas donde despachamos">
-      <h2 class="error__subtitulo">O revisa por comuna</h2>
-      <ul class="sin-lista enlaces-densos">
-        {
-          COMUNAS.map((comuna) => (
-            <li>
-              <a href={`/casas-prefabricadas-${comuna.slug}/`}>{comuna.nombre}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
   </div>
 </BaseLayout>
 
@@ -207,22 +194,4 @@ const modelos = await obtenerModelos();
     margin-block-start: var(--e-7);
   }
 
-  .error__comunas {
-    margin-block-start: var(--e-8);
-    padding-block-start: var(--e-5);
-    border-top: var(--grosor-cota) solid var(--linea);
-  }
-
-  .error__subtitulo {
-    font-size: var(--t-cuerpo);
-    font-weight: 600;
-    margin-block-end: var(--e-3);
-  }
-
-  .error__comunas ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--e-2) var(--e-4);
-    font-size: var(--t-chico);
-  }
 </style>

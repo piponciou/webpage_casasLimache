@@ -1,7 +1,7 @@
 ---
 import Icono from './Icono.astro';
 import Logo from './Logo.astro';
-import { NAV } from '../config/site';
+import { NAV, REDES } from '../config/site';
 import { linkWhatsApp, mensajeGenerico } from '../lib/whatsapp';
 
 const rutaActual = Astro.url.pathname;
@@ -40,17 +40,35 @@ function esActual(href: string): boolean {
       </ul>
     </nav>
 
-    <a
-      class="cabecera__wsp"
-      href={linkWhatsApp(mensajeGenerico())}
-      target="_blank"
-      rel="noopener"
-      data-wsp="header"
-    >
-      <Icono nombre="whatsapp" tamano={20} />
-      <span class="cabecera__wsp-texto">Cotizar</span>
-      <span class="visualmente-oculto">por WhatsApp (se abre WhatsApp)</span>
-    </a>
+    <div class="cabecera__acciones">
+      {/* Solo el ícono: el nombre de la red va como texto accesible. Poner
+          "Instagram" escrito al lado triplicaría el ancho de este bloque y el
+          logo ya identifica el destino. */}
+      <ul class="sin-lista cabecera__redes">
+        {
+          REDES.map((red) => (
+            <li>
+              <a href={red.url} target="_blank" rel="noopener" data-red={red.icono}>
+                <Icono nombre={red.icono} tamano={20} />
+                <span class="visualmente-oculto">{red.nombre} de Casas Limache</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <a
+        class="cabecera__wsp"
+        href={linkWhatsApp(mensajeGenerico())}
+        target="_blank"
+        rel="noopener"
+        data-wsp="header"
+      >
+        <Icono nombre="whatsapp" tamano={20} />
+        <span class="cabecera__wsp-texto">Cotizar</span>
+        <span class="visualmente-oculto">por WhatsApp (se abre WhatsApp)</span>
+      </a>
+    </div>
   </div>
 </header>
 
@@ -153,6 +171,38 @@ function esActual(href: string): boolean {
     box-shadow: inset 0 -1.5px 0 var(--cota);
   }
 
+  .cabecera__acciones {
+    display: flex;
+    align-items: center;
+    gap: var(--e-2);
+  }
+
+  /* Las redes se esconden en móvil: a 375px compiten con el botón de cotizar,
+     que es la conversión. Siguen en el footer, que sí las lista en todas las
+     pantallas. */
+  .cabecera__redes {
+    display: none;
+    gap: var(--e-1);
+  }
+
+  .cabecera__redes a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radio);
+    color: var(--texto-suave);
+    transition:
+      color var(--dur-corta) var(--ease-suave),
+      background-color var(--dur-corta) var(--ease-suave);
+  }
+
+  .cabecera__redes a:hover {
+    color: var(--texto);
+    background: var(--carbon-10);
+  }
+
   .cabecera__wsp {
     display: inline-flex;
     align-items: center;
@@ -175,6 +225,12 @@ function esActual(href: string): boolean {
   .cabecera__wsp:hover {
     background: var(--carbon);
     color: var(--nieve);
+  }
+
+  @media (min-width: 560px) {
+    .cabecera__redes {
+      display: flex;
+    }
   }
 
   @media (min-width: 900px) {

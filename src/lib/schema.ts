@@ -2,12 +2,12 @@
  * GENERADORES DE JSON-LD
  * ======================
  * Datos estructurados para que Google entienda que esto es un negocio local de
- * construcción, en qué comunas trabaja y qué modelos vende.
+ * construcción, dónde atiende y qué modelos vende.
  *
  * Regla: si un dato no existe, se OMITE la propiedad. Nunca se rellena con un
  * valor inventado, porque un dato falso en el schema es peor que no tenerlo.
  */
-import { SITE, DIRECCION, TELEFONO, HORARIOS, REDES, ZONA_DESPACHO, EMAIL } from '../config/site';
+import { SITE, DIRECCION, TELEFONO, HORARIOS, REDES, EMAIL } from '../config/site';
 import { precioDesde, precioHasta, rangoM2, type DatosModelo } from './catalogo';
 
 const ID_NEGOCIO = `${SITE.dominio}/#negocio`;
@@ -52,11 +52,12 @@ export function negocioLocal() {
       opens: h.desde,
       closes: h.hasta,
     })),
-    areaServed: ZONA_DESPACHO.map((comuna) => ({
-      '@type': 'City',
-      name: comuna,
-      containedInPlace: { '@type': 'AdministrativeArea', name: DIRECCION.region },
-    })),
+    /**
+     * Antes era una lista de doce comunas, heredada de las landings por comuna
+     * que ya no existen. Se despacha a todo Chile: declarar doce ciudades le
+     * decía a Google que el resto del país no se atiende.
+     */
+    areaServed: { '@type': 'Country', name: DIRECCION.pais },
     sameAs: REDES.map((r) => r.url),
     // priceRange se omite a propósito: no hay precios confirmados por el cliente.
   };
