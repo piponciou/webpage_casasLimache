@@ -6,6 +6,12 @@
    de madera y tierra. La página es el fondo blanco; las fotos de las casas son
    lo único que grita.
    Ningún token decorativo: si un valor no se usa, no está.
+
+   La excepción son las escalas —espaciado, sombras, capas—, que se mantienen
+   completas aunque algún escalón no tenga uso hoy. Una escala es un vocabulario:
+   si falta el peldaño que alguien necesita, no busca el siguiente, inventa un
+   número suelto, y ahí se pierde el sistema. Los tokens de un solo propósito,
+   en cambio, se borran en cuanto quedan sin uso.
    ============================================================================= */
 
 /* ---------- Tipografías autoalojadas -------------------------------------- */
@@ -172,7 +178,6 @@
   --ancho-max: 1240px;
   --margen-cota: 24px;
   --borde-pagina: 20px;
-  --canal: clamp(1rem, 0.5rem + 2vw, 2rem); /* separación entre columnas */
 
   /* ---------- Forma -------------------------------------------------------
      El bento pide una esquina blanda: con 4px las celdas parecían recortes de

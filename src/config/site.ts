@@ -155,31 +155,11 @@ export const ZONA_DESPACHO = [
 ] as const; // ⚠️ VERIFICAR si además se despacha fuera de la Región de Valparaíso.
 
 /**
- * ⚠️ REEMPLAZAR — testimonios de ejemplo.
- * La estructura es la definitiva: cambiar solo los textos. Si el cliente no
- * tiene testimonios reales, borrar el array completo y la sección desaparece
- * del home sola.
+ * Los testimonios de ejemplo se eliminaron junto con su componente. Eran tres
+ * bloques de "⚠️ REEMPLAZAR — testimonio real del cliente" que estuvieron
+ * publicados. La prueba social ahora la hacen las fotos de clientes del home
+ * (src/data/clientes.ts), que son reales.
  */
-export const TESTIMONIOS = [
-  {
-    texto: '⚠️ REEMPLAZAR — testimonio real del cliente, entre 2 y 4 líneas, en sus palabras.',
-    nombre: '⚠️ Nombre',
-    comuna: '⚠️ Comuna',
-    modelo: '⚠️ Modelo comprado',
-  },
-  {
-    texto: '⚠️ REEMPLAZAR — testimonio real del cliente, entre 2 y 4 líneas, en sus palabras.',
-    nombre: '⚠️ Nombre',
-    comuna: '⚠️ Comuna',
-    modelo: '⚠️ Modelo comprado',
-  },
-  {
-    texto: '⚠️ REEMPLAZAR — testimonio real del cliente, entre 2 y 4 líneas, en sus palabras.',
-    nombre: '⚠️ Nombre',
-    comuna: '⚠️ Comuna',
-    modelo: '⚠️ Modelo comprado',
-  },
-] as const;
 
 /**
  * Analítica. Mientras estos IDs estén vacíos NO se carga ningún script de
