@@ -1,0 +1,235 @@
+---
+/**
+ * SLIDER DE CLIENTES
+ * ==================
+ * Reemplaza al bloque de testimonios, que hasta ahora mostraba en producción el
+ * texto de ejemplo "⚠️ REEMPLAZAR — testimonio real del cliente".
+ *
+ * POR QUÉ NO ES UN CARRUSEL CON JAVASCRIPT
+ * La pista es un contenedor con scroll horizontal y `scroll-snap`. Las cinco
+ * fotos están en el HTML desde el primer byte: se ven, se indexan y se navegan
+ * con el dedo o con la rueda aunque el JavaScript no llegue nunca. Los botones
+ * son un añadido — el script los muestra solo si puede atenderlos — y lo único
+ * que hacen es desplazar la pista que ya funcionaba sola.
+ *
+ * Un carrusel que monta las diapositivas con JS deja el HTML vacío para el
+ * rastreador y rompe si el script falla. Acá no hay nada que montar.
+ */
+import { CLIENTES } from '../data/clientes';
+---
+
+<section class="seccion clientes" aria-labelledby="titulo-clientes">
+  <div class="envoltorio">
+    <div class="encabezado-seccion">
+      <div>
+        <h2 id="titulo-clientes">Clientes de Casas Limache</h2>
+        <p class="clientes__bajada">Familias que ya compraron su casa prefabricada con nosotros.</p>
+      </div>
+
+      {/* Sin JavaScript no aparecen: la pista se desplaza igual con el dedo. */}
+      <div class="clientes__controles" data-controles hidden>
+        <button class="clientes__flecha" type="button" data-anterior aria-label="Ver clientes anteriores">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 12H5m0 0 5.5-5.5M5 12l5.5 5.5" />
+          </svg>
+        </button>
+        <button class="clientes__flecha" type="button" data-siguiente aria-label="Ver más clientes">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h15m0 0-5.5-5.5M19 12l-5.5 5.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    {/*
+      `tabindex="0"` no es decorativo: un contenedor con scroll tiene que poder
+      recorrerse con el teclado, y sin él las flechas del teclado no llegan acá.
+      El rol de grupo con nombre le dice al lector de pantalla qué es esto.
+    */}
+    <div
+      class="clientes__pista"
+      data-pista
+      role="group"
+      aria-label="Fotos de clientes de Casas Limache"
+      tabindex="0"
+    >
+      <ul class="sin-lista clientes__lista">
+        {
+          CLIENTES.map((cliente, i) => (
+            <li class="clientes__slide">
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={`/images/clientes/${cliente.id}-800.webp 800w, /images/clientes/${cliente.id}-1400.webp 1400w`}
+                  sizes="(min-width: 980px) 33vw, (min-width: 620px) 50vw, 88vw"
+                />
+                <img
+                  class="clientes__foto"
+                  src={`/images/clientes/${cliente.id}-800.jpg`}
+                  srcset={`/images/clientes/${cliente.id}-800.jpg 800w, /images/clientes/${cliente.id}-1400.jpg 1400w`}
+                  sizes="(min-width: 980px) 33vw, (min-width: 620px) 50vw, 88vw"
+                  alt={cliente.alt}
+                  width="800"
+                  height="600"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              </picture>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  /**
+   * Solo mejora la pista: la muestra ya funcionando y le agrega dos botones.
+   * Si este script no corre, no se pierde nada más que los botones.
+   */
+  const pista = document.querySelector<HTMLElement>('[data-pista]');
+  const controles = document.querySelector<HTMLElement>('[data-controles]');
+
+  if (pista && controles) {
+    const anterior = controles.querySelector<HTMLButtonElement>('[data-anterior]');
+    const siguiente = controles.querySelector<HTMLButtonElement>('[data-siguiente]');
+
+    controles.hidden = false;
+
+    /** Ancho de una diapositiva más su separación. */
+    function paso(): number {
+      const slide = pista!.querySelector<HTMLElement>('.clientes__slide');
+      if (!slide) return pista!.clientWidth;
+      const gap = parseFloat(getComputedStyle(pista!.firstElementChild as Element).gap) || 0;
+      return slide.getBoundingClientRect().width + gap;
+    }
+
+    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function mover(direccion: number) {
+      pista!.scrollBy({ left: paso() * direccion, behavior: suave ? 'smooth' : 'auto' });
+    }
+
+    anterior?.addEventListener('click', () => mover(-1));
+    siguiente?.addEventListener('click', () => mover(1));
+
+    /** Apaga el botón que ya no lleva a ninguna parte. */
+    function actualizar() {
+      const max = pista!.scrollWidth - pista!.clientWidth;
+      const x = pista!.scrollLeft;
+      if (anterior) anterior.disabled = x <= 1;
+      if (siguiente) siguiente.disabled = x >= max - 1;
+    }
+
+    pista.addEventListener('scroll', actualizar, { passive: true });
+    window.addEventListener('resize', actualizar);
+
+    /**
+     * Al arrancar, las fotos todavía no ocupan su ancho definitivo: la pista
+     * mide lo mismo que su caja visible y los dos botones salen apagados como
+     * si no hubiera nada que recorrer. El observador vuelve a preguntar cada
+     * vez que la pista cambia de tamaño, que es exactamente cuando la respuesta
+     * cambia.
+     */
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(actualizar).observe(pista);
+    }
+    window.addEventListener('load', actualizar);
+    actualizar();
+  }
+</script>
+
+<style>
+  .clientes__bajada {
+    margin-block-start: var(--e-2);
+    color: var(--texto-suave);
+    max-width: 46ch;
+  }
+
+  .clientes__controles {
+    display: flex;
+    gap: var(--e-2);
+    flex: 0 0 auto;
+  }
+
+  .clientes__flecha {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radio-control);
+    color: var(--texto);
+    /* Mismo 55% que el botón secundario: por debajo no llega al 3:1 que la
+       WCAG pide a los controles de interfaz. */
+    border: var(--grosor-cota) solid color-mix(in srgb, var(--carbon) 55%, transparent);
+    transition:
+      background-color var(--dur-corta) var(--ease-suave),
+      color var(--dur-corta) var(--ease-suave),
+      opacity var(--dur-corta) var(--ease-suave);
+  }
+
+  .clientes__flecha:hover:not(:disabled) {
+    background: var(--carbon);
+    color: var(--nieve);
+  }
+
+  .clientes__flecha:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* La pista sangra hasta el borde derecho de la ventana para que la foto
+     siguiente asome y se entienda que hay más. El scrollbar se oculta porque
+     los botones y el gesto ya comunican el desplazamiento. */
+  .clientes__pista {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline-end: calc(var(--borde-pagina) * -1);
+    padding-inline-end: var(--borde-pagina);
+    /* El foco del teclado no puede quedar cortado por el overflow. */
+    padding-block: var(--e-1);
+  }
+
+  .clientes__pista::-webkit-scrollbar {
+    display: none;
+  }
+
+  .clientes__lista {
+    display: flex;
+    gap: var(--e-4);
+    margin: 0;
+  }
+
+  .clientes__slide {
+    flex: 0 0 auto;
+    width: 88%;
+    scroll-snap-align: start;
+  }
+
+  .clientes__foto {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radio-bento);
+    background: var(--carbon-10);
+  }
+
+  @media (min-width: 620px) {
+    .clientes__lista {
+      gap: var(--e-5);
+    }
+
+    .clientes__slide {
+      width: calc((100% - var(--e-5)) / 2);
+    }
+  }
+
+  @media (min-width: 980px) {
+    .clientes__slide {
+      width: calc((100% - var(--e-5) * 2) / 3);
+    }
+  }
+</style>
